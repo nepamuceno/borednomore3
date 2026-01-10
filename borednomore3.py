@@ -5,7 +5,7 @@ Changes wallpapers with smooth crossfade using imagemagick
 
 Author: Nepamuceno Bartolo
 Email: zzerver@gmail.com
-GitHub: https://github.com/nepamuceno/wallpapers
+GitHub: https://github.com/nepamuceno/borednomore3
 Version: 0.0.3
 """
 
@@ -31,7 +31,7 @@ except ImportError:
 VERSION = "0.0.3"
 AUTHOR = "Nepamuceno Bartolo"
 EMAIL = "zzerver@gmail.com"
-GITHUB = "https://github.com/nepamuceno/wallpapers"
+GITHUB = "https://github.com/nepamuceno/borednomore3"
 
 
 class WallpaperChanger:
