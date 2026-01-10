@@ -14,7 +14,7 @@ HIST_DIR="$PROJECT_DIR/history"
 HIST_FILE="$HIST_DIR/last-100-history.txt"
 
 # Usamos la variable $borednomore3_TOKEN cargada desde .env
-REPO_URL="https://${borednomore3_TOKEN}@github.com/borednomore3muceno/borednomore3.git"
+REPO_URL="https://${borednomore3_TOKEN}@github.com/nepamuceno/borednomore3.git"
 
 # Configuración de Tags
 BASE_TAG="stable-$(date +'%d_%m_%Y_%H_%M')"
