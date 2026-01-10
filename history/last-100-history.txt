@@ -1,0 +1,100 @@
+./dist/bin/nepa conv_entero.nepa 
+cat conv_entero.nepa 
+bash compila.sh 
+./dist/bin/nepa conv_entero.nepa 
+cat conv_entero.nepa 
+bash compila.sh 
+./dist/bin/nepa conv_entero.nepa 
+bash compila.sh 
+./dist/bin/nepa conv_entero.nepa 
+bash compila.sh 
+./dist/bin/nepa conv_entero.nepa 
+bash compila.sh 
+./dist/bin/nepa conv_entero.nepa 
+bash compila.sh 
+./dist/bin/nepa conv_entero.nepa 
+bash compila.sh 
+./dist/bin/nepa conv_entero.nepa 
+bash compila.sh 
+./dist/bin/nepa conv_entero.nepa 
+bash compila.sh 
+./dist/bin/nepa conv_entero.nepa 
+bash compila.sh 
+./dist/bin/nepa conv_entero.nepa 
+cat conv_entero.nepa 
+tree desarrollo/interno/parser/
+tree desarrollo/interno/variables/
+pkill firefox
+tree desarrollo/interno/parser/
+mv desarrollo/interno/parser/perser_matriz.go desarrollo/interno/parser/parser_matriz.go
+touch desarrollo/interno/parser/parser_funcion.go touch desarrollo/interno/parser/parser_bloques.go
+tree desarrollo/interno/parser/
+tree desarrollo/interno/variables/
+nano desarrollo/interno/parser/parser_tipos.go
+nano desarrollo/interno/parser/
+tree desarrollo/interno/parser/
+nano desarrollo/interno/parser/parser_tipo_nativo.go
+rm desarrollo/interno/parser/parser_tipos.go
+cat desarrollo/interno/parser/parser_tipo_nativo.go
+cat desarrollo/interno/parser/parser_tipo_control.go
+nano desarrollo/interno/parser/parser_tipo_control.go
+rm desarrollo/interno/parser/parser_tipo_control.go
+tree desarrollo/interno/parser/
+bash subir_nepa.sh 
+pkill firefox
+cd nepa
+ls desarrollo/interno/core/core-utils.go 
+rm desarrollo/interno/core/core-utils.go 
+ls desarrollo/interno/core/
+rm desarrollo/interno/core/error.go 
+nano desarrollo/interno/core/version.go 
+nano desarrollo/interno/core/utilidades.go 
+nano desarrollo/interno/core/mensajes_error.go 
+nano desarrollo/interno/core/mensajes_verbose.go
+nano desarrollo/interno/core/mensajes_detalle.go
+nano desarrollo/interno/core/mensajes_depuracion.go
+nano desarrollo/interno/core/error.go
+nano desarrollo/interno/core/mensajes_informativos.go
+nano desarrollo/interno/core/mensajes_aviso.go
+nano desarrollo/interno/core/mensajes_exito.go
+nano desarrollo/interno/core/mensajes_estado.go
+nano desarrollo/interno/core/mensajes_progreso.go
+pkill firefox
+nano desarrollo/interno/core/mensajes_progreso.go
+nano desarrollo/interno/core/mensajes_sistema.go
+nano desarrollo/interno/core/mensajes_usuario.go
+nano desarrollo/interno/core/mensajes_evento.go
+for i in desarrollo/interno/core/*.go; do sed -i '1s/package core/package nucleo/' "$i"; done && mv desarrollo/interno/core desarrollo/interno/nucleo
+tree desarrollo/interno/nucleo/
+bash subir_nepa.sh 
+cat /etc/issue
+mkdir wallpapers
+cd wallpapers/
+sudo apt install python3-pyqt5 --yes
+nano ~/wallpaper_changer.py
+nano wallpaper_changer.py
+chmod +x wallpaper_changer.py
+nano wallpaper_changer.py
+use another parameter to setup wallpapers directory, defaults to current directory, add --h --help to print help, --c to setup credits: Author: Nepamuceno Bartolo, email: zzerver@gmail.com, github: https://githup.com/nepamuceno/wallpapers, --v --version: Version 0.0.1
+nano wallpaper_changer.py
+sudo apt install python3-requests python3-bs4
+nano ~/wallpaper_downloader.py
+chmod +x ~/wallpaper_downloader.py
+nano ~/wallpaper_downloader.py
+python3 ~/wallpaper_downloader.py 15 ~/wallpapers "nature 4k"
+python3 ~/wallpaper_downloader.py 15
+nano ~/wallpaper_downloader.py
+python3 ~/wallpaper_downloader.py 15
+ls
+mv ~/wallpaper_downloader.py ./.
+ls
+./wallpaper_changer.py 5
+cat wallpaper_changer.py
+nano wallpaper_changer.py
+./wallpaper_changer.py 5
+echo > wallpaper_changer.py 
+nano wallpaper_changer.py 
+./wallpaper_changer.py 5
+echo > wallpaper_changer.py 
+nano wallpaper_changer.py 
+./wallpaper_changer.py 5
