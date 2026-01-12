@@ -1,5 +1,5 @@
 # BoredNoMore3 Makefile - The "Ultimate" Edition
-# Version: 0.5.3
+# Version: 0.5.4
 
 # Binary Names
 BIN_GUI        = borednomore3-gui
@@ -15,7 +15,7 @@ SCRIPT_DL_GUI  = borednomore3_downloader_gui.py
 LIB_TRANS      = borednomore3_transitions.py
 
 # Variables
-VERSION = 0.5.3
+VERSION = 0.5.4
 AUTHOR  = Nepamuceno Bartolo
 # Hiding email: Uses environment variable BNM_EMAIL if set, else a placeholder
 EMAIL   ?= $(shell echo $${BNM_EMAIL:-"developer@internal.local"})
@@ -32,11 +32,13 @@ GREEN  = \033[0;32m
 YELLOW = \033[1;33m
 NC     = \033[0m
 
-.PHONY: help build clean deb deb-src install-deb requirements
+.PHONY: help build build-dev clean deb deb-src install-deb requirements rebuild
 
 help:
 	@echo "$(BLUE)BoredNoMore3 Build System$(NC)"
-	@echo "$(YELLOW)make build$(NC)        - Build production binaries"
+	@echo "$(YELLOW)make build$(NC)        - Build production binaries (Onefile + UPX)"
+	@echo "$(YELLOW)make build-dev$(NC)    - Fast build (Standalone only, no compression)"
+	@echo "$(YELLOW)make rebuild$(NC)      - Clean and start a fresh build"
 	@echo "$(YELLOW)make deb$(NC)          - Create binary .deb package"
 	@echo "$(YELLOW)make deb-src$(NC)      - Create source .deb package"
 	@echo "$(YELLOW)make install-deb$(NC)  - Build and install the .deb immediately"
@@ -48,6 +50,16 @@ requirements:
 		upx-ucl python3-full patchelf python3-tk ccache
 	@pip3 install --user nuitka customtkinter --break-system-packages || pip3 install --user nuitka customtkinter
 
+# --- FAST DEV BUILD (No Onefile, No Compression) ---
+build-dev: clean
+	@mkdir -p $(DIST_BIN)
+	@echo "$(BLUE)Compiling Fast Dev Binaries...$(NC)"
+	@python3 -m nuitka --standalone $(NUITKA_SPEED_FLAGS) --plugin-enable=tk-inter --include-module=customtkinter --output-filename=$(BIN_GUI) --output-dir=$(DIST_BIN) $(SCRIPT_GUI)
+	@python3 -m nuitka --standalone $(NUITKA_SPEED_FLAGS) --include-module=borednomore3_transitions --output-filename=$(BIN_SETTER) --output-dir=$(DIST_BIN) $(SCRIPT_SETTER)
+	@chmod +x $(DIST_BIN)/*
+	@echo "$(GREEN)✓ Dev binaries ready in $(DIST_BIN)$(NC)"
+
+# --- PRODUCTION BUILD ---
 build: clean
 	@mkdir -p $(DIST_BIN)
 	@echo "$(BLUE)Compiling Main GUI...$(NC)"
@@ -61,6 +73,9 @@ build: clean
 	@mv dist/borednomore3* $(DIST_BIN)/ 2>/dev/null || true
 	@upx --best $(DIST_BIN)/*
 	@chmod +x $(DIST_BIN)/*
+
+# --- RECOVERY COMMAND ---
+rebuild: clean build
 
 # --- BINARY DEBIAN PACKAGE ---
 deb: build
