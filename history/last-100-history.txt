@@ -1,100 +1,100 @@
-./dist/bin/nepa conv_entero.nepa 
-cat conv_entero.nepa 
-bash compila.sh 
-./dist/bin/nepa conv_entero.nepa 
-cat conv_entero.nepa 
-bash compila.sh 
-./dist/bin/nepa conv_entero.nepa 
-bash compila.sh 
-./dist/bin/nepa conv_entero.nepa 
-bash compila.sh 
-./dist/bin/nepa conv_entero.nepa 
-bash compila.sh 
-./dist/bin/nepa conv_entero.nepa 
-bash compila.sh 
-./dist/bin/nepa conv_entero.nepa 
-bash compila.sh 
-./dist/bin/nepa conv_entero.nepa 
-bash compila.sh 
-./dist/bin/nepa conv_entero.nepa 
-bash compila.sh 
-./dist/bin/nepa conv_entero.nepa 
-bash compila.sh 
-./dist/bin/nepa conv_entero.nepa 
-cat conv_entero.nepa 
-tree desarrollo/interno/parser/
-tree desarrollo/interno/variables/
-pkill firefox
-tree desarrollo/interno/parser/
-mv desarrollo/interno/parser/perser_matriz.go desarrollo/interno/parser/parser_matriz.go
-touch desarrollo/interno/parser/parser_funcion.go touch desarrollo/interno/parser/parser_bloques.go
-tree desarrollo/interno/parser/
-tree desarrollo/interno/variables/
-nano desarrollo/interno/parser/parser_tipos.go
-nano desarrollo/interno/parser/
-tree desarrollo/interno/parser/
-nano desarrollo/interno/parser/parser_tipo_nativo.go
-rm desarrollo/interno/parser/parser_tipos.go
-cat desarrollo/interno/parser/parser_tipo_nativo.go
-cat desarrollo/interno/parser/parser_tipo_control.go
-nano desarrollo/interno/parser/parser_tipo_control.go
-rm desarrollo/interno/parser/parser_tipo_control.go
-tree desarrollo/interno/parser/
-bash subir_nepa.sh 
-pkill firefox
-cd nepa
-ls desarrollo/interno/core/core-utils.go 
-rm desarrollo/interno/core/core-utils.go 
-ls desarrollo/interno/core/
-rm desarrollo/interno/core/error.go 
-nano desarrollo/interno/core/version.go 
-nano desarrollo/interno/core/utilidades.go 
-nano desarrollo/interno/core/mensajes_error.go 
-nano desarrollo/interno/core/mensajes_verbose.go
-nano desarrollo/interno/core/mensajes_detalle.go
-nano desarrollo/interno/core/mensajes_depuracion.go
-nano desarrollo/interno/core/error.go
-nano desarrollo/interno/core/mensajes_informativos.go
-nano desarrollo/interno/core/mensajes_aviso.go
-nano desarrollo/interno/core/mensajes_exito.go
-nano desarrollo/interno/core/mensajes_estado.go
-nano desarrollo/interno/core/mensajes_progreso.go
-pkill firefox
-nano desarrollo/interno/core/mensajes_progreso.go
-nano desarrollo/interno/core/mensajes_sistema.go
-nano desarrollo/interno/core/mensajes_usuario.go
-nano desarrollo/interno/core/mensajes_evento.go
-for i in desarrollo/interno/core/*.go; do sed -i '1s/package core/package nucleo/' "$i"; done && mv desarrollo/interno/core desarrollo/interno/nucleo
-tree desarrollo/interno/nucleo/
-bash subir_nepa.sh 
-cat /etc/issue
-mkdir wallpapers
-cd wallpapers/
-sudo apt install python3-pyqt5 --yes
-nano ~/wallpaper_changer.py
-nano wallpaper_changer.py
-chmod +x wallpaper_changer.py
-nano wallpaper_changer.py
-use another parameter to setup wallpapers directory, defaults to current directory, add --h --help to print help, --c to setup credits: Author: Nepamuceno Bartolo, email: zzerver@gmail.com, github: https://githup.com/nepamuceno/wallpapers, --v --version: Version 0.0.1
-nano wallpaper_changer.py
-sudo apt install python3-requests python3-bs4
-nano ~/wallpaper_downloader.py
-chmod +x ~/wallpaper_downloader.py
-nano ~/wallpaper_downloader.py
-python3 ~/wallpaper_downloader.py 15 ~/wallpapers "nature 4k"
-python3 ~/wallpaper_downloader.py 15
-nano ~/wallpaper_downloader.py
-python3 ~/wallpaper_downloader.py 15
-ls
-mv ~/wallpaper_downloader.py ./.
-ls
+echo > wallpaper_changer.py 
+nano wallpaper_changer.py 
 ./wallpaper_changer.py 5
+sudo apt install python3-pyqt5 python3-pynput
+./wallpaper_changer.py 5
+echo > wallpaper_changer.py 
+nano wallpaper_changer.py 
+./wallpaper_changer.py 5 3000
+./wallpaper_changer.py 5 ./. 3000
+ls
+rm *.jpg
+./wallpaper_downloader.py --h
+./wallpaper_downloader.py -h
+./wallpaper_downloader.py 20 . dark
+./wallpaper_changer.py 5 ./. 5000
+sudo apt install python3-pil python3-pynput
+echo > wallpaper_changer.py 
+nano wallpaper_changer.py 
+./wallpaper_changer.py 5 ./. 5000
+./wallpaper_changer.py 5 ./. 25
+./wallpaper_changer.py 5 ./. 5
+./wallpaper_downloader.py 25 "dark theme"
+./wallpaper_downloader.py 25 dark wallpaper
+./wallpaper_downloader.py 25 dark+wallpaper
+./wallpaper_downloader.py 30 dark
+la
+./wallpaper_changer.py 5 ./. 
 cat wallpaper_changer.py
-nano wallpaper_changer.py
-./wallpaper_changer.py 5
-echo > wallpaper_changer.py 
-nano wallpaper_changer.py 
-./wallpaper_changer.py 5
-echo > wallpaper_changer.py 
-nano wallpaper_changer.py 
-./wallpaper_changer.py 5
+./wallpaper_changer.py 5 ./. 
+./wallpaper_changer.py -h
+./wallpaper_changer.py --h
+./wallpaper_changer.py --help
+./wallpaper_changer.py -h
+./wallpaper_changer.py --help
+./wallpaper_changer.py 
+./wallpaper_changer.py -v
+cat wallpaper_changer.py
+./wallpaper_changer.py -v
+./wallpaper_changer.py --version
+./wallpaper_changer.py --help
+./wallpaper_changer.py 
+cat wallpaper_changer.py 
+./wallpaper_changer.py 
+./wallpaper_changer.py  --version
+./wallpaper_changer.py  --v
+./wallpaper_changer.py  -v
+./wallpaper_changer.py  -h
+./wallpaper_changer.py  -help
+./wallpaper_changer.py  --help
+./wallpaper_changer.py  -h
+./wallpaper_changer.py  -v
+./wallpaper_changer.py 
+./wallpaper_changer.py -h
+./wallpaper_changer.py 5 ./. 
+./wallpaper_changer.py 5 ./. 0,01
+./wallpaper_changer.py 5 ./. 0.01
+./wallpaper_changer.py 5 ./. 10 0.01
+./wallpaper_changer.py 5 ./. 5 0.01
+./wallpaper_changer.py 5 ./. 5 0.005
+./wallpaper_changer.py 5 ./. 5 0.001
+tree .
+./wallpaper_changer.py 5 ./dark 5 0.001
+./wallpaper_downloader.py --help
+./wallpaper_downloader.py 30
+ls
+rm *.jpg
+ls
+./wallpaper_downloader.py 30
+ls
+./wallpaper_changer.py 5 ./dark 5 0.001
+./wallpaper_changer.py 5 ./. 5 0.001
+mv ./wallpaper_ ./borednomore3
+mv ./wallpapers ./borednomore3
+cd ..
+mv wallpapers/ borednomore3/
+cd borednomore3/
+ls
+mv wallpaper_changer.py borednomore3.py
+mv wallpaper_downloader.py.py borednomore3-downloader.py
+mv wallpaper_downloader.py borednomore3-downloader.py
+ls -al
+ls
+cp ../nepa/.env .env
+ls -la
+nano .gitignore
+la
+git init
+git add .
+bash subir_borednomore3.sh 
+git add .
+cat .env
+git commit -m "Initial upload: borednomore3 scripts and README"
+git branch -M main
+git push -u origin main
+git remote add origin https://github.com/nepamuceno/borednomore3.git
+ls
+git push -u origin main
+git push -u origin main --force
+./wallpaper_changer.py 10 ./. 5 0.0001
+./borednomore3.py 10 ./. 5 0.0001
