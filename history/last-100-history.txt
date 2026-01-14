@@ -1,100 +1,100 @@
-echo > wallpaper_changer.py 
-nano wallpaper_changer.py 
-./wallpaper_changer.py 5
-sudo apt install python3-pyqt5 python3-pynput
-./wallpaper_changer.py 5
-echo > wallpaper_changer.py 
-nano wallpaper_changer.py 
-./wallpaper_changer.py 5 3000
-./wallpaper_changer.py 5 ./. 3000
 ls
-rm *.jpg
-./wallpaper_downloader.py --h
-./wallpaper_downloader.py -h
-./wallpaper_downloader.py 20 . dark
-./wallpaper_changer.py 5 ./. 5000
-sudo apt install python3-pil python3-pynput
-echo > wallpaper_changer.py 
-nano wallpaper_changer.py 
-./wallpaper_changer.py 5 ./. 5000
-./wallpaper_changer.py 5 ./. 25
-./wallpaper_changer.py 5 ./. 5
-./wallpaper_downloader.py 25 "dark theme"
-./wallpaper_downloader.py 25 dark wallpaper
-./wallpaper_downloader.py 25 dark+wallpaper
-./wallpaper_downloader.py 30 dark
-la
-./wallpaper_changer.py 5 ./. 
-cat wallpaper_changer.py
-./wallpaper_changer.py 5 ./. 
-./wallpaper_changer.py -h
-./wallpaper_changer.py --h
-./wallpaper_changer.py --help
-./wallpaper_changer.py -h
-./wallpaper_changer.py --help
-./wallpaper_changer.py 
-./wallpaper_changer.py -v
-cat wallpaper_changer.py
-./wallpaper_changer.py -v
-./wallpaper_changer.py --version
-./wallpaper_changer.py --help
-./wallpaper_changer.py 
-cat wallpaper_changer.py 
-./wallpaper_changer.py 
-./wallpaper_changer.py  --version
-./wallpaper_changer.py  --v
-./wallpaper_changer.py  -v
-./wallpaper_changer.py  -h
-./wallpaper_changer.py  -help
-./wallpaper_changer.py  --help
-./wallpaper_changer.py  -h
-./wallpaper_changer.py  -v
-./wallpaper_changer.py 
-./wallpaper_changer.py -h
-./wallpaper_changer.py 5 ./. 
-./wallpaper_changer.py 5 ./. 0,01
-./wallpaper_changer.py 5 ./. 0.01
-./wallpaper_changer.py 5 ./. 10 0.01
-./wallpaper_changer.py 5 ./. 5 0.01
-./wallpaper_changer.py 5 ./. 5 0.005
-./wallpaper_changer.py 5 ./. 5 0.001
-tree .
-./wallpaper_changer.py 5 ./dark 5 0.001
-./wallpaper_downloader.py --help
-./wallpaper_downloader.py 30
+python3 borednomore3_downloader_gui.py
+python3 borednomore3_gui.py
+python3 borednomore3_downloader_gui.py
+debuild -us -uc
+fakeroot debian/rules clean
+debuild -us -uc
+./prepare_debian_repo.sh
+tree -h .
+./borednomore3
+./borednomore3 -
+./borednomore3 -i 5 -f 5 -r -s 0.0001
+./borednomore3_gui
+ls
+./borednomore3-gui
+./prepare_debian_repo.sh
+cat prepare_debian_repo.sh
+nano prepare_debian_repo.sh
+nano debian/rules
+ls debian/rules
+ls debian/
+ls debian/control
+cat debian/control
+ls
+ls debian/
+ls debian/rules
+cat debian/rules
+ls debian
+./prepare_debian_repo.sh
+./borednomore3-gui
+./borednomore3-downloader_gui
+./borednomore3-downloader-gui
+ls
+./borednomore3 -h
+./borednomore3 -i 5 -f 20 -s 0.00001 -r
+./borednomore3 -i 5 -f 5 -s 0.00001 -r
+./borednomore3 -i 5 -f 5 -s 0.0001 -r
+cd borednomore3/borednomore3/
 ls
 rm *.jpg
 ls
-./wallpaper_downloader.py 30
+./borednomore3_downloader.py 
+./borednomore3.py
+./borednomore3.py --help
+./borednomore3.py -f 5 -r
+./borednomore3.py -i 5 -f 5 -r
+pyinstaller --noconsole --onefile --collect-all customtkinter borednomore_gui.py
 ls
-./wallpaper_changer.py 5 ./dark 5 0.001
-./wallpaper_changer.py 5 ./. 5 0.001
-mv ./wallpaper_ ./borednomore3
-mv ./wallpapers ./borednomore3
-cd ..
-mv wallpapers/ borednomore3/
-cd borednomore3/
+make requirements
+make build
+ls borednomore*
+rm *.c
 ls
-mv wallpaper_changer.py borednomore3.py
-mv wallpaper_downloader.py.py borednomore3-downloader.py
-mv wallpaper_downloader.py borednomore3-downloader.py
-ls -al
+make requirements
+make build
 ls
-cp ../nepa/.env .env
-ls -la
-nano .gitignore
-la
-git init
-git add .
-bash subir_borednomore3.sh 
-git add .
+make build
 cat .env
-git commit -m "Initial upload: borednomore3 scripts and README"
-git branch -M main
-git push -u origin main
-git remote add origin https://github.com/nepamuceno/borednomore3.git
+bash subir_borednomore3.sh 
+cat subir_borednomore3.sh 
+bash subir_borednomore3.sh 
+make build-dev
+make build
+make clean
+make build-dev
+cat Makefile 
+bash subir_borednomore3.sh 
 ls
-git push -u origin main
-git push -u origin main --force
-./wallpaper_changer.py 10 ./. 5 0.0001
-./borednomore3.py 10 ./. 5 0.0001
+bash subir_borednomore3.sh 
+cat subir_borednomore3.sh 
+bash subir_borednomore3.sh 
+make clean
+make build
+rm -rf dist/ borednomore3.build/ borednomore3.onefile-build/ borednomore3.dist/
+tail -f ../borednomore3_0.5.4-1_amd64.build
+nano debian/rules
+echo "debian/borednomore3.1" > debian/manpages
+nano debian/borednomore3.1
+cat debian/borednomore3.1
+nano debian/rules
+nano debian/borednomore3.1
+nano debian/borednomore3-downloader.1
+nano debian/borednomore3-gui.1
+nano borednomore3-downloader-gui.1
+mv borednomore3-downloader-gui.1 debian/.
+ls debian
+nano debian/manpages
+nano debian/rules
+nano debian/borednomore3.desktop
+nano debian/borednomore3-downloader.desktop
+bash subir_borednomore3.sh 
+git add -A
+ls 
+bash subir_borednomore3.sh 
+nano .gitignore
+bash subir_borednomore3.sh 
+ls -al 
+ls
+git add -A
+bash subir_borednomore3.sh 

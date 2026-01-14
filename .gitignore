@@ -1,2 +1,23 @@
 .env
 *.jpg
+.ccache/
+__pycache__/
+__pycache__
+*.deb
+borednomore3_downloader.build/
+borednomore3_downloader_gui.dist/
+borednomore3_downloader.dist/
+borednomore3_downloader_gui.onefile-build/
+borednomore3_gui.build/
+borednomore3_gui.dist/
+borednomore3_downloader_gui.build/
+borednomore3_downloader.onefile-build/
+borednomore3_gui.onefile-build/
+borednomore3.conf
+nuitka-crash-report.xml
+
+# binary
+borednomore3
+borednomore3-gui
+borednomore3-downloader
+borednomore3-downloader-gui
