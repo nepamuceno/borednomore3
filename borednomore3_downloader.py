@@ -2,7 +2,6 @@
 """
 BoredNoMore3 Downloader
 Advanced wallpaper downloader from multiple sources
-
 Downloads high-quality wallpapers from:
 - Unsplash (https://unsplash.com)
 - Pexels (https://pexels.com)
@@ -11,7 +10,6 @@ Downloads high-quality wallpapers from:
 - Lorem Picsum (https://picsum.photos)
 - Google Images (via scraping)
 - Bing Images (via scraping)
-
 Author: Nepamuceno Bartolo
 Email: (hidden)
 GitHub: https://github.com/nepamuceno/borednomore3
@@ -258,45 +256,35 @@ def print_help():
 ║                  BoredNoMore3 Downloader - Wallpaper Fetcher                 ║
 ║                              Version {VERSION}                                ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
-
 DESCRIPTION:
     BoredNoMore3 Downloader is an advanced wallpaper downloading tool that fetches
     high-quality images from multiple sources with smart duplicate detection and
     sequential numbering.
-
 USAGE:
     borednomore3_downloader.py [OPTIONS]
-
 OPTIONS:
     -h, --help
         Display this comprehensive help message and exit.
-
     -v, --version
         Display version information and exit.
-
     -c, --credits
         Display credits and author information.
-
     -d, --directory <path>
         Directory where wallpapers will be saved.
         Default: current directory
         Example: -d ~/Pictures/Wallpapers
-
     -s, --search <query>
         Search query for finding wallpapers.
         Default: "dark wallpaper"
         Example: -s "nature landscape"
         Example: -s "abstract art"
-
     -n, --number <count>
         Number of wallpapers to download.
         Default: 10
         Range: 1-500
         Example: -n 20
-
     -D, --deep
         Enable deep search mode for more variety.
-
     -w, --websites <sources>
         Specify which websites/sources to use.
         Default: bing
@@ -304,14 +292,11 @@ OPTIONS:
         
         Example: -w unsplash,pexels
         Example: -w all
-
     -o, --overwrite <number>
         Start overwriting from specified number.
         Example: -o 50
-
     -R, --random-source
         Randomly select one source.
-
 SOURCES:
     • unsplash  - High-quality curated photography
     • pexels    - Professional stock photos (API key recommended)
@@ -321,7 +306,6 @@ SOURCES:
     • google    - Google Images scraping
     • bing      - Bing Images scraping
     • all       - All available sources
-
 FEATURES:
     ✅ Smart sequential numbering
     ✅ SHA256 duplicate detection
@@ -329,11 +313,9 @@ FEATURES:
     ✅ Deep search mode
     ✅ Automatic directory creation
     ✅ Overwrite mode
-
 AUTHOR:
     {AUTHOR}
     GitHub: {GITHUB}
-
 NOTES:
     - For best results with Pexels, Pixabay, and Wallhaven, use their API keys
     - Edit borednomore3_downloader_engines.py to add API keys
@@ -353,12 +335,10 @@ def print_credits():
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                  BoredNoMore3 Downloader - Wallpaper Fetcher                 ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
-
 Version:    {VERSION}
 Author:     {AUTHOR}
 Email:      {EMAIL}
 GitHub:     {GITHUB}
-
 Credits:
     • Unsplash.com - Beautiful free photos
     • Pexels.com - Free stock photos & videos

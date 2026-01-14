@@ -21,3 +21,7 @@ borednomore3
 borednomore3-gui
 borednomore3-downloader
 borednomore3-downloader-gui
+
+*.pyc
+*.pyo
+*.pyd
