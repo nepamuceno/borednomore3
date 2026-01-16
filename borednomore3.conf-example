@@ -1,48 +1,38 @@
+# BoredNoMore3 Configuration File Example
+# This file contains settings for the BoredNoMore3 wallpaper changer.
+# Command-line flags override these values.
+# Default values are used if not specified here.
+
 [settings]
-# BoredNoMore3 Configuration File
-# All settings can be overridden by command-line arguments
+# -i, --interval <sec>: Change interval in seconds (default: 300)
+interval = 300
 
-# Time interval between wallpaper changes (in seconds)
-interval = 5
-
-# Directory containing wallpaper images (JPG files)
-# Use absolute path or relative path from where the program is executed
+# -d, --directory <path>: Directory containing wallpapers (default: current directory)
 directory = .
 
-# Number of transition frames (higher = smoother but slower)
-# Range: 5-100, Default: 10
-frames = 5
+# -f, --frames <num>: Number of frames for transitions (default: 10, range 5-100)
+frames = 10
 
-# Speed of transition per frame (in seconds)
-# Lower values = faster transitions
-# Range: 0.0001-1.0, Default: 0.001
-speed = 0.0001
+# -s, --speed <sec>: Seconds per frame in transitions (default: 0.001, range 0.0001-1.0)
+speed = 0.001
 
-# Comma-separated list of transition numbers to use
-# Leave empty to use all transitions
-# Example: transitions = 1,2,3,4,5,10,15,20
-transitions = 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40
+# -t, --transitions <list>: Comma-separated list of transition IDs (e.g., 1,2,5-8,10)
+# If empty, all transitions are used.
+transitions = 
 
-# Randomize the order of transitions
-# Options: true, false
-randomize = true
+# -r, --randomize: Randomize transition selection (True/False, default: False)
+randomize = False
 
-# Keep image A visible during transitions (KEEP_IMAGE mode)
-# When true: Image A stays on desktop while Image B transitions in
-# When false: Both images move together during transitions
-# Options: true, false
-keep_image = false
+# -k, --keep-image: Keep previous image visible during transition (True/False, default: False)
+keep_image = False
 
-# Path to the borednomore3 binary or script
-# This can be:
-#   - 'borednomore3' (looks in PATH for compiled binary)
-#   - 'borednomore3.py' (runs the Python script)
-#   - './borednomore3' (runs binary from current directory)
-#   - Full path: '/usr/local/bin/borednomore3'
-borednomore3_binary = borednomore3
+# -w, --randomize-wallpapers: Randomize wallpaper selection instead of sequential (True/False, default: False)
+randomize_wallpapers = False
 
-# Notes:
-# - Lines starting with # are comments
-# - Boolean values: true/false (case insensitive)
-# - Paths with spaces should NOT be quoted
-# - Command-line arguments always override config file settings
+# --wallpaper-list <file>: File containing wallpaper patterns/wildcards (one per line)
+# If not specified, defaults to *.jpg
+# Note: This is a CLI-only option; not stored in config
+# wallpaper_list = borednomore.list  # (example, but not used in config)
+
+# borednomore3_gui_binary: Path to GUI binary (default: borednomore3-gui)
+borednomore3_gui_binary = borednomore3-gui

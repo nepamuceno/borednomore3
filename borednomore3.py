@@ -3,10 +3,10 @@
 Dynamic Wallpaper Changer for Lubuntu/LXQt
 Changes wallpapers with smooth transitions using imagemagick
 
-Author: Nepamuceno Bartolo
-Email: zzerver@gmail.com
+Author: Nepamuceno
+Email: (hidden)
 GitHub: https://github.com/nepamuceno/borednomore3
-Version: 0.5.2 - Fixed sequential vs random priority
+Version: 0.6.0 - Added random wallpaper selection feature
 """
 
 import os
@@ -31,11 +31,11 @@ except ImportError:
 try:
     from borednomore3_transitions import TRANSITIONS, apply_transition
 except ImportError:
-    print("Error: borednomore3_transitions.py is required and must be in the same directory")
+    print("Error: borednomore3_transitions is required and must be in the same directory")
     sys.exit(1)
 
-VERSION = "0.5.2"
-AUTHOR = "Nepamuceno Bartolo"
+VERSION = "0.6.0"
+AUTHOR = "Nepamuceno"
 EMAIL = "(hidden)"
 GITHUB = "https://github.com/nepamuceno/borednomore3"
 
@@ -48,6 +48,7 @@ DEFAULT_CONFIG = {
     'transitions': None,
     'randomize': False,
     'keep_image': False,
+    'randomize_wallpapers': False,
     'borednomore3_gui_binary': 'borednomore3-gui'
 }
 
@@ -79,6 +80,8 @@ def load_config_file(config_path):
                 config['randomize'] = settings.getboolean('randomize')
             if 'keep_image' in settings:
                 config['keep_image'] = settings.getboolean('keep_image')
+            if 'randomize_wallpapers' in settings:
+                config['randomize_wallpapers'] = settings.getboolean('randomize_wallpapers')
             if 'borednomore3_gui_binary' in settings:
                 config['borednomore3_gui_binary'] = settings['borednomore3_gui_binary']
         
@@ -100,6 +103,7 @@ def save_default_config(config_path):
         'transitions': '',
         'randomize': str(DEFAULT_CONFIG['randomize']),
         'keep_image': str(DEFAULT_CONFIG['keep_image']),
+        'randomize_wallpapers': str(DEFAULT_CONFIG['randomize_wallpapers']),
         'borednomore3_gui_binary': DEFAULT_CONFIG['borednomore3_gui_binary']
     }
     
@@ -117,7 +121,8 @@ class BoredNoMore3:
     """Main wallpaper changer application"""
     
     def __init__(self, interval=300, directory=".", frames=10, fade_speed=0.001, 
-                 transitions=None, randomize=False, keep_image=False):
+                 transitions=None, randomize=False, keep_image=False, randomize_wallpapers=False,
+                 wallpaper_patterns=None):
         self.interval = interval
         self.directory = os.path.abspath(os.path.expanduser(directory))
         self.transition_frames = frames
@@ -127,6 +132,7 @@ class BoredNoMore3:
         self.should_exit = False
         self.is_transitioning = False
         self.keep_image = keep_image
+        self.randomize_wallpapers = randomize_wallpapers
         
         # Set random seed based on current time
         random.seed(time.time())
@@ -139,6 +145,9 @@ class BoredNoMore3:
         
         self.randomize_transitions = randomize
         self.transition_index = 0  # For sequential mode
+        
+        # Wallpaper patterns (for --wallpaper-list)
+        self.wallpaper_patterns = wallpaper_patterns if wallpaper_patterns else ["*.jpg", "*.png", "*.jpeg", "*.webp"]
         
         # Setup keyboard listener
         self.listener = keyboard.Listener(on_press=self.on_key_press)
@@ -179,14 +188,22 @@ class BoredNoMore3:
             print(f"Error: Directory '{self.directory}' does not exist")
             sys.exit(1)
         
-        pattern = os.path.join(self.directory, "*.jpg")
-        self.wallpapers = sorted(glob.glob(pattern))
+        self.wallpapers = []
+        for pattern in self.wallpaper_patterns:
+            full_pattern = os.path.join(self.directory, pattern)
+            matched = sorted(glob.glob(full_pattern))
+            self.wallpapers.extend(matched)
+        
+        # Remove duplicates if any patterns overlap
+        self.wallpapers = sorted(list(set(self.wallpapers)))
         
         if not self.wallpapers:
-            print(f"Error: No JPG files found in {self.directory}")
+            print(f"Error: No files matched the patterns in {self.directory}")
+            print(f"Patterns used: {', '.join(self.wallpaper_patterns)}")
             sys.exit(1)
         
         print(f"Loaded {len(self.wallpapers)} wallpapers from {self.directory}")
+        print(f"Using patterns: {', '.join(self.wallpaper_patterns)}")
     
     def set_wallpaper(self, image_path):
         try:
@@ -210,13 +227,22 @@ class BoredNoMore3:
             self.transition_index = (self.transition_index + 1) % len(self.transition_list)
             return transition
     
+    def get_next_wallpaper_index(self):
+        """Get the next wallpaper index based on randomize_wallpapers setting"""
+        if self.randomize_wallpapers:
+            # Random selection
+            return random.randint(0, len(self.wallpapers) - 1)
+        else:
+            # Sequential selection
+            return (self.current_index + 1) % len(self.wallpapers)
+    
     def change_wallpaper(self):
         if self.should_exit or self.is_transitioning:
             return
         
         self.is_transitioning = True
         old_index = self.current_index
-        self.current_index = (self.current_index + 1) % len(self.wallpapers)
+        self.current_index = self.get_next_wallpaper_index()
         new_wallpaper = self.wallpapers[self.current_index]
         
         print(f"\nChanging to: {os.path.basename(new_wallpaper)}")
@@ -243,12 +269,13 @@ class BoredNoMore3:
         print(f"Screen resolution: {self.screen_width}x{self.screen_height}")
         print(f"Keep image mode: {'Enabled' if self.keep_image else 'Disabled'}")
         print(f"Transition mode: {'RANDOM' if self.randomize_transitions else 'SEQUENTIAL'}")
+        print(f"Wallpaper selection: {'RANDOM' if self.randomize_wallpapers else 'SEQUENTIAL'}")
         print(f"Using {len(self.transition_list)} transitions")
         self.load_wallpapers()
         
         self.change_wallpaper()
         
-        print(f"\nBoredNoMore3 running. Changing every {self.interval} seconds.")
+        print(f"\nborednomore3 running. Changing every {self.interval} seconds.")
         print(f"Transition frames: {self.transition_frames}")
         print("\nPress 'q' or 'Q' anywhere to exit immediately.")
         print("Press Ctrl+C to exit.\n")
@@ -267,43 +294,43 @@ class BoredNoMore3:
 
 def print_help():
     help_text = f"""
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                      BoredNoMore3 - Dynamic Wallpaper Changer                ║
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                      borednomore3 - Dynamic Wallpaper Changer                ║
 ║                                  Version {VERSION}                                  ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+╚═══════════════════════════════════════════════════════════════════════════════╝
 
 DESCRIPTION:
-    Changes wallpapers with smooth transitions. Supports random or sequential order.
+    Changes wallpapers with smooth transitions. Supports random or sequential order
+    for both transitions and wallpaper selection.
 
 USAGE:
-    python3 borednomore3.py [OPTIONS]
+    borednomore3 [OPTIONS]
 
 OPTIONS:
     -h, --help                  Show this help message and exit
     -v, --version               Show version information
     -c, --credits               Show credits
     --config <path>             Config file (default: borednomore3.conf)
-    -i, --interval <sec>        Change interval (default: 300)
+    -i, --interval <sec>        Change interval in seconds (default: 300)
     -d, --directory <path>      Wallpaper directory (default: current)
     -f, --frames <num>          Transition frames (default: 10, range 5-100)
     -s, --speed <sec>           Seconds per frame (default: 0.001)
     -t, --transitions <list>    Comma-separated transition IDs (e.g., 1,5,23)
+                                When used with -r, randomizes only from this list
     -r, --randomize             RANDOMIZE transitions (default: SEQUENTIAL)
+                                If -t is given → random from that list only
+                                If no -t → random from all available transitions
+    -w, --randomize-wallpapers  RANDOMIZE wallpaper selection (default: SEQUENTIAL)
+                                When enabled, picks a random wallpaper each time
+                                instead of cycling in order
     -k, --keep-image            Keep previous image visible during transition
+    -l, --wallpaper-list <file> File with wallpaper patterns (one per line)
+                                If no file given after flag → uses borednomore3.list
+                                Default without flag: *.jpg, *.png, *.jpeg, *.webp
 
 CONFIGURATION FILE:
     Created automatically if missing.
     Command-line flags always override config values.
-
-    Example:
-    [settings]
-    interval = 300
-    directory = .
-    frames = 10
-    speed = 0.001
-    transitions = 1,2,3
-    randomize = false
-    keep_image = false
 
 TRANSITION LIBRARY:
     {len(TRANSITIONS)} professional transitions available.
@@ -315,12 +342,12 @@ AUTHOR:
 
 
 def print_version():
-    print(f"BoredNoMore3 v{VERSION}")
+    print(f"borednomore3 v{VERSION}")
 
 
 def print_credits():
     print(f"""
-BoredNoMore3 v{VERSION}
+borednomore3 v{VERSION}
 Author: {AUTHOR}
 GitHub: {GITHUB}
 
@@ -331,20 +358,52 @@ Enjoy!
 
 def parse_transitions(transition_str):
     try:
-        transitions = [int(t.strip()) for t in transition_str.split(',')]
+        parts = [t.strip() for t in transition_str.split(',')]
+        transitions = []
+        for part in parts:
+            if '-' in part:
+                start, end = map(int, part.split('-'))
+                transitions.extend(range(start, end + 1))
+            else:
+                transitions.append(int(part))
+        
         for t in transitions:
             if t < 1 or t > len(TRANSITIONS):
                 print(f"Error: Transition {t} out of range (1-{len(TRANSITIONS)})")
                 sys.exit(1)
-        return transitions
+        return sorted(set(transitions))  # remove duplicates and sort
     except ValueError:
-        print("Error: -t must be comma-separated numbers (e.g., 1,5,10)")
+        print("Error: -t must be comma-separated numbers or ranges (e.g., 1,5,10-15)")
         sys.exit(1)
+
+
+def load_wallpaper_patterns(list_file):
+    """Load wallpaper patterns from a list file"""
+    patterns = []
+    if not os.path.exists(list_file):
+        print(f"Warning: Wallpaper list file not found: {list_file}")
+        return ["*.jpg", "*.png", "*.jpeg", "*.webp"]
+    
+    try:
+        with open(list_file, 'r') as f:
+            for line in f:
+                # Remove inline comments (anything after #) and strip whitespace
+                line = line.split('#', 1)[0].strip()
+                if line:  # only add non-empty patterns
+                    patterns.append(line)
+        if not patterns:
+            print(f"Warning: No valid patterns in {list_file}, falling back to common formats")
+            return ["*.jpg", "*.png", "*.jpeg", "*.webp"]
+        print(f"Loaded {len(patterns)} wallpaper patterns from {list_file}")
+        return patterns
+    except Exception as e:
+        print(f"Error reading wallpaper list file {list_file}: {e}")
+        return ["*.jpg", "*.png", "*.jpeg", "*.webp"]
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description='BoredNoMore3 - Dynamic Wallpaper Changer',
+        description='borednomore3 - Dynamic Wallpaper Changer',
         add_help=False,
         formatter_class=argparse.RawTextHelpFormatter
     )
@@ -358,8 +417,11 @@ def main():
     parser.add_argument('-f', '--frames', type=int, default=None)
     parser.add_argument('-s', '--speed', type=float, default=None)
     parser.add_argument('-t', '--transitions', type=str, default=None)
-    parser.add_argument('-r', '--randomize', action='store_true')  # Explicit flag
+    parser.add_argument('-r', '--randomize', action='store_true')
+    parser.add_argument('-w', '--randomize-wallpapers', action='store_true')
     parser.add_argument('-k', '--keep-image', action='store_true')
+    parser.add_argument('-l', '--wallpaper-list', nargs='?', const='borednomore3.list', 
+                       default=None, help="File with wallpaper patterns (default: borednomore3.list)")
     
     args = parser.parse_args()
     
@@ -400,9 +462,16 @@ def main():
     if args.keep_image:
         config['keep_image'] = True
     
-    # CRITICAL FIX: -r flag controls randomization explicitly
-    # If -r is NOT passed → force sequential (even if config says true)
-    config['randomize'] = args.randomize  # Only True if -r was given
+    # Transition randomization: -r overrides config
+    config['randomize'] = args.randomize
+    
+    # Wallpaper randomization: -w overrides config
+    config['randomize_wallpapers'] = args.randomize_wallpapers
+    
+    # Wallpaper list file handling
+    wallpaper_patterns = ["*.jpg", "*.png", "*.jpeg", "*.webp"]
+    if args.wallpaper_list:
+        wallpaper_patterns = load_wallpaper_patterns(args.wallpaper_list)
     
     # Validate
     if config['interval'] < 1:
@@ -415,13 +484,13 @@ def main():
         print("Error: Speed must be 0.0001-1.0")
         sys.exit(1)
     
-    # Parse transitions
+    # Parse transitions (command-line has highest priority)
     transitions = None
     if config['transitions']:
         transitions = parse_transitions(config['transitions'])
     
     # Start the app
-    print(f"BoredNoMore3 v{VERSION}")
+    print(f"borednomore3 v{VERSION}")
     print("=" * 80)
     
     app = BoredNoMore3(
@@ -430,8 +499,10 @@ def main():
         frames=config['frames'],
         fade_speed=config['speed'],
         transitions=transitions,
-        randomize=config['randomize'],  # Now correctly controlled by -r
-        keep_image=config['keep_image']
+        randomize=config['randomize'],
+        keep_image=config['keep_image'],
+        randomize_wallpapers=config['randomize_wallpapers'],
+        wallpaper_patterns=wallpaper_patterns
     )
     app.run()
 

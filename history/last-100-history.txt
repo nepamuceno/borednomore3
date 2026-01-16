@@ -1,100 +1,100 @@
+git status
+git commit -m "Fix Transitions"
+git add -A
+git commit -m "Fix Transitions"
+git push origin main --force
 ls
-python3 borednomore3_downloader_gui.py
-python3 borednomore3_gui.py
-python3 borednomore3_downloader_gui.py
-debuild -us -uc
-fakeroot debian/rules clean
-debuild -us -uc
-./prepare_debian_repo.sh
-tree -h .
-./borednomore3
-./borednomore3 -
-./borednomore3 -i 5 -f 5 -r -s 0.0001
-./borednomore3_gui
+git add debian
+git add *.py
+git add *.sh
+git add borednomore3.conf-example
+git delete __pycache__/
+git delete __pycache__
 ls
-./borednomore3-gui
-./prepare_debian_repo.sh
-cat prepare_debian_repo.sh
-nano prepare_debian_repo.sh
-nano debian/rules
-ls debian/rules
-ls debian/
-ls debian/control
-cat debian/control
+git add *.md
+git status
+git add -A
+git status
+git add .
+git status
 ls
-ls debian/
-ls debian/rules
-cat debian/rules
-ls debian
-./prepare_debian_repo.sh
-./borednomore3-gui
-./borednomore3-downloader_gui
-./borednomore3-downloader-gui
+git add MODIFY_ME.env 
+git add *
 ls
-./borednomore3 -h
-./borednomore3 -i 5 -f 20 -s 0.00001 -r
-./borednomore3 -i 5 -f 5 -s 0.00001 -r
-./borednomore3 -i 5 -f 5 -s 0.0001 -r
-cd borednomore3/borednomore3/
-ls
-rm *.jpg
-ls
-./borednomore3_downloader.py 
-./borednomore3.py
-./borednomore3.py --help
-./borednomore3.py -f 5 -r
-./borednomore3.py -i 5 -f 5 -r
-pyinstaller --noconsole --onefile --collect-all customtkinter borednomore_gui.py
-ls
-make requirements
-make build
-ls borednomore*
-rm *.c
-ls
-make requirements
-make build
-ls
-make build
+git push origin main --force
+git -m "Fix Transitions"
+git commit -m "Fix Transitions"
 cat .env
+git push origin main --force
+git config --global http.postBuffer 524288000
+git config --global http.maxRequestBuffer 100M
+git lfs install
+git lfs track "*.zip"
+git add .gitattributes
+git commit -m "Track large files with Git LFS"
+git rev-list --objects --all | git verify-pack -v .git/objects/pack/*.idx | sort -k3 -n | tail -20
+git remote set-url origin git@github.com:nepamuceno/borednomore3.git
+cat .env
+git push origin main --force
+git remote set-url origin https://github.com/nepamuceno/borednomore3.git
+git push origin main --force
+cd ..
+mv borednomore3 borednomore3-bk-14-01-2026
+git clone https://github.com/nepamuceno/borednomore3.git
+cd borednomore3-bk-14-01-2026/
+ls
+cp *.py ../borednomore3/.
+ls ../borednomore3/.
+cp *.md ../borednomore3/.
+cp borednomore.conf-example ../borednomore3/.
+cp borednomore3.conf-example ../borednomore3/.
+ls ../borednomore3/.
+ls
+cp .gitignore ../borednomore3/.
+cp *.sh ../borednomore3/.
+cp Makefile ../borednomore3/.
+cp -R debian ../borednomore3/.
+ls
+ls ../borednomore3/.
+cp .env ../borednomore3/.
+cp *.conf ../borednomore3/.
+ls ../borednomore3/.
+ls
+ls ../borednomore3/.
+cd ../borednomore3/
+ls
+git add *
+git commit -m "Fix Translations"
+git add *.py
+git add *.md
+git commit -m "Fix Translations"
+cat .env
+git commit -a
+git push origin master
+git push origin master main
 bash subir_borednomore3.sh 
-cat subir_borednomore3.sh 
-bash subir_borednomore3.sh 
-make build-dev
-make build
-make clean
-make build-dev
-cat Makefile 
-bash subir_borednomore3.sh 
+git push origin master main
+ls
+git add .
+git commit -m "Fix Transitions"
+git remote set-url origin https://github.com/nepamuceno/borednomore3.git
+git push origin main --force
+git rm -r --cached __pycache__
 ls
 bash subir_borednomore3.sh 
-cat subir_borednomore3.sh 
-bash subir_borednomore3.sh 
-make clean
-make build
-rm -rf dist/ borednomore3.build/ borednomore3.onefile-build/ borednomore3.dist/
-tail -f ../borednomore3_0.5.4-1_amd64.build
-nano debian/rules
-echo "debian/borednomore3.1" > debian/manpages
-nano debian/borednomore3.1
-cat debian/borednomore3.1
-nano debian/rules
-nano debian/borednomore3.1
-nano debian/borednomore3-downloader.1
-nano debian/borednomore3-gui.1
-nano borednomore3-downloader-gui.1
-mv borednomore3-downloader-gui.1 debian/.
-ls debian
-nano debian/manpages
-nano debian/rules
-nano debian/borednomore3.desktop
-nano debian/borednomore3-downloader.desktop
-bash subir_borednomore3.sh 
-git add -A
-ls 
-bash subir_borednomore3.sh 
+cat .gitignore
 nano .gitignore
-bash subir_borednomore3.sh 
-ls -al 
+./borednomore3_gui.py 
+./borednomore3_downloader_gui.py 
+./borednomore3_gui.py 
+./borednomore3_downloader_gui.py 
+./borednomore3_gui.py 
+./borednomore3_downloader_gui.py 
+./borednomore3_gui.py 
+./borednomore3_downloader_gui.py 
+./borednomore3_gui.py 
+./borednomore3_downloader_gui.py 
 ls
-git add -A
-bash subir_borednomore3.sh 
+ping yahoo.com
+./borednomore3_downloader_gui.py 
+./borednomore3_gui.py 

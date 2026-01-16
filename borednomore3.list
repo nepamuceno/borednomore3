@@ -1,0 +1,49 @@
+# borednomore3.list - Wallpaper pattern selection file
+# Purpose: Specify which files to use as wallpapers using glob patterns
+# Usage:
+#   1. One pattern per line (wildcards allowed: * ? [ ] )
+#   2. Lines starting with # are comments and ignored
+#   3. Patterns are relative to the directory specified with -d/--directory
+#   4. Run the changer with: python3 borednomore3.py -l borednomore3.list
+#      (or -l custom.list if you renamed the file)
+#   5. If the file is missing or empty → defaults to *.jpg *.png *.jpeg *.webp
+#   6. You can use as many patterns as you want — all matches are combined
+
+# === BASIC EXAMPLES ===
+*.jpg                    # All JPEG files in the directory
+*.png                    # All PNG files (great for images with transparency)
+*.jpeg                   # Alternative JPEG extension (some cameras use it)
+*.webp                   # Modern WebP format (smaller files, good quality)
+
+# === MORE SPECIFIC WILDCARD EXAMPLES ===
+# dark*.jpg                # All JPEG files starting with "dark" (dark_forest.jpg, dark_city.png, etc.)
+# *_4k.*                   # Any file ending with _4k (any extension: image_4k.jpg, sunset_4k.png, etc.)
+# wallpaper_*.jpg          # Files like wallpaper_00001.jpg, wallpaper_night.jpg, etc.
+# cyberpunk_*.*            # All cyberpunk themed files (cyberpunk_city.jpg, cyberpunk_neon.png, etc.)
+
+# === RANGE & CHARACTER CLASS EXAMPLES ===
+# wallpaper_[0-9][0-9][0-9][0-9][0-9].jpg   # wallpaper_00000.jpg to wallpaper_99999.jpg
+# photo_[ABC]*.png         # photo_A_something.png, photo_B_test.png, photo_C_123.png
+# image_????.jpg           # image_ followed by exactly 4 characters (image_2023.jpg, image_abcd.jpg)
+
+# === SUBFOLDER EXAMPLES ===
+# nature/*.jpg             # All JPEGs inside a "nature" subfolder
+# themes/cyberpunk/*.png   # All PNGs in themes/cyberpunk/
+# minimal_landscapes/*.*   # Everything inside minimal_landscapes folder
+
+# === MIXED & ADVANCED EXAMPLES ===
+# *.jpg
+# *.png
+# dark*.*
+# minimal_*.jpg
+# 4k_*.*                   # All files starting with 4k_ (any extension)
+# abstract_[0-9]*.png      # abstract_1.png, abstract_42.png, etc.
+# */background_*.jpg       # All background_*.jpg files in ANY subfolder
+
+# === TIPS ===
+# - Use * for any characters (including none)
+# - Use ? for exactly one character
+# - Use [abc] for one character from the set a/b/c
+# - Use [a-z] for any lowercase letter
+# - Use [0-9] for any digit
+# - Avoid very broad patterns like *.* (might include thumbnails, temp files, etc.)
