@@ -1,0 +1,67 @@
+.TH BOREDNOMORE3 1 "January 2026" "0.5.0" "BoredNoMore3 Manual"
+.SH NAME
+borednomore3 \- dynamic wallpaper changer for Lubuntu/LXQt with smooth transitions
+.SH SYNOPSIS
+.B borednomore3
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B borednomore3
+is a sophisticated wallpaper management daemon designed for Lubuntu and LXQt environments.
+It uses a professional transition library to change desktop backgrounds with high-quality visual effects.
+The tool calculates transitions in real-time, supports global keyboard interrupts, and integrates
+directly with desktop managers like \fBpcmanfm-qt\fR or \fBfeh\fR.
+.SH OPTIONS
+.TP
+.BI \-i, \-\-interval " seconds"
+Time between wallpaper changes. Default is \fB300\fR (5 minutes).
+.TP
+.BI \-d, \-\-directory " path"
+Directory containing JPG wallpapers. Default is the current directory (\fB.\fR).
+.TP
+.BI \-f, \-\-frames " number"
+Number of transition frames. Higher values (up to 100) create smoother animations. Default: \fB10\fR.
+.TP
+.BI \-s, \-\-speed " seconds"
+Seconds per frame. Controls the speed of the effect. Range: \fB0.0001\fR to \fB1.0\fR. Default: \fB0.001\fR.
+.TP
+.BI \-t, \-\-transitions " list"
+Comma-separated list of transition IDs (1-40) to use.
+.TP
+.B \-r, \-\-randomize
+Randomize the order of transitions. If used with \fB\-t\fR, randomizes only the specified list.
+.TP
+.B \-h, \-\-help
+Display the comprehensive help message including the full transition library list.
+.TP
+.B \-v, \-\-version
+Display version information and exit.
+.TP
+.B \-c, \-\-credits
+Display credits and author information.
+.SH CONTROLS
+.TP
+.B q, Q
+Global Exit. Pressing 'q' anywhere on the desktop will stop the wallpaper changer immediately.
+.TP
+.B Ctrl+C
+Standard terminal interrupt to stop the daemon.
+.SH TRANSITION MODES
+The suite includes 40 transitions. Some popular IDs are:
+.IP \(bu 2
+\fB1-5\fR: Fades and Dissolves
+.IP \(bu 2
+\fB10-12\fR: Wipes and Iris effects
+.IP \(bu 2
+\fB23\fR: Glitch effect
+.IP \(bu 2
+\fB37\fR: Pixelate effect
+.IP \(bu 2
+\fB40\fR: Horizontal Split
+.SH TECHNICAL NOTES
+Images are automatically resized to match the current screen resolution (detected via \fBxrandr\fR)
+before applying transitions to ensure desktop icons remain usable.
+.SH AUTHOR
+Nepamuceno Bartolo <zzerver@gmail.com>
+.SH SEE ALSO
+.BR pcmanfm-qt (1),
+.BR feh (1)

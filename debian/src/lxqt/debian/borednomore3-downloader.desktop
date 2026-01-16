@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=BNM3 Downloader
+Comment=Bulk download high-res wallpapers
+Exec=borednomore3-downloader-gui
+Icon=folder-download
+Terminal=false
+Type=Application
+Categories=Network;FileTransfer;

@@ -1,6 +1,0 @@
-borednomore3 (0.5.4-1) unstable; urgency=low
-
-  * Initial release to Debian.
-  * Added Nuitka compilation support.
-
- -- Nepamuceno Bartolo <zzerver@gmail.com>  Mon, 12 Jan 2026 00:00:00 -0600

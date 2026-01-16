@@ -1,0 +1,15 @@
+{
+    "category_id": "fades",
+    "category_name": "Standard Fades",
+    "version": "1.0.0",
+    "transitions": [
+        {
+            "id": "fade_io",
+            "name": "Linear Fade",
+            "short_description": "Changes opacity over time.",
+            "long_description": "A standard linear interpolation of the alpha channel. Supports both In and Out directions.",
+            "has_way_out": true,
+            "symmetric": true
+        }
+    ]
+}

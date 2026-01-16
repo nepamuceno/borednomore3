@@ -1,25 +1,3 @@
-git status
-git commit -m "Fix Transitions"
-git add -A
-git commit -m "Fix Transitions"
-git push origin main --force
-ls
-git add debian
-git add *.py
-git add *.sh
-git add borednomore3.conf-example
-git delete __pycache__/
-git delete __pycache__
-ls
-git add *.md
-git status
-git add -A
-git status
-git add .
-git status
-ls
-git add MODIFY_ME.env 
-git add *
 ls
 git push origin main --force
 git -m "Fix Transitions"
@@ -98,3 +76,25 @@ ls
 ping yahoo.com
 ./borednomore3_downloader_gui.py 
 ./borednomore3_gui.py 
+cd borednomore3/borednomore3
+./borednomore3.py
+./borednomore3_gui.py
+./borednomore3.py -h
+for i in {1..100}; do echo "$i, "; done
+for i in {1..100}; do echo -n "$i, "; done
+for i in {1..100}; do echo -n "$i,"; done
+./borednomore3.py
+./borednomore3.py -w
+./borednomore3.py -w -r
+./borednomore3.py -h
+./borednomore3.py -l -i 5 -s 0.0001 
+ls
+./borednomore3 -l -i 5 -s 0.0001
+./borednomore3.py -l -i 5 -s 0.0001
+./borednomore3.py -h
+./borednomore3.py -l -i 5 -s 0.0001 -w -
+./borednomore3.py -l -i 5 -s 0.0001 -w 
+./borednomore3.py -l -i 5 -s 0.0001 -w  -r
+
+./borednomore3.py -l -i 5 -s 0.0001 -w -r
+bash  subir_borednomore3.sh 

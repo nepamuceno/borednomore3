@@ -1,3 +1,0 @@
-[*] BoredNoMore3 Mission Control v3.3.0 initialized
-[*] Ready to launch background engine
-[*] Configuration loaded from: borednomore3.conf
