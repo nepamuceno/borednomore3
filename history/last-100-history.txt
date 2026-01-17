@@ -1,100 +1,100 @@
-ls
-git push origin main --force
-git -m "Fix Transitions"
-git commit -m "Fix Transitions"
-cat .env
-git push origin main --force
-git config --global http.postBuffer 524288000
-git config --global http.maxRequestBuffer 100M
-git lfs install
-git lfs track "*.zip"
-git add .gitattributes
-git commit -m "Track large files with Git LFS"
-git rev-list --objects --all | git verify-pack -v .git/objects/pack/*.idx | sort -k3 -n | tail -20
-git remote set-url origin git@github.com:nepamuceno/borednomore3.git
-cat .env
-git push origin main --force
-git remote set-url origin https://github.com/nepamuceno/borednomore3.git
-git push origin main --force
-cd ..
-mv borednomore3 borednomore3-bk-14-01-2026
-git clone https://github.com/nepamuceno/borednomore3.git
-cd borednomore3-bk-14-01-2026/
-ls
-cp *.py ../borednomore3/.
-ls ../borednomore3/.
-cp *.md ../borednomore3/.
-cp borednomore.conf-example ../borednomore3/.
-cp borednomore3.conf-example ../borednomore3/.
-ls ../borednomore3/.
-ls
-cp .gitignore ../borednomore3/.
-cp *.sh ../borednomore3/.
-cp Makefile ../borednomore3/.
-cp -R debian ../borednomore3/.
-ls
-ls ../borednomore3/.
-cp .env ../borednomore3/.
-cp *.conf ../borednomore3/.
-ls ../borednomore3/.
-ls
-ls ../borednomore3/.
-cd ../borednomore3/
-ls
-git add *
-git commit -m "Fix Translations"
-git add *.py
-git add *.md
-git commit -m "Fix Translations"
-cat .env
-git commit -a
-git push origin master
-git push origin master main
-bash subir_borednomore3.sh 
-git push origin master main
-ls
-git add .
-git commit -m "Fix Transitions"
-git remote set-url origin https://github.com/nepamuceno/borednomore3.git
-git push origin main --force
-git rm -r --cached __pycache__
-ls
-bash subir_borednomore3.sh 
-cat .gitignore
-nano .gitignore
-./borednomore3_gui.py 
-./borednomore3_downloader_gui.py 
-./borednomore3_gui.py 
-./borednomore3_downloader_gui.py 
-./borednomore3_gui.py 
-./borednomore3_downloader_gui.py 
-./borednomore3_gui.py 
-./borednomore3_downloader_gui.py 
-./borednomore3_gui.py 
-./borednomore3_downloader_gui.py 
-ls
-ping yahoo.com
-./borednomore3_downloader_gui.py 
-./borednomore3_gui.py 
-cd borednomore3/borednomore3
-./borednomore3.py
-./borednomore3_gui.py
-./borednomore3.py -h
-for i in {1..100}; do echo "$i, "; done
-for i in {1..100}; do echo -n "$i, "; done
-for i in {1..100}; do echo -n "$i,"; done
-./borednomore3.py
-./borednomore3.py -w
-./borednomore3.py -w -r
-./borednomore3.py -h
-./borednomore3.py -l -i 5 -s 0.0001 
-ls
-./borednomore3 -l -i 5 -s 0.0001
-./borednomore3.py -l -i 5 -s 0.0001
-./borednomore3.py -h
-./borednomore3.py -l -i 5 -s 0.0001 -w -
-./borednomore3.py -l -i 5 -s 0.0001 -w 
-./borednomore3.py -l -i 5 -s 0.0001 -w  -r
+cat ../lib/borednomore3_transitions.py | grep "range(900"
+pkill firefox
+ls ../lib
+ls ../lib/transitions
+nano ../lib/transitions/borednomore3_transitions.py
+cat ../lib/borednomore3_transitions.py | grep "range(900"
+cat ../lib/transitions/borednomore3_transitions.py | grep "range(900"
+./borednomore3.py -i 5 -f 5 -s 0.0001 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -r -w
+nano ../lib/transitions/fx.py
+nano ../lib/transitions/mask.py
+nano ../lib/transitions/borednomore3_transitions.py
+nano benchmark_transitions.py
+bash benchmark_transitions.py 
+python3 benchmark_transitions.py 
+nano ../lib/borednomore3_transitions.py
+python3 benchmark_transitions.py 
+nano ../lib/borednomore3_transitions.py
+python3 benchmark_transitions.py 
+nano ../lib/borednomore3_transitions.py
+python3 benchmark_transitions.py 
+nano ../lib/borednomore3_transitions.py
+python3 benchmark_transitions.py 
+nano fast_benchmark.py
+python3 fast_benchmark.py
+nano ../lib/borednomore3_transitions.py
+python3 fast_benchmark.py
+nano ../lib/borednomore3_transitions.py
+python3 fast_benchmark.py
+> fast_benchmark.py
+nano ../lib/borednomore3_transitions.py
+python3 fast_benchmark.py
+cat fast_benchmark.py
+nano ../lib/transitions/borednomore3_transitions.py
 
-./borednomore3.py -l -i 5 -s 0.0001 -w -r
-bash  subir_borednomore3.sh 
+rm ../lib/borednomore3_transitions.py
+python3 fast_benchmark.py
+cat fast_benchmark.py 
+nano fast_benchmark.py 
+cat fast_benchmark.py 
+ls ../lib/
+ls ../lib/borednomore3_transitions_core.py 
+rm ../lib/borednomore3_transitions_core.py 
+rm ../lib/borednomore3_transitions_meta.py 
+ls ../lib/borednomore3_transitions_core.py 
+ls ../lib/
+python3 fast_benchmark.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -r -w
+./borednomore3.py -i 5 -f 15 -s 0.0001 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 15 -s 0.0001 -r -w
+./borednomore3.py -i 5 -f 15 -s 0.05 -r -w
+./borednomore3.py -i 5 -f 20 -s 0.05 -r -w
+./borednomore3.py -i 10 -f 12 -s 0.08 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 10 -f 12 -s 0.08 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 10 -f 12 -s 0.08 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 10 -f 12 -s 0.08 -r -w
+./borednomore3.py -i 5 -f 10 -s 0.0001 -r -w
+./borednomore3.py -i 5 -f 5 -s 0.0001 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -r -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -t 5,8,100,4 -i 5 -f 5 -s 0.0001 -r -w
+./borednomore3.py -t 5,8,100,4 -i 5 -f 5 -s 0.0001 -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -t 5,8,100,4 -i 5 -f 5 -s 0.0001 -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -t 5,8,100,4 -i 5 -f 5 -s 0.0001 -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -t 5,8,100,4 -i 5 -f 5 -s 0.0001 -w
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -t 5,8,100,4 -i 5 -f 5 -s 0.0001 -w
+./borednomore3.py -t -i 5 -f 5 -s 0.0001 -w -r
+./borednomore3.py -i 5 -f 5 -s 0.0001 -w -r
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -w -r
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -w -r
+nano ../lib/transitions/borednomore3_transitions.py
+./borednomore3.py -i 5 -f 5 -s 0.0001 -w -r
+cd ..
+bash subir_borednomore3.sh 

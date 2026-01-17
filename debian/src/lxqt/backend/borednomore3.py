@@ -19,21 +19,36 @@ import tempfile
 import argparse
 import configparser
 from pathlib import Path
+import os
+import sys
 
-# --- CORRECTED PATH LOGIC FOR YOUR FOLDER STRUCTURE ---
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__)) # .../backend/
-# Go up from backend, then into lib
+
+# --- STEP 1: DEFINE BASE DIRECTORIES ---
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 LIB_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'lib'))
-# Path to your transitions folder
+# This points exactly to where your tree showed the file is
 TRANS_DIR = os.path.join(LIB_DIR, 'transitions')
 
-CONF_DIR = os.path.join(SCRIPT_DIR, '..', 'conf')
-WALLPAPERS_DIR = os.path.join(SCRIPT_DIR, '..', 'wallpapers')
+# --- STEP 2: DEFINE CONFIG AND WALLPAPER PATHS ---
+CONF_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'conf'))
+WALLPAPERS_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'wallpapers'))
 
-# Add paths to sys.path so Python can find the modules
-sys.path.insert(0, LIB_DIR)
-sys.path.insert(0, TRANS_DIR)
+# --- STEP 3: UPDATE SYSTEM PATHS ---
+if LIB_DIR not in sys.path:
+    sys.path.insert(0, LIB_DIR)
+if TRANS_DIR not in sys.path:
+    sys.path.insert(0, TRANS_DIR)
 
+# --- STEP 4: IMPORT ---
+try:
+    from borednomore3_transitions import TRANSITIONS, apply_transition
+except ImportError as e:
+    print(f"Error: Could not import borednomore3_transitions from {TRANS_DIR}")
+    print(f"Python looked in: {sys.path[:2]}")
+    sys.exit(1)
+    
+    
+    
 try:
     from PIL import Image
 except ImportError:
@@ -62,8 +77,8 @@ GITHUB = "https://github.com/nepamuceno/borednomore3"
 DEFAULT_CONFIG = {
     'interval': 300,
     'directory': WALLPAPERS_DIR,  # Absolute path to wallpapers directory
-    'frames': 10,
-    'speed': 0.001,
+    'frames': 8,
+    'speed': 0,
     'transitions': None,
     'randomize': False,
     'keep_image': False,
@@ -117,59 +132,6 @@ def load_config_file(config_path):
     except Exception as e:
         print(f"[WARNING] Error loading config file: {e}")
         return config
-
-
-def save_default_config(config_path):
-    """Create default borednomore3.conf if it doesn't exist"""
-    # Calculate relative path from config location to wallpapers
-    config_dir = os.path.dirname(config_path)
-    rel_wallpapers_path = os.path.relpath(WALLPAPERS_DIR, config_dir)
-    
-    parser = configparser.ConfigParser()
-    parser['settings'] = {
-        'interval': str(DEFAULT_CONFIG['interval']),
-        'directory': rel_wallpapers_path,
-        'frames': str(DEFAULT_CONFIG['frames']),
-        'speed': str(DEFAULT_CONFIG['speed']),
-        'transitions': '',
-        'randomize': str(DEFAULT_CONFIG['randomize']),
-        'keep_image': str(DEFAULT_CONFIG['keep_image']),
-        'randomize_wallpapers': str(DEFAULT_CONFIG['randomize_wallpapers']),
-        'borednomore3_gui_binary': DEFAULT_CONFIG['borednomore3_gui_binary']
-    }
-    
-    try:
-        with open(config_path, 'w') as f:
-            parser.write(f)
-        print(f"[*] Created default configuration file: {config_path}")
-        return True
-    except Exception as e:
-        print(f"[WARNING] Failed to create default config: {e}")
-        return False
-
-
-def create_default_wallpaper_list(list_path):
-    """Create default borednomore3.list if it doesn't exist"""
-    default_patterns = [
-        "*.jpg",
-        "*.png", 
-        "*.jpeg",
-        "*.webp",
-        "# Add more patterns as needed, one per line",
-        "# *.bmp",
-        "# *.tiff",
-        "# *.gif"
-    ]
-    
-    try:
-        with open(list_path, 'w') as f:
-            for pattern in default_patterns:
-                f.write(pattern + '\n')
-        print(f"[*] Created default wallpaper list file: {list_path}")
-        return True
-    except Exception as e:
-        print(f"[WARNING] Failed to create default wallpaper list: {e}")
-        return False
 
 
 class BoredNoMore3:
@@ -328,7 +290,8 @@ class BoredNoMore3:
                 self.screen_width, self.screen_height,
                 self.transition_frames, self.fade_speed,
                 self.set_wallpaper, lambda: self.should_exit,
-                effective_keep
+                effective_keep,
+                self.interval
             )
         else:
             self.set_wallpaper(new_wallpaper)
@@ -363,10 +326,16 @@ class BoredNoMore3:
 
 
 def print_help():
+    # Fetching default values from the DEFAULT_CONFIG dictionary for clarity in help
+    def_interval = DEFAULT_CONFIG['interval']
+    def_dir = DEFAULT_CONFIG['directory']
+    def_frames = DEFAULT_CONFIG['frames']
+    def_speed = DEFAULT_CONFIG['speed']
+
     help_text = f"""
 ╔═══════════════════════════════════════════════════════════════════════════════╗
-║                      borednomore3 - Dynamic Wallpaper Changer                 ║
-║                                  Version {VERSION}                                    ║
+║                 borednomore3 - Dynamic Wallpaper Changer                  ║
+║                                Version {VERSION}                                 ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 
 DESCRIPTION:
@@ -377,14 +346,16 @@ USAGE:
     borednomore3 [OPTIONS]
 
 OPTIONS:
-    -h, --help                  Show this help message and exit
+    -h, --help                Show this help message and exit
     -v, --version               Show version information
     -c, --credits               Show credits
-    --config <path>             Config file (default: {DEFAULT_CONF_FILE})
-    -i, --interval <sec>        Change interval in seconds (default: 300)
-    -d, --directory <path>      Wallpaper directory (default: {WALLPAPERS_DIR})
-    -f, --frames <num>          Transition frames (default: 10, range 5-100)
-    -s, --speed <sec>           Seconds per frame (default: 0.001)
+    --config <path>             Path to a custom .conf file. If not provided,
+                                the program uses: {DEFAULT_CONF_FILE}
+    -i, --interval <sec>        Change interval in seconds (default: {def_interval})
+    -d, --directory <path>      Directory to search for wallpapers. Overwrites
+                                values in config files (default: {def_dir})
+    -f, --frames <num>          Transition frames (default: {def_frames}, range 5-100)
+    -s, --speed <sec>           Seconds per frame (default: {def_speed})
     -t, --transitions <list>    Comma-separated transition IDs (e.g., 1,5,23)
                                 When used with -r, randomizes only from this list
     -r, --randomize             RANDOMIZE transitions (default: SEQUENTIAL)
@@ -395,13 +366,14 @@ OPTIONS:
                                 instead of cycling in order
     -k, --keep-image            Keep previous image visible during transition
                                 (Auto-enabled for Slide/Movement transitions)
-    -l, --wallpaper-list <file> File with wallpaper patterns (one per line)
-                                If no file given after flag → uses {DEFAULT_LIST_FILE}
-                                Default without flag: *.jpg, *.png, *.jpeg, *.webp
+    -l, --wallpaper-list <file> Load patterns from <file>. If used without a filename,
+                                uses {DEFAULT_LIST_FILE}. If a custom file is provided, 
+                                the program will also look for a matching .conf file.
 
-CONFIGURATION FILE:
-    Created automatically if missing.
-    Command-line flags always override config values.
+CONFIGURATION PRIORITY:
+    1. Command-line flags (Highest priority)
+    2. Config file settings (--config or auto-detected via -l)
+    3. Source code default values (Lowest priority)
 
 TRANSITION LIBRARY:
     {len(TRANSITIONS)} professional transitions available.
@@ -410,7 +382,6 @@ AUTHOR:
     {AUTHOR} - {GITHUB}
 """
     print(help_text)
-
 
 def print_version():
     print(f"borednomore3 v{VERSION}")
@@ -460,14 +431,7 @@ def load_wallpaper_patterns(list_file):
     """Load wallpaper patterns from a list file"""
     patterns = []
     if not os.path.exists(list_file):
-        print(f"Warning: Wallpaper list file not found: {list_file}")
-        # Create default if it's the default list file
-        if list_file == DEFAULT_LIST_FILE:
-            os.makedirs(CONF_DIR, exist_ok=True)
-            create_default_wallpaper_list(list_file)
-            return ["*.jpg", "*.png", "*.jpeg", "*.webp"]
-        else:
-            return ["*.jpg", "*.png", "*.jpeg", "*.webp"]
+        return ["*.jpg", "*.png", "*.jpeg", "*.webp"]
     
     try:
         with open(list_file, 'r') as f:
@@ -477,7 +441,6 @@ def load_wallpaper_patterns(list_file):
                 if line:  # only add non-empty patterns
                     patterns.append(line)
         if not patterns:
-            print(f"Warning: No valid patterns in {list_file}, falling back to common formats")
             return ["*.jpg", "*.png", "*.jpeg", "*.webp"]
         print(f"Loaded {len(patterns)} wallpaper patterns from {list_file}")
         return patterns
@@ -506,7 +469,7 @@ def main():
     parser.add_argument('-w', '--randomize-wallpapers', action='store_true')
     parser.add_argument('-k', '--keep-image', action='store_true')
     parser.add_argument('-l', '--wallpaper-list', nargs='?', const=DEFAULT_LIST_FILE, 
-                       default=None, help=f"File with wallpaper patterns (default: {DEFAULT_LIST_FILE})")
+                       default=None)
     
     args = parser.parse_args()
     
@@ -523,23 +486,27 @@ def main():
     # Seed random
     random.seed(time.time())
     
-    # Config file logic
+    # 1. Start with internal source code defaults
+    config = DEFAULT_CONFIG.copy()
+
+    # 2. Logic for Config File Selection
+    config_file = DEFAULT_CONF_FILE
+    
+    # If user specifies a specific config file, use that.
     if args.config:
         config_file = args.config
-    else:
-        config_file = DEFAULT_CONF_FILE
-    
-    # Create default config if it doesn't exist
-    if not os.path.exists(config_file):
-        os.makedirs(CONF_DIR, exist_ok=True)
-        save_default_config(config_file)
-    
-    config = DEFAULT_CONFIG.copy()
+    # If user specifies a custom list file name, try to find a matching .conf
+    elif args.wallpaper_list and args.wallpaper_list != DEFAULT_LIST_FILE:
+        potential_conf = os.path.splitext(args.wallpaper_list)[0] + ".conf"
+        if os.path.exists(potential_conf):
+            config_file = potential_conf
+
+    # Load the selected config file if it exists
     if os.path.exists(config_file):
         file_config = load_config_file(config_file)
         config.update(file_config)
     
-    # Apply command-line overrides (highest priority)
+    # 3. Apply command-line overrides (Highest Priority)
     if args.interval is not None:
         config['interval'] = args.interval
     if args.directory is not None:
@@ -552,34 +519,27 @@ def main():
         config['transitions'] = args.transitions
     if args.keep_image:
         config['keep_image'] = True
-    
-    # Transition randomization: -r overrides config
     if args.randomize:
         config['randomize'] = True
-    
-    # Wallpaper randomization: -w overrides config
     if args.randomize_wallpapers:
         config['randomize_wallpapers'] = True
     
-    # Wallpaper list file handling
-    wallpaper_patterns = ["*.jpg", "*.png", "*.jpeg", "*.webp"]
-    if args.wallpaper_list:
-        # Use provided list file or default
-        list_file = args.wallpaper_list
-        wallpaper_patterns = load_wallpaper_patterns(list_file)
+    # Wallpaper list file selection (READ ONLY)
+    list_file = args.wallpaper_list if args.wallpaper_list else DEFAULT_LIST_FILE
+    wallpaper_patterns = load_wallpaper_patterns(list_file)
     
-    # Validate
+    # Validate final merged values
     if config['interval'] < 1:
         print("Error: Interval must be >= 1 second")
         sys.exit(1)
     if config['frames'] < 5 or config['frames'] > 100:
         print("Error: Frames must be 5-100")
         sys.exit(1)
-    if config['speed'] <= 0 or config['speed'] > 1.0:
-        print("Error: Speed must be 0.0001-1.0")
+    if config['speed'] < 0 or config['speed'] > 1.0:
+        print("Error: Speed must be 0-1.0")
         sys.exit(1)
     
-    # Parse transitions (command-line has highest priority)
+    # Parse transitions
     transitions = None
     if config['transitions']:
         transitions = parse_transitions(config['transitions'])
