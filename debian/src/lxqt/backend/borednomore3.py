@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
 Dynamic Wallpaper Changer for Lubuntu/LXQt
-Changes wallpapers with smooth transitions using imagemagick
+Changes wallpapers with smooth transitions using OpenCV
 
 Author: Nepamuceno
 Email: (hidden)
 GitHub: https://github.com/nepamuceno/borednomore3
-Version: 0.6.0 - Added random wallpaper selection feature
+Version: 0.7.0 - Major refactor with OpenCV, pre-calculated frames, and debug mode
 """
 
 import os
@@ -15,19 +15,13 @@ import time
 import random
 import glob
 import subprocess
-import tempfile
 import argparse
 import configparser
 from pathlib import Path
-import os
-import sys
-import cv2
-import numpy as np
 
 # --- STEP 1: DEFINE BASE DIRECTORIES ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 LIB_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'lib'))
-# This points exactly to where your tree showed the file is
 TRANS_DIR = os.path.join(LIB_DIR, 'transitions')
 
 # --- STEP 2: DEFINE CONFIG AND WALLPAPER PATHS ---
@@ -42,14 +36,12 @@ if TRANS_DIR not in sys.path:
 
 # --- STEP 4: IMPORT ---
 try:
-    from borednomore3_transitions import TRANSITIONS, apply_transition
+    from borednomore3_transitions import TransitionEngine, get_curated_transitions
 except ImportError as e:
     print(f"Error: Could not import borednomore3_transitions from {TRANS_DIR}")
     print(f"Python looked in: {sys.path[:2]}")
     sys.exit(1)
-    
-    
-    
+
 try:
     from PIL import Image
 except ImportError:
@@ -63,27 +55,28 @@ except ImportError:
     sys.exit(1)
 
 try:
-    # Importing from lib/transitions/borednomore3_transitions.py
-    from borednomore3_transitions import TRANSITIONS, apply_transition
+    import cv2
+    import numpy as np
 except ImportError:
-    print(f"Error: Could not import borednomore3_transitions from {LIB_DIR}")
+    print("Error: opencv-python (cv2) and numpy are required.")
     sys.exit(1)
 
-VERSION = "0.6.0"
+VERSION = "0.7.0"
 AUTHOR = "Nepamuceno"
 EMAIL = "(hidden)"
 GITHUB = "https://github.com/nepamuceno/borednomore3"
 
-# Default configuration values (used if no config file exists)
+# Default configuration values
 DEFAULT_CONFIG = {
     'interval': 300,
-    'directory': WALLPAPERS_DIR,  # Absolute path to wallpapers directory
+    'directory': WALLPAPERS_DIR,
     'frames': 8,
     'speed': 0,
     'transitions': None,
     'randomize': False,
     'keep_image': False,
     'randomize_wallpapers': False,
+    'debug': False,
     'borednomore3_gui_binary': 'borednomore3-gui'
 }
 
@@ -108,7 +101,6 @@ def load_config_file(config_path):
             if 'interval' in settings:
                 config['interval'] = int(settings['interval'])
             if 'directory' in settings:
-                # If directory is relative, make it relative to config file
                 dir_path = settings['directory']
                 if not os.path.isabs(dir_path):
                     dir_path = os.path.join(os.path.dirname(config_path), dir_path)
@@ -125,6 +117,8 @@ def load_config_file(config_path):
                 config['keep_image'] = settings.getboolean('keep_image')
             if 'randomize_wallpapers' in settings:
                 config['randomize_wallpapers'] = settings.getboolean('randomize_wallpapers')
+            if 'debug' in settings:
+                config['debug'] = settings.getboolean('debug')
             if 'borednomore3_gui_binary' in settings:
                 config['borednomore3_gui_binary'] = settings['borednomore3_gui_binary']
         
@@ -140,8 +134,13 @@ class BoredNoMore3:
     
     def __init__(self, interval=300, directory=None, frames=10, fade_speed=0.001, 
                  transitions=None, randomize=False, keep_image=False, randomize_wallpapers=False,
-                 wallpaper_patterns=None):
-        # Set default directory if not provided
+                 wallpaper_patterns=None, debug=False):
+        
+        self.debug = debug
+        
+        # Initialize true random seed once
+        random.seed(int(time.time() * 1000000) % (2**32))
+        
         if directory is None:
             self.directory = WALLPAPERS_DIR
         else:
@@ -157,30 +156,41 @@ class BoredNoMore3:
         self.keep_image = keep_image
         self.randomize_wallpapers = randomize_wallpapers
         
-        # Set random seed based on current time
-        random.seed(time.time())
+        # Get screen resolution
+        self.screen_width, self.screen_height = self.get_screen_resolution()
+        
+        # Initialize transition engine
+        self.transition_engine = TransitionEngine(
+            self.screen_width, 
+            self.screen_height,
+            debug=self.debug
+        )
         
         # Setup transition list
+        curated = get_curated_transitions()
         if transitions:
             self.transition_list = transitions
         else:
-            self.transition_list = list(TRANSITIONS.keys())
+            self.transition_list = list(curated.keys())
         
         self.randomize_transitions = randomize
-        self.transition_index = 0  # For sequential mode
+        self.transition_index = 0
         
-        # Wallpaper patterns (for --wallpaper-list)
+        # Wallpaper patterns
         self.wallpaper_patterns = wallpaper_patterns if wallpaper_patterns else ["*.jpg", "*.png", "*.jpeg", "*.webp"]
-        
-        # Movement IDs that REQUIRE keep_image to look correct
-        self.movement_ids = list(range(5, 9)) + list(range(37, 49)) + list(range(82, 86))
 
         # Setup keyboard listener
         self.listener = keyboard.Listener(on_press=self.on_key_press)
         self.listener.start()
         
-        # Screen resolution
-        self.screen_width, self.screen_height = self.get_screen_resolution()
+        # Pre-calculated frames cache
+        self.next_frames = None
+        self.next_wallpaper = None
+    
+    def debug_print(self, message):
+        """Print debug messages if debug mode is enabled"""
+        if self.debug:
+            print(f"[DEBUG] {message}")
     
     def on_key_press(self, key):
         try:
@@ -195,6 +205,7 @@ class BoredNoMore3:
             pass
     
     def get_screen_resolution(self):
+        """Detect screen resolution using xrandr"""
         try:
             output = subprocess.check_output(['xrandr'], text=True)
             for line in output.split('\n'):
@@ -210,6 +221,7 @@ class BoredNoMore3:
         return 1920, 1080
     
     def load_wallpapers(self):
+        """Load wallpaper list from directory"""
         if not os.path.isdir(self.directory):
             print(f"Error: Directory '{self.directory}' does not exist")
             print(f"Please create the directory or specify a different one with --directory")
@@ -221,19 +233,37 @@ class BoredNoMore3:
             matched = sorted(glob.glob(full_pattern))
             self.wallpapers.extend(matched)
         
-        # Remove duplicates if any patterns overlap
         self.wallpapers = sorted(list(set(self.wallpapers)))
         
         if not self.wallpapers:
             print(f"Error: No files matched the patterns in {self.directory}")
             print(f"Patterns used: {', '.join(self.wallpaper_patterns)}")
-            print(f"Directory contents: {os.listdir(self.directory)}")
             sys.exit(1)
         
         print(f"Loaded {len(self.wallpapers)} wallpapers from {self.directory}")
-        print(f"Using patterns: {', '.join(self.wallpaper_patterns)}")
+        if self.debug:
+            print(f"Using patterns: {', '.join(self.wallpaper_patterns)}")
+    
+    def get_current_wallpaper(self):
+        """Detect current system wallpaper"""
+        try:
+            # Try pcmanfm-qt config
+            config_path = os.path.expanduser("~/.config/pcmanfm-qt/lxqt/settings.conf")
+            if os.path.exists(config_path):
+                with open(config_path, 'r') as f:
+                    for line in f:
+                        if 'Wallpaper=' in line:
+                            wallpaper = line.split('=', 1)[1].strip()
+                            if os.path.exists(wallpaper):
+                                self.debug_print(f"Current wallpaper detected: {wallpaper}")
+                                return wallpaper
+        except Exception as e:
+            self.debug_print(f"Could not detect current wallpaper: {e}")
+        
+        return None
     
     def set_wallpaper(self, image_path):
+        """Set system wallpaper"""
         try:
             subprocess.run([
                 "pcmanfm-qt", "--set-wallpaper", image_path,
@@ -247,67 +277,130 @@ class BoredNoMore3:
                 pass
     
     def get_next_transition(self):
+        """Get next transition ID"""
         if self.randomize_transitions:
             return random.choice(self.transition_list)
         else:
-            # Sequential: cycle through the list in order
             transition = self.transition_list[self.transition_index]
             self.transition_index = (self.transition_index + 1) % len(self.transition_list)
             return transition
     
     def get_next_wallpaper_index(self):
-        """Get the next wallpaper index based on randomize_wallpapers setting"""
+        """Get next wallpaper index"""
         if self.randomize_wallpapers:
-            # Random selection
             return random.randint(0, len(self.wallpapers) - 1)
         else:
-            # Sequential selection
             return (self.current_index + 1) % len(self.wallpapers)
     
-    def change_wallpaper(self):
-        if self.should_exit or self.is_transitioning:
+    def validate_and_resize_image(self, image_path):
+        """Validate if image can be resized to screen resolution"""
+        try:
+            img = cv2.imread(image_path)
+            if img is None:
+                self.debug_print(f"Cannot load image: {image_path}")
+                return None
+            
+            # Try to resize
+            resized = cv2.resize(img, (self.screen_width, self.screen_height))
+            if resized is not None:
+                return image_path
+            return None
+        except Exception as e:
+            self.debug_print(f"Error validating image {image_path}: {e}")
+            return None
+    
+    def find_valid_wallpaper(self, start_index):
+        """Find next valid wallpaper that can be resized"""
+        attempts = 0
+        test_index = start_index
+        
+        while attempts < len(self.wallpapers):
+            test_wallpaper = self.wallpapers[test_index]
+            if self.validate_and_resize_image(test_wallpaper):
+                return test_index, test_wallpaper
+            
+            # Try next
+            if self.randomize_wallpapers:
+                test_index = random.randint(0, len(self.wallpapers) - 1)
+            else:
+                test_index = (test_index + 1) % len(self.wallpapers)
+            
+            attempts += 1
+        
+        print("Error: No valid wallpapers found that can be resized")
+        sys.exit(1)
+    
+    def pre_calculate_next_transition(self):
+        """Pre-calculate frames for next transition"""
+        if self.should_exit:
             return
         
-        self.is_transitioning = True
-        old_index = self.current_index
-        self.current_index = self.get_next_wallpaper_index()
-        new_wallpaper = self.wallpapers[self.current_index]
+        # Get current wallpaper
+        current_wp = self.get_current_wallpaper()
+        if not current_wp:
+            current_wp = self.wallpapers[self.current_index] if self.current_index >= 0 else None
         
-        print(f"\nChanging to: {os.path.basename(new_wallpaper)}")
+        # Get next valid wallpaper
+        next_index = self.get_next_wallpaper_index()
+        next_index, next_wp = self.find_valid_wallpaper(next_index)
         
-        if old_index >= 0:
-            old_wallpaper = self.wallpapers[old_index]
-            transition_num = self.get_next_transition()
-            transition_name = TRANSITIONS.get(transition_num, "fade")
-            print(f"Using transition #{transition_num}: {transition_name}")
-            
-            # Logic bridge: Force keep_image for movement types
-            effective_keep = self.keep_image
-            if transition_num in self.movement_ids:
-                effective_keep = True
-
-            apply_transition(
-                old_wallpaper, new_wallpaper, transition_num,
-                self.screen_width, self.screen_height,
-                self.transition_frames, self.fade_speed,
-                self.set_wallpaper, lambda: self.should_exit,
-                effective_keep,
-                self.interval
+        # Get next transition
+        transition_id = self.get_next_transition()
+        
+        self.debug_print(f"Pre-calculating transition #{transition_id} to {os.path.basename(next_wp)}")
+        
+        # Generate frames
+        if current_wp:
+            frames = self.transition_engine.generate_transition_frames(
+                current_wp, next_wp, transition_id,
+                self.transition_frames, self.keep_image
             )
         else:
-            self.set_wallpaper(new_wallpaper)
+            frames = None
         
-        self.is_transitioning = False
+        self.next_frames = frames
+        self.next_wallpaper = next_wp
+        self.next_wallpaper_index = next_index
+    
+    def execute_transition(self):
+        """Execute pre-calculated transition"""
+        if self.next_frames and not self.should_exit:
+            print(f"\nChanging to: {os.path.basename(self.next_wallpaper)}")
+            
+            # Play all frames
+            for frame_path in self.next_frames:
+                if self.should_exit:
+                    break
+                self.set_wallpaper(frame_path)
+                if self.fade_speed > 0:
+                    time.sleep(self.fade_speed)
+                else:
+                    time.sleep(0.016)  # ~60fps
+            
+            # Set final wallpaper
+            self.set_wallpaper(self.next_wallpaper)
+            self.current_index = self.next_wallpaper_index
+            
+            self.debug_print("Transition complete")
+        elif self.next_wallpaper:
+            # Direct cut (first transition)
+            self.set_wallpaper(self.next_wallpaper)
+            self.current_index = self.next_wallpaper_index
     
     def run(self):
+        """Main execution loop"""
         print(f"Screen resolution: {self.screen_width}x{self.screen_height}")
         print(f"Keep image mode: {'Enabled' if self.keep_image else 'Disabled'}")
         print(f"Transition mode: {'RANDOM' if self.randomize_transitions else 'SEQUENTIAL'}")
         print(f"Wallpaper selection: {'RANDOM' if self.randomize_wallpapers else 'SEQUENTIAL'}")
+        print(f"Debug mode: {'Enabled' if self.debug else 'Disabled'}")
         print(f"Using {len(self.transition_list)} transitions")
+        
         self.load_wallpapers()
         
-        self.change_wallpaper()
+        # Initial wallpaper
+        self.current_index = 0 if not self.randomize_wallpapers else random.randint(0, len(self.wallpapers) - 1)
+        self.set_wallpaper(self.wallpapers[self.current_index])
         
         print(f"\nborednomore3 running. Changing every {self.interval} seconds.")
         print(f"Transition frames: {self.transition_frames}")
@@ -316,9 +409,16 @@ class BoredNoMore3:
         
         try:
             while not self.should_exit:
+                # Pre-calculate next transition
+                self.pre_calculate_next_transition()
+                
+                # Wait for interval
                 time.sleep(self.interval)
+                
                 if not self.should_exit:
-                    self.change_wallpaper()
+                    # Execute pre-calculated transition
+                    self.execute_transition()
+                    
         except KeyboardInterrupt:
             print("\n\nExiting gracefully...")
             if hasattr(self, 'listener'):
@@ -327,7 +427,6 @@ class BoredNoMore3:
 
 
 def print_help():
-    # Fetching default values from the DEFAULT_CONFIG dictionary for clarity in help
     def_interval = DEFAULT_CONFIG['interval']
     def_dir = DEFAULT_CONFIG['directory']
     def_frames = DEFAULT_CONFIG['frames']
@@ -340,49 +439,49 @@ def print_help():
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 
 DESCRIPTION:
-    Changes wallpapers with smooth transitions. Supports random or sequential order
-    for both transitions and wallpaper selection.
+    Changes wallpapers with smooth transitions using OpenCV. Supports random or 
+    sequential order for both transitions and wallpaper selection. Features 
+    pre-calculated transitions for optimal performance.
 
 USAGE:
     borednomore3 [OPTIONS]
 
 OPTIONS:
     -h, --help                Show this help message and exit
-    -v, --version               Show version information
-    -c, --credits               Show credits
-    --config <path>             Path to a custom .conf file. If not provided,
-                                the program uses: {DEFAULT_CONF_FILE}
-    -i, --interval <sec>        Change interval in seconds (default: {def_interval})
-    -d, --directory <path>      Directory to search for wallpapers. Overwrites
-                                values in config files (default: {def_dir})
-    -f, --frames <num>          Transition frames (default: {def_frames}, range 5-100)
-    -s, --speed <sec>           Seconds per frame (default: {def_speed})
-    -t, --transitions <list>    Comma-separated transition IDs (e.g., 1,5,23)
-                                When used with -r, randomizes only from this list
-    -r, --randomize             RANDOMIZE transitions (default: SEQUENTIAL)
-                                If -t is given → random from that list only
-                                If no -t → random from all available transitions
-    -w, --randomize-wallpapers  RANDOMIZE wallpaper selection (default: SEQUENTIAL)
-                                When enabled, picks a random wallpaper each time
-                                instead of cycling in order
-    -k, --keep-image            Keep previous image visible during transition
-                                (Auto-enabled for Slide/Movement transitions)
-    -l, --wallpaper-list <file> Load patterns from <file>. If used without a filename,
-                                uses {DEFAULT_LIST_FILE}. If a custom file is provided, 
-                                the program will also look for a matching .conf file.
+    -v, --version             Show version information
+    -c, --credits             Show credits
+    --config <path>           Path to a custom .conf file. If not provided,
+                              the program uses: {DEFAULT_CONF_FILE}
+    -i, --interval <sec>      Change interval in seconds (default: {def_interval})
+    -d, --directory <path>    Directory to search for wallpapers
+                              (default: {def_dir})
+    -f, --frames <num>        Transition frames (default: {def_frames}, range 5-100)
+    -s, --speed <sec>         Seconds per frame (default: {def_speed})
+    -t, --transitions <list>  Comma-separated transition IDs (e.g., 1,5,23)
+                              When used with -r, randomizes only from this list
+    -r, --randomize           RANDOMIZE transitions (default: SEQUENTIAL)
+    -w, --randomize-wallpapers RANDOMIZE wallpaper selection (default: SEQUENTIAL)
+    -k, --keep-image          Keep previous image visible during transition
+    -D, --debug               Enable debug output (default: disabled)
+    -l, --wallpaper-list <file> Load patterns from file
+                              (default: {DEFAULT_LIST_FILE})
 
 CONFIGURATION PRIORITY:
     1. Command-line flags (Highest priority)
     2. Config file settings (--config or auto-detected via -l)
     3. Source code default values (Lowest priority)
 
-TRANSITION LIBRARY:
-    {len(TRANSITIONS)} professional transitions available.
+PERFORMANCE:
+    - Pre-calculates next transition during interval wait time
+    - Validates images can be resized to screen resolution
+    - Uses OpenCV for fast frame generation
+    - True random seed initialization for better randomization
 
 AUTHOR:
     {AUTHOR} - {GITHUB}
 """
     print(help_text)
+
 
 def print_version():
     print(f"borednomore3 v{VERSION}")
@@ -395,11 +494,13 @@ Author: {AUTHOR}
 GitHub: {GITHUB}
 
 A dynamic wallpaper changer with smooth transitions for LXQt/Lubuntu.
+Powered by OpenCV for optimal performance.
 Enjoy!
 """)
 
 
 def parse_transitions(transition_str):
+    """Parse transition string into list of IDs"""
     try:
         parts = [t.strip() for t in transition_str.split(',')]
         transitions = []
@@ -411,9 +512,10 @@ def parse_transitions(transition_str):
             else:
                 transitions.append(int(part))
         
+        curated = get_curated_transitions()
         valid_transitions = []
         for t in transitions:
-            if t in TRANSITIONS:
+            if t in curated:
                 valid_transitions.append(t)
             else:
                 print(f"Warning: Transition {t} is not in the library. Skipping.")
@@ -422,7 +524,7 @@ def parse_transitions(transition_str):
              print("Error: No valid transition IDs provided.")
              sys.exit(1)
 
-        return sorted(set(valid_transitions))  # remove duplicates and sort
+        return sorted(set(valid_transitions))
     except ValueError:
         print("Error: -t must be comma-separated numbers or ranges (e.g., 1,5,10-15)")
         sys.exit(1)
@@ -437,9 +539,8 @@ def load_wallpaper_patterns(list_file):
     try:
         with open(list_file, 'r') as f:
             for line in f:
-                # Remove inline comments (anything after #) and strip whitespace
                 line = line.split('#', 1)[0].strip()
-                if line:  # only add non-empty patterns
+                if line:
                     patterns.append(line)
         if not patterns:
             return ["*.jpg", "*.png", "*.jpeg", "*.webp"]
@@ -469,6 +570,7 @@ def main():
     parser.add_argument('-r', '--randomize', action='store_true')
     parser.add_argument('-w', '--randomize-wallpapers', action='store_true')
     parser.add_argument('-k', '--keep-image', action='store_true')
+    parser.add_argument('-D', '--debug', action='store_true')
     parser.add_argument('-l', '--wallpaper-list', nargs='?', const=DEFAULT_LIST_FILE, 
                        default=None)
     
@@ -484,30 +586,24 @@ def main():
         print_credits()
         sys.exit(0)
     
-    # Seed random
-    random.seed(time.time())
-    
-    # 1. Start with internal source code defaults
+    # Start with defaults
     config = DEFAULT_CONFIG.copy()
 
-    # 2. Logic for Config File Selection
+    # Config file selection
     config_file = DEFAULT_CONF_FILE
     
-    # If user specifies a specific config file, use that.
     if args.config:
         config_file = args.config
-    # If user specifies a custom list file name, try to find a matching .conf
     elif args.wallpaper_list and args.wallpaper_list != DEFAULT_LIST_FILE:
         potential_conf = os.path.splitext(args.wallpaper_list)[0] + ".conf"
         if os.path.exists(potential_conf):
             config_file = potential_conf
 
-    # Load the selected config file if it exists
     if os.path.exists(config_file):
         file_config = load_config_file(config_file)
         config.update(file_config)
     
-    # 3. Apply command-line overrides (Highest Priority)
+    # Command-line overrides
     if args.interval is not None:
         config['interval'] = args.interval
     if args.directory is not None:
@@ -524,12 +620,14 @@ def main():
         config['randomize'] = True
     if args.randomize_wallpapers:
         config['randomize_wallpapers'] = True
+    if args.debug:
+        config['debug'] = True
     
-    # Wallpaper list file selection (READ ONLY)
+    # Wallpaper patterns
     list_file = args.wallpaper_list if args.wallpaper_list else DEFAULT_LIST_FILE
     wallpaper_patterns = load_wallpaper_patterns(list_file)
     
-    # Validate final merged values
+    # Validate
     if config['interval'] < 1:
         print("Error: Interval must be >= 1 second")
         sys.exit(1)
@@ -558,7 +656,8 @@ def main():
         randomize=config['randomize'],
         keep_image=config['keep_image'],
         randomize_wallpapers=config['randomize_wallpapers'],
-        wallpaper_patterns=wallpaper_patterns
+        wallpaper_patterns=wallpaper_patterns,
+        debug=config['debug']
     )
     app.run()
 
