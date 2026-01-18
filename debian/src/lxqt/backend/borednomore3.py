@@ -21,7 +21,8 @@ import configparser
 from pathlib import Path
 import os
 import sys
-
+import cv2
+import numpy as np
 
 # --- STEP 1: DEFINE BASE DIRECTORIES ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
