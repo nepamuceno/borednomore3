@@ -190,9 +190,11 @@ class BoredNoMore3:
     def _detect_wallpaper_setter(self):
         """Detect and cache the fastest available wallpaper setter"""
         methods = [
-            (["nitrogen", "--help"], lambda p: ["nitrogen", "--set-zoom-fill", p]),
             (["feh", "--version"], lambda p: ["feh", "--bg-fill", p]),
+            (["xloadimage", "-version"], lambda p: ["xloadimage", "-onroot", "-fullscreen", p]),
+            (["hsetroot", "-help"], lambda p: ["hsetroot", "-fill", p]),
             (["xwallpaper", "--version"], lambda p: ["xwallpaper", "--zoom", p]),
+            (["nitrogen", "--help"], lambda p: ["nitrogen", "--set-zoom-fill", p]),
             (["pcmanfm-qt", "--version"], lambda p: ["pcmanfm-qt", "--set-wallpaper", p, "--wallpaper-mode=stretch", "--desktop"]),
             (["gsettings", "help"], lambda p: ["gsettings", "set", "org.gnome.desktop.background", "picture-uri", f"file://{p}"])
         ]
@@ -291,13 +293,15 @@ class BoredNoMore3:
         
         try:
             cmd = self.wallpaper_setter(image_path)
-            # Use Popen for non-blocking, faster execution
-            subprocess.Popen(
+            # Use run() with wait to ensure wallpaper is set before continuing
+            subprocess.run(
                 cmd,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
-                start_new_session=True
+                timeout=0.5
             )
+        except subprocess.TimeoutExpired:
+            pass  # Continue even if timeout
         except Exception as e:
             self.debug_print(f"Error setting wallpaper: {e}")
     
@@ -384,25 +388,34 @@ class BoredNoMore3:
             
             self.debug_print(f"Generating {self.transition_frames} frames...")
             
-            # Generate transition frames
-            frames = self.transition_engine.generate_transition_frames(
-                old_wallpaper, new_wallpaper, trans_id, self.transition_frames
-            )
-            
-            if frames:
-                self.debug_print(f"Playing {len(frames)} frames at {self.fade_speed}s per frame")
+            try:
+                # Generate transition frames
+                frames = self.transition_engine.generate_transition_frames(
+                    old_wallpaper, new_wallpaper, trans_id, self.transition_frames
+                )
                 
-                # Play all frames
-                for frame_path in frames:
-                    if self.should_exit:
-                        break
-                    self.set_wallpaper(frame_path)
-                    if self.fade_speed > 0:
-                        time.sleep(self.fade_speed)
-                    else:
-                        time.sleep(0.016)  # ~60fps
-                
-                self.debug_print("Transition complete")
+                if frames and len(frames) > 0:
+                    self.debug_print(f"Playing {len(frames)} frames at {self.fade_speed}s per frame")
+                    
+                    # Play all frames
+                    for frame_path in frames:
+                        if self.should_exit:
+                            break
+                        if os.path.exists(frame_path):
+                            self.set_wallpaper(frame_path)
+                            if self.fade_speed > 0:
+                                time.sleep(self.fade_speed)
+                            else:
+                                time.sleep(0.016)  # ~60fps
+                    
+                    self.debug_print("Transition complete")
+                else:
+                    self.debug_print("No frames generated, using direct change")
+            except Exception as e:
+                self.debug_print(f"Error during transition: {e}")
+                import traceback
+                if self.debug:
+                    traceback.print_exc()
         
         # Set final wallpaper
         self.set_wallpaper(new_wallpaper)
