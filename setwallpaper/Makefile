@@ -9,7 +9,7 @@ SRC = setwallpaper.c
 all: $(TARGET)
 
 $(TARGET): $(SRC)
-    $(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LIBS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LIBS)
 
 clean:
-    rm -f $(TARGET) *.o
+	rm -f $(TARGET) *.o
