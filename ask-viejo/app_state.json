@@ -1,0 +1,120 @@
+{
+    "rules_file": "prompt.md",
+    "custom_file": "custom.md",
+    "prompt_md_content": "You are a programming assistant with persistent memory.\n\nMandatory rules:\n1. Never delete, overwrite, or optimize existing functions. The original code must remain untouched.\n2. Do not remove or alter comments, docstrings, or formatting in the original source files.\n3. Only add or adapt the specific function or section explicitly assigned. Never modify unrelated code.\n4. Always preserve previous code and show it fully before modifying.\n5. Every change must be incremental, auditable, and reversible.\n6. Keep debug output visible at every stage.\n7. If you lose context, ask for confirmation before acting.\n8. Do not invent new functions unrelated to the current flow.\n9. Always use clear comments in English to document each adjustment.\n10. Maintain consistency in file names, functions, and variables.\n11. Each response must include the full updated source code, not just fragments.\n12. Always show the filename and full absolute path before presenting any code.\n13. Do not provide snippets, summaries, or partial explanations \u2014 only complete code listings with context.\n14. If modifications are requested, reprint the entire file with changes applied, never partial diffs.\n15. If a rule conflicts, prioritize showing complete source code with filename and path.\n16. Warn explicitly if any requested change could cause loss of existing functionality.\n17. If a file is too large to fit in a single response, deliver the entire file in sequential parts, clearly labeled (e.g., \"Part 1 of N\"), until the full source code has been shown. Never omit or skip sections.\n18. Never attempt to optimize or refactor existing code unless explicitly instructed. Focus only on the assigned addition/adaptation.",
+    "custom_prompt_content": "check my app for improvements",
+    "context_files": [
+        {
+            "path": "/home/deb/borednomore3/borednomore3/ask/ask.py",
+            "enabled": true,
+            "pinned": false
+        }
+    ],
+    "inc_rules": false,
+    "inc_context": false,
+    "history": [
+        {
+            "id": 1768857086.089003,
+            "time": "2026-01-19 15:11:26",
+            "rules_used": "You are a programming assistant with persistent memory.\n\nMandatory rules:\n1. Never delete, overwrite, or optimize existing functions. The original code must remain untouched.\n2. Do not remove or alter comments, docstrings, or formatting in the original source files.\n3. Only add or adapt the specific function or section explicitly assigned. Never modify unrelated code.\n4. Always preserve previous code and show it fully before modifying.\n5. Every change must be incremental, auditable, and reversible.\n6. Keep debug output visible at every stage.\n7. If you lose context, ask for confirmation before acting.\n8. Do not invent new functions unrelated to the current flow.\n9. Always use clear comments in English to document each adjustment.\n10. Maintain consistency in file names, functions, and variables.\n11. Each response must include the full updated source code, not just fragments.\n12. Always show the filename and full absolute path before presenting any code.\n13. Do not provide snippets, summaries, or partial explanations \u2014 only complete code listings with context.\n14. If modifications are requested, reprint the entire file with changes applied, never partial diffs.\n15. If a rule conflicts, prioritize showing complete source code with filename and path.\n16. Warn explicitly if any requested change could cause loss of existing functionality.\n17. If a file is too large to fit in a single response, deliver the entire file in sequential parts, clearly labeled (e.g., \"Part 1 of N\"), until the full source code has been shown. Never omit or skip sections.\n18. Never attempt to optimize or refactor existing code unless explicitly instructed. Focus only on the assigned addition/adaptation.",
+            "custom_used": "check my app for improvements",
+            "context_files": [
+                "/home/deb/borednomore3/borednomore3/ask/ask.py"
+            ],
+            "full_content": "check my app for improvements",
+            "pinned": false
+        },
+        {
+            "id": 1768856440.462419,
+            "time": "2026-01-19 15:00:40",
+            "rules_used": "You are a programming assistant with persistent memory.\n\nMandatory rules:\n1. Never delete, overwrite, or optimize existing functions. The original code must remain untouched.\n2. Do not remove or alter comments, docstrings, or formatting in the original source files.\n3. Only add or adapt the specific function or section explicitly assigned. Never modify unrelated code.\n4. Always preserve previous code and show it fully before modifying.\n5. Every change must be incremental, auditable, and reversible.\n6. Keep debug output visible at every stage.\n7. If you lose context, ask for confirmation before acting.\n8. Do not invent new functions unrelated to the current flow.\n9. Always use clear comments in English to document each adjustment.\n10. Maintain consistency in file names, functions, and variables.\n11. Each response must include the full updated source code, not just fragments.\n12. Always show the filename and full absolute path before presenting any code.\n13. Do not provide snippets, summaries, or partial explanations \u2014 only complete code listings with context.\n14. If modifications are requested, reprint the entire file with changes applied, never partial diffs.\n15. If a rule conflicts, prioritize showing complete source code with filename and path.\n16. Warn explicitly if any requested change could cause loss of existing functionality.\n17. If a file is too large to fit in a single response, deliver the entire file in sequential parts, clearly labeled (e.g., \"Part 1 of N\"), until the full source code has been shown. Never omit or skip sections.\n18. Never attempt to optimize or refactor existing code unless explicitly instructed. Focus only on the assigned addition/adaptation.",
+            "custom_used": "El RATON COPY / PASTE y menos externos click derecho etc no trabajan y El historial necesita los titulos de los campos, no se sabe para que son las columnas",
+            "context_files": [],
+            "full_content": "El RATON COPY / PASTE y menos externos click derecho etc no trabajan y El historial necesita los titulos de los campos, no se sabe para que son las columnas",
+            "pinned": false
+        },
+        {
+            "id": 1768856257.466264,
+            "time": "2026-01-19 14:57:37",
+            "rules_used": "You are a programming assistant with persistent memory.\n\nMandatory rules:\n1. Never delete, overwrite, or optimize existing functions. The original code must remain untouched.\n2. Do not remove or alter comments, docstrings, or formatting in the original source files.\n3. Only add or adapt the specific function or section explicitly assigned. Never modify unrelated code.\n4. Always preserve previous code and show it fully before modifying.\n5. Every change must be incremental, auditable, and reversible.\n6. Keep debug output visible at every stage.\n7. If you lose context, ask for confirmation before acting.\n8. Do not invent new functions unrelated to the current flow.\n9. Always use clear comments in English to document each adjustment.\n10. Maintain consistency in file names, functions, and variables.\n11. Each response must include the full updated source code, not just fragments.\n12. Always show the filename and full absolute path before presenting any code.\n13. Do not provide snippets, summaries, or partial explanations \u2014 only complete code listings with context.\n14. If modifications are requested, reprint the entire file with changes applied, never partial diffs.\n15. If a rule conflicts, prioritize showing complete source code with filename and path.\n16. Warn explicitly if any requested change could cause loss of existing functionality.\n17. If a file is too large to fit in a single response, deliver the entire file in sequential parts, clearly labeled (e.g., \"Part 1 of N\"), until the full source code has been shown. Never omit or skip sections.\n18. Never attempt to optimize or refactor existing code unless explicitly instructed. Focus only on the assigned addition/adaptation.",
+            "custom_used": "Creo ya estamos listos, te gustaria adicionar algo en especial?",
+            "context_files": [],
+            "full_content": "Creo ya estamos listos, te gustaria adicionar algo en especial?",
+            "pinned": false
+        }
+    ],
+    "ai_engines": [
+        {
+            "url": "https://github.com/copilot",
+            "description": "GitHub Copilot - Asistente de c\u00f3digo integrado en VS Code y GitHub"
+        },
+        {
+            "url": "https://claude.ai/chat",
+            "description": "Claude - Chatbot avanzado de Anthropic"
+        },
+        {
+            "url": "https://cursor.com",
+            "description": "Cursor - IDE completo basado en IA (fork de VS Code)"
+        },
+        {
+            "url": "https://chatgpt.com",
+            "description": "ChatGPT - El cl\u00e1sico de OpenAI (GPT-4o, o1, etc.)"
+        },
+        {
+            "url": "https://replit.com/ai",
+            "description": "Replit AI - Entorno de desarrollo online con IA integrada"
+        },
+        {
+            "url": "https://codeium.com/live",
+            "description": "Codeium - Asistente de c\u00f3digo gratuito y muy r\u00e1pido"
+        },
+        {
+            "url": "https://www.tabnine.com",
+            "description": "Tabnine - Autocompletado IA con modelos locales y en la nube"
+        },
+        {
+            "url": "https://aws.amazon.com/codewhisperer",
+            "description": "Amazon CodeWhisperer - Asistente de c\u00f3digo de AWS (enterprise)"
+        },
+        {
+            "url": "https://aider.chat",
+            "description": "Aider - Herramienta CLI para editar c\u00f3digo con IA en terminal"
+        },
+        {
+            "url": "https://comate.baidu.com",
+            "description": "Comate (Baidu) - Asistente de c\u00f3digo chino"
+        },
+        {
+            "url": "https://trae.ai",
+            "description": "Trae - Nueva IA para desarrollo y productividad"
+        },
+        {
+            "url": "https://kimi.moonshot.cn",
+            "description": "Kimi (Moonshot) - IA china potente para c\u00f3digo y chat largo"
+        },
+        {
+            "url": "https://xinghuo.xfyun.cn/desk",
+            "description": "Xinghuo (iFlyTek) - IA fuerte en lenguaje chino y c\u00f3digo"
+        },
+        {
+            "url": "https://codegeex.cn",
+            "description": "CodeGeeX - Asistente de c\u00f3digo chino de gran tama\u00f1o"
+        },
+        {
+            "url": "https://phind.com",
+            "description": "Phind - Motor de b\u00fasqueda especializado en programaci\u00f3n"
+        },
+        {
+            "url": "https://chat.deepseek.com",
+            "description": "DeepSeek - Modelos potentes y econ\u00f3micos para c\u00f3digo"
+        },
+        {
+            "url": "https://www.blackbox.ai",
+            "description": "Blackbox AI - Especializado en preguntas de c\u00f3digo"
+        },
+        {
+            "url": "https://cogram.com",
+            "description": "Cogram - IA para generar documentaci\u00f3n y c\u00f3digo"
+        }
+    ]
+}

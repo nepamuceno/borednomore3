@@ -1,87 +1,3 @@
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w
--h
--i 5 -f 5 -s 0 -w -r
-~/path/to/your/project/lib/transitions/borednomore3_transitions.py
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-
-../lib/transitions/borednomore3_transitions.py
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-../lib/transitions/borednomore3_transitions.py
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-2. Point to the EXACT folder where the transition file lives
-THIS IS THE LINE YOU NEED TO CHECK:
-= os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'lib', 'transitions'))
-3. Add that path to the system so Python can find the file
-TRANS_DIR not in sys.path:; sys.path.insert(0, TRANS_DIR)
-= os.path.join(SCRIPT_DIR, '..', 'conf')
-= os.path.join(SCRIPT_DIR, '..', 'wallpapers')
-Add paths to sys.path so Python can find the modules
-LIB_DIR)
-
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-../.
-..
-
-lib
-
-transitions/
-
-..
-transitions transitions-bk
-transitions-bk/transitions transitions
-transitions
-transitions transitions-bk/.
-transitions-bk transitions
-
-transitions
-..
-backend
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
-../lib/transitions/borednomore3_transitions.py
--i 5 -f 5 -s 0 -w -r
--h
--i 5 -f 5 -s .05 -w -r
--i 8 -f 10 -s 0.50 -w -r
--i 5 -f 10 -s 0.50 -w -r
--i 5 -f 10 -s 0 -w -r
--i 5 -f 10 -s 0.05 -w -r
--i 5 -f 20 -s 0 -w -r
--i 5 -f 20 -s 0.05 -w -r
--i 5 -f 20 -s 0 -w -r
-..
-
-..
-subir_borednomore3.sh
-debian/src/lxqt/backend/
 -i 5 -f 20 -s 0 -w -r
 -i 5 -f 20 -s 0.05 -w -r
 ./borednomore3.py -i 5 -f 20 -s 0.05 -w -r
@@ -97,4 +13,88 @@ install opencv-python
 apt install python3-opencv python3-numpy
 -i 5 -f 20 -s 0.05 -w -r
 ..
+subir_borednomore3.sh
+borednomore3/borednomore3/debian/src/lxqt/backend/
+-h
+-i 5 -f 20 -s 0.05 -w -r
+
+
+craw4l4ai
+craw4l4ai
+install -U crawl4ai
+apt update
+apt install python3-full python3-venv
+-m venv venv
+venv/bin/activate
+install -U pip
+install crawl4ai
+
+
+https://images.google.com/ -q "enlaces de wallpapers dark"
+
+
+| awk '{$1=""; sub(/^ /,""); print}'
+| awk '{$1=""; sub(/^ /,""); print}' | tail 20
+| tail -n 20 | sed 's/^[ ]*[0-9]\+[ ]*//'
+| tail -n 20 | sed 's/^[ ]*[0-9]\+[ ]*//' > README
+..
+borednomore3/borednomore3
+
+subir_borednomore3.sh
+prompt.md
+.gitignore
+
+ai_engines.md
+
+ask.py
+ask.py
+ask.py
+ask.py
+ask.py
+ask.py
+prompt.md
+ask.py
+ask.py
+prompt.md
+ask.py
+ask.py
+firefox
+ask.py
+ask.py
+ask.py
+ask.py
+ask.py
+ask.py
+ask.py
+prompt.md
+
+prompt_final.txt
+prompt_final.txt
+
+history_prompts.txt
+history_prompts.txt
+
+ask
+ask.py ask/.
+ask.py ask/.
+ai_engines.md ask/.
+prompt.md ask/.
+ask
+ask.py
+
+*.json
+ask.py
+
+ask.py
+..
+.gitignore
+add -A
+add ask
+
+subir_borednomore3.sh
+
+ai_engines.md ai_engines.json
+
+app_state.json
+
 subir_borednomore3.sh
