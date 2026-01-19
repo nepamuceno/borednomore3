@@ -27,8 +27,9 @@ HIST_FILE="$HIST_DIR/last-100-history.txt"
 mkdir -p "$HIST_DIR"
 
 if [ -f "$HOME/.bash_history" ]; then
-    tail -n 100 "$HOME/.bash_history" > "$HIST_FILE"
+    tail -n 100 "$HOME/.bash_history" | awk '{$1=""; sub(/^ /,""); print}' > "$HIST_FILE"
 fi
+
 
 # 4. Preparación de Mensajes y Tags
 echo "--- Subiendo cambios a GitHub (borednomore3 - Modo Seguro) ---"

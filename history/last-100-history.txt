@@ -1,100 +1,100 @@
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w
-./borednomore3.py -h
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-nano ~/path/to/your/project/lib/transitions/borednomore3_transitions.py
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-pwd
-ls ../lib/transitions/borednomore3_transitions.py
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-pwd
-cat ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-cat ../lib/transitions/borednomore3_transitions.py
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-# 2. Point to the EXACT folder where the transition file lives
-# THIS IS THE LINE YOU NEED TO CHECK:
-TRANS_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'lib', 'transitions'))
-# 3. Add that path to the system so Python can find the file
-if TRANS_DIR not in sys.path:;     sys.path.insert(0, TRANS_DIR)
-CONF_DIR = os.path.join(SCRIPT_DIR, '..', 'conf')
-WALLPAPERS_DIR = os.path.join(SCRIPT_DIR, '..', 'wallpapers')
-# Add paths to sys.path so Python can find the modules
-sys.path.insert(0, LIB_DIR)
-ls
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-tree ../.
-cd ..
-ls
-cd lib
-ls
-cd transitions/
-ls
-cd ..
-mv transitions transitions-bk
-mv transitions-bk/transitions transitions
-ls transitions
-mv transitions transitions-bk/.
-mv transitions-bk transitions
-ls
-tree transitions
-cd ..
-cd backend
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-nano ../lib/transitions/borednomore3_transitions.py
-./borednomore3.py -i 5 -f 5 -s 0 -w -r
-./borednomore3.py -h
-./borednomore3.py -i 5 -f 5 -s .05 -w -r
-./borednomore3.py -i 8 -f 10 -s 0.50 -w -r
-./borednomore3.py -i 5 -f 10 -s 0.50 -w -r
-./borednomore3.py -i 5 -f 10 -s 0 -w -r
-./borednomore3.py -i 5 -f 10 -s 0.05 -w -r
-./borednomore3.py -i 5 -f 20 -s 0 -w -r
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w
+-h
+-i 5 -f 5 -s 0 -w -r
+~/path/to/your/project/lib/transitions/borednomore3_transitions.py
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+
+../lib/transitions/borednomore3_transitions.py
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+../lib/transitions/borednomore3_transitions.py
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+2. Point to the EXACT folder where the transition file lives
+THIS IS THE LINE YOU NEED TO CHECK:
+= os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'lib', 'transitions'))
+3. Add that path to the system so Python can find the file
+TRANS_DIR not in sys.path:; sys.path.insert(0, TRANS_DIR)
+= os.path.join(SCRIPT_DIR, '..', 'conf')
+= os.path.join(SCRIPT_DIR, '..', 'wallpapers')
+Add paths to sys.path so Python can find the modules
+LIB_DIR)
+
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+../.
+..
+
+lib
+
+transitions/
+
+..
+transitions transitions-bk
+transitions-bk/transitions transitions
+transitions
+transitions transitions-bk/.
+transitions-bk transitions
+
+transitions
+..
+backend
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+../lib/transitions/borednomore3_transitions.py
+-i 5 -f 5 -s 0 -w -r
+-h
+-i 5 -f 5 -s .05 -w -r
+-i 8 -f 10 -s 0.50 -w -r
+-i 5 -f 10 -s 0.50 -w -r
+-i 5 -f 10 -s 0 -w -r
+-i 5 -f 10 -s 0.05 -w -r
+-i 5 -f 20 -s 0 -w -r
+-i 5 -f 20 -s 0.05 -w -r
+-i 5 -f 20 -s 0 -w -r
+..
+
+..
+subir_borednomore3.sh
+debian/src/lxqt/backend/
+-i 5 -f 20 -s 0 -w -r
+-i 5 -f 20 -s 0.05 -w -r
 ./borednomore3.py -i 5 -f 20 -s 0.05 -w -r
-./borednomore3.py -i 5 -f 20 -s 0 -w -r
-cd ..
-cd..
-cd ..
-bash subir_borednomore3.sh 
-cd debian/src/lxqt/backend/
-./borednomore3.py -i 5 -f 20 -s 0 -w -r
-./borednomore3.py -i 5 -f 20 -s 0.05 -w -r
-deb@deb-hp205g3aio:~/borednomore3/borednomore3/debian/src/lxqt/backend$ ./borednomore3.py -i 5 -f 20 -s 0.05 -w -r
-Traceback (most recent call last):
-./borednomore3.py -i 5 -f 20 -s 0.05 -w -r
-pkill firefox
-./borednomore3.py -i 5 -f 20 -s 0.05 -w -r
-touch /home/deb/borednomore3/borednomore3/debian/src/lxqt/lib/transitions/__init__.py
-./borednomore3.py -i 5 -f 20 -s 0.05 -w -r
-touch /home/deb/borednomore3/borednomore3/debian/src/lxqt/lib/transitions/__init__.py
-./borednomore3.py -i 5 -f 20 -s 0.05 -w -r
-pip3 install opencv-python
-sudo apt install python3-opencv python3-numpy
-./borednomore3.py -i 5 -f 20 -s 0.05 -w -r
-cd ..
-bash subir_borednomore3.sh 
+(most recent call last):
+-i 5 -f 20 -s 0.05 -w -r
+firefox
+-i 5 -f 20 -s 0.05 -w -r
+/home/deb/borednomore3/borednomore3/debian/src/lxqt/lib/transitions/__init__.py
+-i 5 -f 20 -s 0.05 -w -r
+/home/deb/borednomore3/borednomore3/debian/src/lxqt/lib/transitions/__init__.py
+-i 5 -f 20 -s 0.05 -w -r
+install opencv-python
+apt install python3-opencv python3-numpy
+-i 5 -f 20 -s 0.05 -w -r
+..
+subir_borednomore3.sh
