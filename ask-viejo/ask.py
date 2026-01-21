@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-import customtkinter as ctk  # Libreria mas moderna solicitada
+import customtkinter as ctk
 import os
 import subprocess
 import datetime
@@ -11,7 +11,6 @@ import sys
 
 # Configuración inicial de apariencia
 ctk.set_appearance_mode("dark")
-# DEBUG: Color theme updated to 'blue' but components will be customized further
 ctk.set_default_color_theme("blue")
 
 class ModernPromptGUI:
@@ -136,7 +135,7 @@ class ModernPromptGUI:
         
         self.prompt_editor = ctk.CTkTextbox(self.tab_rules, font=("JetBrains Mono", 13), border_width=2, border_color="#333", undo=True)
         self.prompt_editor.pack(fill="both", expand=True, padx=12, pady=(0,12))
-        self.add_context_menu(self.prompt_editor)
+        self.setup_mouse_support(self.prompt_editor)
 
         btn_rules_frame = ctk.CTkFrame(self.tab_rules, fg_color="transparent")
         btn_rules_frame.pack(fill="x", padx=12, pady=(0,12))
@@ -154,7 +153,7 @@ class ModernPromptGUI:
         
         self.custom_prompt = ctk.CTkTextbox(self.tab_custom, font=("JetBrains Mono", 14), border_width=2, border_color="#2fa572", undo=True, fg_color="#121212")
         self.custom_prompt.pack(fill="both", expand=True, padx=12, pady=(0,12))
-        self.add_context_menu(self.custom_prompt)
+        self.setup_mouse_support(self.custom_prompt)
 
         btn_custom_frame = ctk.CTkFrame(self.tab_custom, fg_color="transparent")
         btn_custom_frame.pack(fill="x", padx=12, pady=(0,12))
@@ -242,26 +241,79 @@ class ModernPromptGUI:
         ctk.CTkLabel(header_frame, text="DATE/TIME", font=("Inter", 10, "bold"), width=120, anchor="w").pack(side="left", padx=10)
         ctk.CTkLabel(header_frame, text="TASK PREVIEW / CONTENT", font=("Inter", 10, "bold"), anchor="w").pack(side="left", padx=20)
 
-    # --- Mouse Context Menu - MEJORADO PARA FUNCIONAR CON RATON ---
-    def add_context_menu(self, widget):
-        """Adds a standard right-click context menu with internal mapping fix"""
-        menu = tk.Menu(widget, tearoff=0, bg="#2b2b2b", fg="white", activebackground="#3b8ed0", borderwidth=0)
+    # --- FIXED MOUSE SUPPORT FOR DESKTOP BEHAVIOR ---
+    def setup_mouse_support(self, widget):
+        """Setup proper desktop mouse behavior with right-click context menu"""
+        # Create context menu
+        menu = tk.Menu(widget, tearoff=0, bg="#2b2b2b", fg="white", 
+                      activebackground="#3b8ed0", borderwidth=0)
         
-        # Mapeo explicito para que el raton funcione sobre el foco actual
-        menu.add_command(label="Cut", command=lambda: widget.event_generate("<<Cut>>"))
-        menu.add_command(label="Copy", command=lambda: widget.event_generate("<<Copy>>"))
-        menu.add_command(label="Paste", command=lambda: widget.event_generate("<<Paste>>"))
+        # Add menu items with proper callbacks
+        menu.add_command(label="Cut", 
+                        command=lambda: widget.event_generate("<<Cut>>") if hasattr(widget, 'event_generate') else None)
+        menu.add_command(label="Copy", 
+                        command=lambda: self.copy_selection(widget))
+        menu.add_command(label="Paste", 
+                        command=lambda: self.paste_clipboard(widget))
         menu.add_separator()
-        menu.add_command(label="Select All", command=lambda: widget.event_generate("<<SelectAll>>"))
+        menu.add_command(label="Select All", 
+                        command=lambda: self.select_all_text(widget))
 
         def show_menu(event):
-            widget.focus_set() # FIX: Asegura que el foco este en el widget antes de popup
+            """Show context menu at mouse position"""
+            widget.focus_set()
             try:
                 menu.tk_popup(event.x_root, event.y_root)
             finally:
                 menu.grab_release()
 
+        # Bind right-click to show menu
         widget.bind("<Button-3>", show_menu)
+        
+        # Also bind for better selection behavior
+        widget.bind("<Button-1>", lambda e: widget.focus_set())
+
+    def copy_selection(self, widget):
+        """Copy selected text to clipboard"""
+        try:
+            if hasattr(widget, 'tag_ranges') and widget.tag_ranges("sel"):
+                # Text widget
+                selected_text = widget.get("sel.first", "sel.last")
+                self.root.clipboard_clear()
+                self.root.clipboard_append(selected_text)
+            elif hasattr(widget, 'selection_present') and widget.selection_present():
+                # Entry widget
+                selected_text = widget.selection_get()
+                self.root.clipboard_clear()
+                self.root.clipboard_append(selected_text)
+        except:
+            pass
+
+    def paste_clipboard(self, widget):
+        """Paste from clipboard"""
+        try:
+            clipboard_text = self.root.clipboard_get()
+            if clipboard_text:
+                if hasattr(widget, 'insert'):
+                    widget.insert("insert", clipboard_text)
+                elif hasattr(widget, 'insert'):
+                    widget.insert(tk.INSERT, clipboard_text)
+        except:
+            pass
+
+    def select_all_text(self, widget):
+        """Select all text in widget"""
+        try:
+            if hasattr(widget, 'tag_add'):
+                # Text widget
+                widget.tag_add("sel", "1.0", "end")
+                widget.mark_set("insert", "end")
+            elif hasattr(widget, 'select_range'):
+                # Entry widget
+                widget.select_range(0, tk.END)
+                widget.focus_set()
+        except:
+            pass
 
     # --- Funcionalidades de Archivos ---
 
@@ -323,12 +375,12 @@ class ModernPromptGUI:
         url_entry = ctk.CTkEntry(frame, width=400, font=("JetBrains Mono", 12))
         url_entry.insert(0, data.get('url', ''))
         url_entry.pack(side="left", padx=5)
-        self.add_context_menu(url_entry)
+        self.setup_mouse_support(url_entry)
 
         desc_entry = ctk.CTkEntry(frame, font=("Inter", 12))
         desc_entry.insert(0, data.get('description', ''))
         desc_entry.pack(side="left", fill="x", expand=True, padx=5)
-        self.add_context_menu(desc_entry)
+        self.setup_mouse_support(desc_entry)
 
         ctk.CTkButton(frame, text="GO", width=40, command=lambda u=url_entry: webbrowser.open(u.get())).pack(side="left", padx=2)
         ctk.CTkButton(frame, text="X", width=30, fg_color="#b02a37", hover_color="#8c1c27", command=lambda idx=index: self.remove_ai_row(idx)).pack(side="left", padx=2)
@@ -496,7 +548,7 @@ class ModernPromptGUI:
                 content_box_container[0] = tb
                 btn_node.configure(text=f"  - {label}")
                 is_open.set(True)
-                self.add_context_menu(tb)
+                self.setup_mouse_support(tb)
 
         btn_node = ctk.CTkButton(node_frame, text=f"  + {label}", anchor="w", fg_color="transparent", 
                                  text_color="#aaa", hover_color="#222", height=24, command=toggle_node)
@@ -537,7 +589,7 @@ class ModernPromptGUI:
         # Lógica de Prompt Largo
         if len(final_prompt) > 15000:
             if messagebox.askyesno("Prompt Largo", f"El prompt generado es muy grande ({len(final_prompt)} caracteres).\n¿Deseas abrir GitHub Gist para subirlo allí?"):
-                webbrowser.open("https://gist.github.com/")
+                webbrowser.open("https://gist.github.com/ ")
                 self.copy_to_clipboard(final_prompt)
             else:
                 final_prompt = "[Aviso: El prompt es largo y se enviará por partes]\n\n" + final_prompt

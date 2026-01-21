@@ -1,0 +1,22 @@
+{
+    "rules_file": "prompt.md",
+    "custom_file": "custom.md",
+    "prompt_md_content": "",
+    "custom_prompt_content": "",
+    "context_files": [
+        {
+            "path": "/home/deb/borednomore3/borednomore3/setwallpaper/custom.md",
+            "enabled": true,
+            "pinned": true
+        },
+        {
+            "path": "/home/deb/borednomore3/borednomore3/setwallpaper/prompt.md",
+            "enabled": true,
+            "pinned": true
+        }
+    ],
+    "inc_rules": true,
+    "inc_context": true,
+    "history": [],
+    "ai_engines": []
+}

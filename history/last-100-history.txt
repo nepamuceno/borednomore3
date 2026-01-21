@@ -1,100 +1,100 @@
--i 5 -f 20 -s 0 -w -r
--i 5 -f 20 -s 0.05 -w -r
-./borednomore3.py -i 5 -f 20 -s 0.05 -w -r
-(most recent call last):
--i 5 -f 20 -s 0.05 -w -r
-firefox
--i 5 -f 20 -s 0.05 -w -r
-/home/deb/borednomore3/borednomore3/debian/src/lxqt/lib/transitions/__init__.py
--i 5 -f 20 -s 0.05 -w -r
-/home/deb/borednomore3/borednomore3/debian/src/lxqt/lib/transitions/__init__.py
--i 5 -f 20 -s 0.05 -w -r
-install opencv-python
-apt install python3-opencv python3-numpy
--i 5 -f 20 -s 0.05 -w -r
-..
-subir_borednomore3.sh
-borednomore3/borednomore3/debian/src/lxqt/backend/
--h
--i 5 -f 20 -s 0.05 -w -r
-
-
-craw4l4ai
-craw4l4ai
-install -U crawl4ai
-apt update
-apt install python3-full python3-venv
--m venv venv
-venv/bin/activate
-install -U pip
-install crawl4ai
-
-
-https://images.google.com/ -q "enlaces de wallpapers dark"
-
-
-| awk '{$1=""; sub(/^ /,""); print}'
-| awk '{$1=""; sub(/^ /,""); print}' | tail 20
-| tail -n 20 | sed 's/^[ ]*[0-9]\+[ ]*//'
-| tail -n 20 | sed 's/^[ ]*[0-9]\+[ ]*//' > README
-..
-borednomore3/borednomore3
-
-subir_borednomore3.sh
-prompt.md
-.gitignore
-
-ai_engines.md
-
+ui/context_manager.py
+ui/main_window.py
+-rf core ui
+core ui
+"" > ask.py
 ask.py
+"" > core/state_manager.py
+core/state_manager.py
+"" > core/prompt_builder.py
+core/prompt_builder.py
+"" > ui/widgets.py
+ui/widgets.py
+"" > ui/tabs.py
+ui/tabs.py
+"" > ui/main_window.py
+ui/main_window.py
+"{}" > app_state.json
 ask.py
-ask.py
-ask.py
-ask.py
-ask.py
-prompt.md
-ask.py
-ask.py
-prompt.md
-ask.py
-ask.py
-firefox
-ask.py
-ask.py
-ask.py
-ask.py
-ask.py
-ask.py
-ask.py
-prompt.md
-
-prompt_final.txt
-prompt_final.txt
-
-history_prompts.txt
-history_prompts.txt
-
-ask
-ask.py ask/.
-ask.py ask/.
-ai_engines.md ask/.
-prompt.md ask/.
-ask
-ask.py
-
-*.json
-ask.py
-
+"" > ui/menu_bar.py
+ui/menu_bar.py
+"" > ui/engine_editor.py
+ui/engine_editor.py
+"" > ui/history_view.py
+ui/history_view.py
+"" > ui/editor_toolbar.py
+ui/editor_toolbar.py
+"" > ui/context_manager.py
+ui/context_manager.py
+"" > ui/mouse_utils.py
+ui/mouse_utils.py
+"" > ui/autoscroll.py
+ui/autoscroll.py
+"" > core/history_manager.py
+core/history_manager.py
+"" > core/engine_store.py
+core/engine_store.py
+"" > ui/ai_engines_tab.py
+ui/ai_engines_tab.py
+"" > ai_engines.json
+ai_engines.json
 ask.py
 ..
-.gitignore
-add -A
-add ask
 
-subir_borednomore3.sh
+set
+setwallpaper/
 
-ai_engines.md ai_engines.json
+clean
 
-app_state.json
+all
 
-subir_borednomore3.sh
+all
+clean & make all
+
+cean
+clean
+
+native-setwallpaper
+native-setwallpaper.so
+
+clan
+all
+
+clean
+all
+for i
+for
+"for"
+m in {1..1}; do for i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i";sleep 0.05; done;done
+clean
+
+clean
+
+i in {1..20}; do\
+i in {1..20}; do ./native-setwallpaper ../debian/src/lxqt/wallpapers/wallpaper_0000$((RANDOM%62+1)).jpg;sleep 0.05;done
+i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i";sleep 0.05;done
+../debian/src/lxqt/wallpapers/wallpaper_00001.jpg --sync-config
+i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i --sync-config";sleep 0.05;done
+i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i" --sync-config;sleep 0.05;done
+i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i" --sync-config;sleep 0.1;done
+i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i" --sync-config;sleep 0.2;done
+i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i" --sync-config;sleep 0.8;done
+i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i" --sync-config;sleep 0.7;done
+
+native-setwallpaper-run.bash
+clean
+
+native-setwallpaper-run.bash
+clean
+
+--slideshow 0.7 ../debian/src/lxqt/wallpapers/*.jpg --sync-config
+clean
+
+--slideshow 0.7 ../debian/src/lxqt/wallpapers/*.jpg --sync-config
+--desktop &
+--slideshow 0.7 ../debian/src/lxqt/wallpapers/*.jpg --sync-config
+--desktop &
+--slideshow 0.7 ../debian/src/lxqt/wallpapers/*.jpg --sync-config
+--desktop &
+i in ../debian/src/lxqt/wallpapers/*.jpg; do sed -i "s|^Wallpaper=.*|Wallpaper=$i|" ~/.config/pcmanfm-qt/lxqt/settings.conf; pcmanfm-qt --desktop --reconfigure; done
+i in ../debian/src/lxqt/wallpapers/*.jpg; do sed -i "s|^Wallpaper=.*|Wallpaper=$i|" ~/.config/pcmanfm-qt/lxqt/settings.conf; pkill pcmanfm-qt; pcmanfm-qt --desktop & done

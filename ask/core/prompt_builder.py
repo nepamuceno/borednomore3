@@ -1,39 +1,26 @@
-"""
-core/prompt_builder.py
-
-Construye el prompt final a partir de:
-- prompt.md (rules)
-- custom.md (custom instructions)
-- contexto cargado
-"""
-
-from core.paths import PROMPT_MD, CUSTOM_MD
-from core.state_manager import StateManager
-
-
 class PromptBuilder:
-    def __init__(self, state: StateManager) -> None:
+    def __init__(self, state, history):
         self.state = state
+        self.history = history
 
-    # -------------------------------------------------
+    def build(self):
+        rules = self.state.get("rules_text", "")
+        prompt = self.state.get("prompt_text", "")
 
-    def build_prompt(self, context: str) -> str:
-        sections = []
+        context_files = []
+        if self.state.get("include_context"):
+            context_files = (
+                self.state.get("pinned_context_files", []) +
+                self.state.get("context_files", [])
+            )
 
-        # Rules
-        if PROMPT_MD.exists():
-            text = PROMPT_MD.read_text(encoding="utf-8").strip()
-            if text:
-                sections.append(text)
+        final = "\n\n".join(
+            p for p in [
+                rules if self.state.get("include_rules") else "",
+                prompt
+            ] if p.strip()
+        )
 
-        # Custom
-        if CUSTOM_MD.exists():
-            text = CUSTOM_MD.read_text(encoding="utf-8").strip()
-            if text:
-                sections.append(text)
+        self.history.add(prompt, rules, context_files)
+        return final
 
-        # Context
-        if context.strip():
-            sections.append("### Context\n" + context.strip())
-
-        return "\n\n".join(sections)

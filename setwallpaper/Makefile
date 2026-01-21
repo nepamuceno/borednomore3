@@ -1,14 +1,29 @@
 CC = gcc
-CFLAGS = -Wall -O2
+CFLAGS = -Wall -O3 -fPIC
 LIBS = -lX11 -lImlib2
+PREFIX = /usr/local
 
-all: setwallpaper benchmark
+TARGETS = native-setwallpaper native-setwallpaper.so
 
-setwallpaper: setwallpaper.c
-	$(CC) $(CFLAGS) -o setwallpaper setwallpaper.c $(LIBS)
+all: $(TARGETS)
 
-benchmark: benchmark.py
-	chmod +x benchmark.py
+native-setwallpaper: native-setwallpaper.c
+	$(CC) $(CFLAGS) -o native-setwallpaper native-setwallpaper.c $(LIBS)
+
+native-setwallpaper.so: native-setwallpaper.c
+	$(CC) $(CFLAGS) -shared -o native-setwallpaper.so native-setwallpaper.c $(LIBS)
+
+test: native-setwallpaper
+	./native-setwallpaper ../wallpapers/wallpaper_00001.jpg
+
+bench: native-setwallpaper native-setwallpaper.so
+	./benchmark.py -f "../wallpapers/*.jpg" -l 5
+
+install: native-setwallpaper native-setwallpaper.so
+	install -Dm755 native-setwallpaper $(DESTDIR)$(PREFIX)/bin/native-setwallpaper
+	install -Dm755 native-setwallpaper.so $(DESTDIR)$(PREFIX)/lib/native-setwallpaper.so
 
 clean:
-	rm -f setwallpaper
+	rm -f native-setwallpaper native-setwallpaper.so *.o
+
+.PHONY: all test bench install clean

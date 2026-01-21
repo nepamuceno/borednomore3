@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
-"""
-Ask Prompt Engine
-Entry point
-Python 3.12 compatible
-"""
-
-import sys
-from datetime import datetime
-
+import os
+import customtkinter as ctk
+from core.state_manager import StateManager
+from core.history_manager import HistoryManager
 from ui.main_window import MainWindow
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-def main() -> None:
-    print(f"[{datetime.now()}] Ask starting...")
-    print(f"[DEBUG] Python version: {sys.version}")
+def main():
+    state = StateManager(BASE_DIR)
+    history = HistoryManager(BASE_DIR)
 
-    app = MainWindow()
+    ctk.set_appearance_mode(state.get("theme", "system"))
+    app = MainWindow(state, history)
     app.mainloop()
 
+    state.save()
+    history.save()
 
 if __name__ == "__main__":
     main()
+
