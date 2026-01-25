@@ -1,0 +1,22 @@
+{
+  "theme": "Dark",
+  "script_path": "/home/deb/borednomore3/borednomore3/debian/src/lxqt/backend/borednomore3.py",
+  "config_path": "/home/deb/borednomore3/borednomore3/debian/src/lxqt/frontend/../conf/borednomore3.conf",
+  "list_path": "/home/deb/borednomore3/borednomore3/debian/src/lxqt/frontend/../conf/borednomore3.list",
+  "interval": 1,
+  "directory": "/home/deb/borednomore3/borednomore3/debian/src/lxqt/frontend/../wallpapers",
+  "frames": 5,
+  "speed": 0.0001,
+  "transitions": "",
+  "randomize": true,
+  "randomize_wallpapers": true,
+  "keep_image": false,
+  "use_wallpaper_list": false,
+  "use_config": false,
+  "use_directory": false,
+  "verbose": false,
+  "python_path": "/usr/bin/python3",
+  "extra_args": "",
+  "running_pid": null,
+  "window_geometry": "1600x972+216+41"
+}

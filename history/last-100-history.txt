@@ -1,52 +1,3 @@
-ui/context_manager.py
-ui/main_window.py
--rf core ui
-core ui
-"" > ask.py
-ask.py
-"" > core/state_manager.py
-core/state_manager.py
-"" > core/prompt_builder.py
-core/prompt_builder.py
-"" > ui/widgets.py
-ui/widgets.py
-"" > ui/tabs.py
-ui/tabs.py
-"" > ui/main_window.py
-ui/main_window.py
-"{}" > app_state.json
-ask.py
-"" > ui/menu_bar.py
-ui/menu_bar.py
-"" > ui/engine_editor.py
-ui/engine_editor.py
-"" > ui/history_view.py
-ui/history_view.py
-"" > ui/editor_toolbar.py
-ui/editor_toolbar.py
-"" > ui/context_manager.py
-ui/context_manager.py
-"" > ui/mouse_utils.py
-ui/mouse_utils.py
-"" > ui/autoscroll.py
-ui/autoscroll.py
-"" > core/history_manager.py
-core/history_manager.py
-"" > core/engine_store.py
-core/engine_store.py
-"" > ui/ai_engines_tab.py
-ui/ai_engines_tab.py
-"" > ai_engines.json
-ai_engines.json
-ask.py
-..
-
-set
-setwallpaper/
-
-clean
-
-all
 
 all
 clean & make all
@@ -98,3 +49,52 @@ clean
 --desktop &
 i in ../debian/src/lxqt/wallpapers/*.jpg; do sed -i "s|^Wallpaper=.*|Wallpaper=$i|" ~/.config/pcmanfm-qt/lxqt/settings.conf; pcmanfm-qt --desktop --reconfigure; done
 i in ../debian/src/lxqt/wallpapers/*.jpg; do sed -i "s|^Wallpaper=.*|Wallpaper=$i|" ~/.config/pcmanfm-qt/lxqt/settings.conf; pkill pcmanfm-qt; pcmanfm-qt --desktop & done
+borednomore3/borednomore3
+set
+setwallpaper/
+i in ../debian/src/lxqt/wallpapers/*.jpg; do sed -i "s|^Wallpaper=.*|Wallpaper=$i|" ~/.config/pcmanfm-qt/lxqt/settings.conf; pkill pcmanfm-qt; pcmanfm-qt --desktop & done
+--version
+i in ../debian/src/lxqt/wallpapers/*.jpg; do pcmanfm-qt --set-wallpaper "$i" --wallpaper-mode=stretch --desktop; done
+../ask-viejo/
+ask.py
+../debian/src/lxqt/backend/
+borednomore3.py
+/home/deb/Documents/bored/borednomore3-stable-16_01_2026_15_47-runs
+
+debian/src/lxqt/backend/
+borednomore3.py
+../wallpapers/
+
+-h
+-s n5 -f 5 -w -r -i 0.0001
+-s 5 -f 5 -w -r -i 0.0001
+-s 5 -f 5 -w -r
+-s 5 -f 5 -w -r -i 0.0001
+-s 5 -f 5 -w -r -i 0.001
+-i -s 5 -f 5 -w -r
+-i 1 -s 5 -f 5 -w -r
+-i 5 -s 0.001 -f 5 -w -r
+/home/deb/borednomore3/borednomore3/debian/src/lxqt/backend
+-i 5 -s 0.001 -f 5 -w -r
+i in ../wallpapers/*.jpg; do pcmanfm-qt --set-wallpaper "$i" --wallpaper-mode=stretch --desktop; done
+--version
+--version
+--version
+| grep pacman
+i in ../debian/src/lxqt/wallpapers/*.jpg; do pcmanfm-qt --set-wallpaper "$i" --wallpaper-mode=stretch --desktop; done
+borednomore3.py
+borednomore3.py -s 0.0001 -t 5 -r -w
+borednomore3.py -h
+borednomore3.py -i 5 -s 0.0001 -t 5 -r -w
+borednomore3.py -i 5 -f 5 -s 0.0001 -t 5 -r -w
+..
+../../../
+../../../../
+../../../../subir_borednomore3.sh
+../../../../
+subir_borednomore3.sh
+borednomore3/borednomore3
+ask-viejo
+ask.py
+../debian/src/lxqt/frontend/
+bnm3.py

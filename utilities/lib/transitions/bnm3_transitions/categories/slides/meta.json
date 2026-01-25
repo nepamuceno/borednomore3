@@ -1,0 +1,15 @@
+{
+    "category_id": "slides",
+    "category_name": "Motion Slides",
+    "version": "1.0.0",
+    "transitions": [
+        {
+            "id": "slide_linear",
+            "name": "Linear Slide",
+            "short_description": "Moves the element across the screen.",
+            "long_description": "Translates the X or Y coordinates. 'In' moves from off-screen to home; 'Out' moves from home to off-screen.",
+            "has_way_out": true,
+            "symmetric": true
+        }
+    ]
+}
