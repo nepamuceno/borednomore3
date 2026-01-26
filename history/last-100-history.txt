@@ -1,14 +1,3 @@
-
-all
-clean & make all
-
-cean
-clean
-
-native-setwallpaper
-native-setwallpaper.so
-
-clan
 all
 
 clean
@@ -97,4 +86,15 @@ borednomore3/borednomore3
 ask-viejo
 ask.py
 ../debian/src/lxqt/frontend/
+bnm3.py
+apt update
+apt upgrade
+
+borednomore3/borednomore3
+
+debian/
+
+src
+
+frontend/
 bnm3.py

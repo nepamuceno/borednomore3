@@ -1,7 +1,6 @@
 """
 Logger utility for real-time debug and info messages with rotation
 """
-
 import sys
 import os
 from datetime import datetime
@@ -29,8 +28,9 @@ class Logger:
             'RESET': '\033[0m'
         }
         
-        # Clear console on start
-        os.system('clear' if os.name != 'nt' else 'cls')
+        # Clear console on start only if terminal
+        if sys.stdout.isatty():
+            os.system('clear' if os.name != 'nt' else 'cls')
         
         # Trim log file if it exists
         if self.log_file and os.path.exists(self.log_file):
@@ -50,6 +50,8 @@ class Logger:
     
     def _trim_console(self):
         """Clear console when line count exceeds max_lines"""
+        if not sys.stdout.isatty():
+            return
         self.line_count += 1
         if self.line_count >= self.max_lines:
             os.system('clear' if os.name != 'nt' else 'cls')
@@ -62,11 +64,15 @@ class Logger:
             return
         
         timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-        color = self.colors.get(level_name, '')
-        reset = self.colors['RESET']
         
-        # Console output with color
-        prefix = f"{color}[{timestamp}] [{level_name}]{reset}"
+        # Console output with color only if terminal
+        if sys.stdout.isatty():
+            color = self.colors.get(level_name, '')
+            reset = self.colors['RESET']
+            prefix = f"{color}[{timestamp}] [{level_name}]{reset}"
+        else:
+            prefix = f"[{timestamp}] [{level_name}]"
+        
         print(f"{prefix} {message}", flush=True)
         self._trim_console()
         

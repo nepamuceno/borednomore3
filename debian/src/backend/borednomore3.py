@@ -39,7 +39,7 @@ def print_help():
     help_text = f"""
 ╔═══════════════════════════════════════════════════════════════════════════════╗
 ║                      borednomore3 - Dynamic Wallpaper Changer                 ║
-║                                  Version {VERSION}                                    ║
+║                                  Version {VERSION}                            ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 
 DESCRIPTION:
@@ -173,35 +173,31 @@ def main():
     # Main loop
     logger.info(f"Starting main loop (interval: {config['interval']}s)")
     logger.info("Press 'q' or Ctrl+C to exit\n")
-    
+
     try:
-        current_wallpaper = None
-        
+        current_wallpaper = wallpaper_mgr.get_next()
+    
         while True:
             next_wallpaper = wallpaper_mgr.get_next()
-            
+        
             logger.info(f"Next wallpaper: {os.path.basename(next_wallpaper)}")
             logger.debug(f"Full path: {next_wallpaper}")
-            
-            if current_wallpaper:
-                transition = transition_engine.get_next_transition()
-                logger.info(f"Applying transition: {transition['name']} (ID: {transition['id']})")
-                logger.debug(f"Transition details: {transition}")
-                
-                transition_engine.apply(
-                    current_wallpaper,
-                    next_wallpaper,
-                    transition,
-                    desktop.set_wallpaper
-                )
-            else:
-                logger.info("First wallpaper, no transition")
-                desktop.set_wallpaper(next_wallpaper)
-            
+        
+            transition = transition_engine.get_next_transition()
+            logger.info(f"Applying transition: {transition['name']} (ID: {transition['id']})")
+            logger.debug(f"Transition details: {transition}")
+        
+            transition_engine.apply(
+                current_wallpaper,
+                next_wallpaper,
+                transition,
+                desktop.set_wallpaper
+            )
+        
             current_wallpaper = next_wallpaper
             logger.debug(f"Waiting {config['interval']} seconds...")
             time.sleep(config['interval'])
-            
+        
     except KeyboardInterrupt:
         logger.info("\nExiting gracefully...")
         sys.exit(0)

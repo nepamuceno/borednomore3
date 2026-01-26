@@ -17,10 +17,9 @@ from datetime import datetime
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATE_FILE = os.path.join(SCRIPT_DIR, '.bnm3_gui_state.json')
-DEFAULT_SCRIPT = os.path.join(SCRIPT_DIR, 'borednomore3.py')
+DEFAULT_SCRIPT = os.path.join(SCRIPT_DIR, '..', 'backend', 'borednomore3.py')
 CONF_DIR = os.path.join(SCRIPT_DIR, '..', 'conf')
 DEFAULT_CONF = os.path.join(CONF_DIR, 'borednomore3.conf')
 DEFAULT_LIST = os.path.join(CONF_DIR, 'borednomore3.list')
@@ -197,8 +196,8 @@ class BNM3GUI(ctk.CTk):
         ctk.CTkButton(quick_frame, text="ℹ️", command=self.show_version, width=60, height=30).grid(row=0, column=1, padx=2)
         ctk.CTkButton(quick_frame, text="👤", command=self.show_credits, width=60, height=30).grid(row=0, column=2, padx=2)
         
-        self.verbose_var = tk.BooleanVar(value=self.state.get('verbose', False))
-        ctk.CTkCheckBox(sidebar, text="Show detailed output", variable=self.verbose_var, font=ctk.CTkFont(size=10), height=20).grid(row=6, column=0, padx=20, pady=(0, 8), sticky="w")
+        self.debug_var = tk.BooleanVar(value=self.state.get('debug', False))
+        ctk.CTkCheckBox(sidebar, text="Enable Debug Mode (-D)", variable=self.debug_var, font=ctk.CTkFont(size=10), height=20).grid(row=6, column=0, padx=20, pady=(0, 8), sticky="w")
         
         self.start_button = ctk.CTkButton(sidebar, text="▶ START", command=self.start_wallpapers, height=45, font=ctk.CTkFont(size=15, weight="bold"), fg_color="#28a745", hover_color="#218838")
         self.start_button.grid(row=7, column=0, padx=20, pady=8, sticky="ew")
@@ -525,8 +524,8 @@ of timing values."""
     
     def build_command(self):
         cmd = [self.python_var.get(), self.script_path_var.get()]
-        if self.verbose_var.get():
-            cmd.append('-v')
+        if self.debug_var.get():
+            cmd.append('-D')
         if self.use_config_var.get():
             cmd.extend(['--config', self.config_path_var.get()])
         else:
@@ -678,7 +677,7 @@ of timing values."""
             'use_wallpaper_list': self.use_wallpaper_list_var.get(),
             'use_config': self.use_config_var.get(),
             'use_directory': self.use_directory_var.get(),
-            'verbose': self.verbose_var.get(),
+            'debug': self.debug_var.get(),
             'python_path': self.python_var.get(),
             'extra_args': self.extra_args_var.get(),
             'running_pid': self.process_manager.pid,
