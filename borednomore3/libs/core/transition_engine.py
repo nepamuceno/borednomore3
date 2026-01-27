@@ -1,10 +1,13 @@
 """
 Transition engine - handles transition selection and application
+Fixed: Implemented synchronous frame purging and targeted file globbing to prevent ghost frames.
 """
 
 import os
 import subprocess
 import random
+import glob
+import time
 
 # Transition logic map
 LOGIC_MAP = {
@@ -27,6 +30,9 @@ class TransitionEngine:
     """Handles transition selection and execution"""
     
     def __init__(self, transitions, randomize, frames, speed, keep_image, desktop_info, logger):
+        # Initialize random seed for unique results every session
+        random.seed(time.time_ns())
+
         self.logger = logger
         self.frames = frames
         self.speed = speed
@@ -42,14 +48,18 @@ class TransitionEngine:
             self.transition_list = list(TRANSITIONS.keys())
         
         self.randomize = randomize
-        self.current_index = 0
+        self.current_index = -1
+        self.transition_playlist = [] # The "deck" of transitions
+        
+        # Prepare the first cycle
+        self._prepare_transition_playlist()
         
         self.logger.info(f"Initialized with {len(self.transition_list)} transitions")
         self.logger.debug(f"Randomize: {self.randomize}")
         self.logger.debug(f"Frames: {self.frames}")
         self.logger.debug(f"Speed: {self.speed}")
         self.logger.debug(f"Keep image: {self.keep_image}")
-    
+
     def _parse_transitions(self, transition_str):
         """Parse transition string (e.g., '1,5,10-15') into list"""
         try:
@@ -80,16 +90,33 @@ class TransitionEngine:
         except ValueError as e:
             self.logger.error(f"Invalid transition format: {transition_str}")
             raise
-    
+
+    def _prepare_transition_playlist(self):
+        """Creates the playback queue for transitions and shuffles if needed"""
+        self.transition_playlist = list(self.transition_list)
+        if self.randomize:
+            self.logger.debug("Shuffling transition playlist for non-repeating randomization...")
+            random.shuffle(self.transition_playlist)
+        self.current_index = -1
+
     def get_next_transition(self):
         """Get next transition based on selection mode"""
+        # Increment index
+        self.current_index += 1
+
+        # Reshuffle if we've used all transitions in the current list
+        if self.current_index >= len(self.transition_playlist):
+            self.logger.info("Transition cycle complete. Reshuffling transitions...")
+            self._prepare_transition_playlist()
+            self.current_index = 0
+
+        tid = self.transition_playlist[self.current_index]
+        
         if self.randomize:
-            tid = random.choice(self.transition_list)
-            self.logger.debug(f"Random transition selected: {tid}")
+            self.logger.debug(f"Random transition selected (from playlist): {tid}")
         else:
-            tid = self.transition_list[self.current_index]
-            self.current_index = (self.current_index + 1) % len(self.transition_list)
-            self.logger.debug(f"Sequential transition {self.current_index}/{len(self.transition_list)}: {tid}")
+            tid = self.transition_playlist[self.current_index]
+            self.logger.debug(f"Sequential transition {self.current_index + 1}/{len(self.transition_playlist)}: {tid}")
         
         transition_data = TRANSITIONS[tid]
         return {
@@ -98,7 +125,7 @@ class TransitionEngine:
             'exit_mode': transition_data[1],
             'entry_mode': transition_data[2]
         }
-    
+
     def _get_imagemagick_cmd(self, img, mode, frames, width, height):
         """Generate ImageMagick command for transition phase"""
         t_step = "(t+1)"
@@ -135,62 +162,69 @@ class TransitionEngine:
         elif mode == "zoom-in":
             return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:{t_step}*(1/{frames})]' "
         
-        # Fallback
         return rf"convert '{img}' -morph {frames} "
-    
+
     def apply(self, old_img, new_img, transition, set_wallpaper_func):
-        """Apply transition between two images"""
+        """Apply transition between two images with clean frame state."""
         tid = transition['id']
         exit_mode = transition['exit_mode']
         entry_mode = transition['entry_mode']
         
         self.logger.transition_start(transition['name'], tid)
         
-        # Auto-enable keep_image for movement transitions
-        effective_keep = self.keep_image or (tid in MOVEMENT_IDS)
-        if tid in MOVEMENT_IDS and not self.keep_image:
-            self.logger.debug("Auto-enabling keep_image for movement transition")
-        
         tmp_dir = "/tmp/bnm3_frames"
         os.makedirs(tmp_dir, exist_ok=True)
         
-        self.logger.debug(f"Cleaning temp directory: {tmp_dir}")
-        subprocess.run(f"rm -f {tmp_dir}/*.jpg", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        
-        # Calculate frame split
+        # --- HARD PURGE (FIX) ---
+        # Using native Python to ensure files are deleted synchronously 
+        # before ImageMagick starts writing.
+        self.logger.debug(f"Purging old frames from: {tmp_dir}")
+        for f in os.listdir(tmp_dir):
+            if f.endswith('.jpg'):
+                try:
+                    os.remove(os.path.join(tmp_dir, f))
+                except OSError:
+                    pass
+
         exit_frames = self.frames // 2
         entry_frames = self.frames - exit_frames
         
         # Generate exit frames
         if exit_frames > 0:
-            self.logger.debug(f"Generating {exit_frames} exit frames ({exit_mode})...")
+            self.logger.debug(f"Generating {exit_frames} exit frames...")
             cmd_exit = self._get_imagemagick_cmd(old_img, exit_mode, exit_frames, self.width, self.height)
-            cmd_exit += f"{tmp_dir}/f01_%03d.jpg"
-            self.logger.debug(f"Command: {cmd_exit[:100]}...")
+            cmd_exit += f" {tmp_dir}/f01_%03d.jpg"
             subprocess.run(cmd_exit, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         
         # Generate entry frames
-        self.logger.debug(f"Generating {entry_frames} entry frames ({entry_mode})...")
+        self.logger.debug(f"Generating {entry_frames} entry frames...")
         cmd_entry = self._get_imagemagick_cmd(new_img, entry_mode, entry_frames, self.width, self.height)
-        cmd_entry += f"{tmp_dir}/f02_%03d.jpg"
-        self.logger.debug(f"Command: {cmd_entry[:100]}...")
+        cmd_entry += f" {tmp_dir}/f02_%03d.jpg"
         subprocess.run(cmd_entry, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         
-        # Play frames
-        frames_list = sorted([os.path.join(tmp_dir, f) for f in os.listdir(tmp_dir) if f.endswith('.jpg')])
-        total_frames = len(frames_list)
+        # Play frames (Targeted Filter)
+        # We only play files starting with our specific session prefixes
+        frames_list = sorted([
+            os.path.join(tmp_dir, f) for f in os.listdir(tmp_dir) 
+            if f.endswith('.jpg') and (f.startswith('f01_') or f.startswith('f02_'))
+        ])
         
-        self.logger.debug(f"Playing {total_frames} frames...")
+        total_frames = len(frames_list)
+        self.logger.debug(f"Playing {total_frames} clean frames...")
+        
         for i, frame in enumerate(frames_list):
             self.logger.transition_progress(i + 1, total_frames)
             set_wallpaper_func(frame)
         
         # Set final wallpaper
-        self.logger.debug("Setting final wallpaper...")
         set_wallpaper_func(new_img)
         
-        # Cleanup
-        self.logger.debug("Cleaning up frames...")
-        subprocess.run(f"rm -f {tmp_dir}/*.jpg", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        # Post-transition cleanup
+        self.logger.debug("Finalizing cleanup...")
+        for f in frames_list:
+            try:
+                os.remove(frame)
+            except:
+                pass
         
         self.logger.transition_complete()
