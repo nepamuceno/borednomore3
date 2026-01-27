@@ -1,1 +1,14 @@
+.env
+*.jpg
+.ccache/
+__pycache__/
+__pycache__
+*.deb
+nuitka-crash-report.xml
+*.jpg
+# binary
 
+*.pyc
+*.pyo
+*.pyd
+gist.txt
