@@ -11,3 +11,4 @@ nuitka-crash-report.xml
 *.pyc
 *.pyo
 *.pyd
+gist.txt
