@@ -1,0 +1,35 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    purge)
+        # Remove configuration on purge
+        rm -rf /etc/borednomore3
+        
+        # Remove wallpapers directory if empty
+        rmdir /usr/share/borednomore3/wallpapers 2>/dev/null || true
+        rmdir /usr/share/borednomore3 2>/dev/null || true
+        
+        # Update desktop database
+        if [ -x /usr/bin/update-desktop-database ]; then
+            update-desktop-database -q /usr/share/applications || true
+        fi
+        
+        echo "BoredNoMore3 configuration purged."
+        ;;
+        
+    remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        if [ -x /usr/bin/update-desktop-database ]; then
+            update-desktop-database -q /usr/share/applications || true
+        fi
+        ;;
+        
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

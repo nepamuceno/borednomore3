@@ -1,0 +1,17 @@
+borednomore3 (0.7.0-1) unstable; urgency=medium
+
+  * Initial Release.
+  * Dynamic wallpaper changer with 1000+ ImageMagick transitions
+  * Universal desktop environment support (GNOME, KDE, XFCE, LXQt, MATE, etc.)
+  * Professional CustomTkinter GUI frontend (borednomore3-gui)
+  * Command-line backend daemon (borednomore3)
+  * Wallpaper downloader utility (borednomore3-downloader)
+  * Modular Python library structure (libs/config, core, desktop, utils)
+  * True random shuffle with playlist system (no repeats until full cycle)
+  * Configuration file support with CLI override
+  * Real-time debug mode
+  * Man pages and desktop integration
+  * Automatic desktop environment detection
+  * Smart resolution detection via xrandr
+
+ -- Nepamuceno Bartolo <packager@example.com>  Tue, 28 Jan 2025 00:00:00 +0000

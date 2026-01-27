@@ -1,0 +1,57 @@
+BOREDNOMORE3-DOWNLOADER 1 "January 2025" "0.7.0" "BoredNoMore3 Manual"
+.SH NAME
+borednomore3-downloader \- fetch wallpapers from multiple online sources
+.SH SYNOPSIS
+.B borednomore3-downloader
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B borednomore3-downloader
+downloads high-resolution wallpapers from multiple sources including
+Unsplash, Pexels, Pixabay, Picsum, Wallhaven, Google, and Bing.
+.PP
+Features smart sequential numbering and SHA256 deduplication to prevent
+duplicate downloads across sources.
+.SH OPTIONS
+.TP
+.BI \-d " PATH" "\fR, \fB\-\-directory " PATH
+Save directory (default: current directory)
+.TP
+.BI \-s " QUERY" "\fR, \fB\-\-search " QUERY
+Search query (default: "dark wallpaper")
+.TP
+.BI \-n " COUNT" "\fR, \fB\-\-number " COUNT
+Number of wallpapers to download (default: 10)
+.TP
+.B \-D, \-\-deep
+Enable deep search (multiple pages)
+.TP
+.BI \-w " SOURCES" "\fR, \fB\-\-websites " SOURCES
+Comma-separated sources: unsplash, pexels, pixabay, picsum, wallhaven, google, bing, all
+.TP
+.BI \-o " NUMBER" "\fR, \fB\-\-overwrite " NUMBER
+Start numbering from specific number (disables duplicate detection)
+.TP
+.B \-R, \-\-random-source
+Randomly select one source
+.TP
+.B \-h, \-\-help
+Display help
+.TP
+.B \-v, \-\-version
+Display version
+.SH EXAMPLES
+.TP
+.B borednomore3-downloader -s "space" -n 20
+Download 20 space wallpapers
+.TP
+.B borednomore3-downloader -w unsplash,pexels -D
+Deep search from Unsplash and Pexels
+.TP
+.B borednomore3-downloader -R -n 50
+Download 50 from random source
+.SH FILE NAMING
+Images saved as: wallpaper_NNNNN.jpg (e.g., wallpaper_00001.jpg)
+.SH AUTHOR
+Written by Nepamuceno Bartolo.
+.SH SEE ALSO
+.BR borednomore3 (1)

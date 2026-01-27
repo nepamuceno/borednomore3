@@ -1,5 +1,3 @@
-This `README.md` is strictly based on your **Frontend**, **Backend**, and **Downloader** logic, incorporating the specific **Debian** packaging structure and your preference for identifying the platform.
-
 ---
 
 # borednomore3
@@ -54,7 +52,7 @@ The backend follows a strict priority: **CLI Flags > Custom Config > System Defa
 
 The `borednomore3_downloader.py` utility allows for keyword-based scraping to populate wallpaper directories directly from the command line.
 
-## 📖 Further Documentation about `borednomore3_downloader.py` see 
+## 📖 Further Documentation about borednomore3_downloader.py 
 For detailed installation steps, troubleshooting, and advanced usage examples, please refer to the [DOWNLOADER.md](./DOWNLOADER.md) file.
 ---
 

@@ -1,0 +1,3519 @@
+=== /home/deb/borednomore3/DOWNLOADER.md ===
+
+```markdown
+# BoredNoMore3 Wallpaper Manager
+
+BoredNoMore3 is a dual-purpose tool designed to fetch high-quality images and rotate them on your desktop. Whether you want a curated collection from the web or want to cycle through your own personal memories, this tool handles the heavy lifting.
+
+---
+
+## 🚀 Getting Started
+
+To get the most out of the application, you need to follow two simple steps: **Populate** your collection and **Launch** the interface.
+
+### 1. Populate Your Wallpapers
+Before running the GUI, you need a directory of images. By default, the scripts look for a folder named `wallpapers/`.
+
+#### Option A: Use the Downloader Script
+Use the built-in downloader to fetch images from Pexels and Lorem Picsum automatically.
+
+```bash
+./borednomore3_downloader.py [options]
+
+```
+
+**Common Flags:**
+
+* **`-s "<search-string>"`**: Search for specific themes (e.g., "space", "nature"). *(Default: "wallpapers")*
+* **`-n <number>`**: The number of images to download. *(Default: 10)*
+* **`-h`**: Display the help menu and all available arguments.
+
+**Example:**
+To download 15 custom wallpapers:
+
+```bash
+./borednomore3_downloader.py -s "mountains" -n 15
+
+```
+
+#### Option B: Use Your Own Photos
+
+You don’t have to download images from the web. If you prefer a personal touch, simply manually move your own photos (**family, travel, work, etc.**) into the `wallpapers/` directory. The system will recognize any standard image format you place there.
+
+---
+
+### 2. Launch the GUI
+
+Once your folder is populated with images, launch the frontend to configure and execute the wallpaper changer:
+
+```bash
+./borednomore3/frontend/bnm3.py
+
+```
+
+---
+
+## 🛠 Summary of Features
+
+| Feature | Description |
+| --- | --- |
+| **Default Directory** | Uses the `wallpapers/` directory for all operations. |
+| **Smart Numbering** | The downloader detects existing files and appends new ones without overwriting. |
+| **Custom Sources** | Downloads from high-quality APIs like Pexels and Picsum. |
+| **Flexibility** | Supports both automated downloads and manual personal photo collections. |
+
+---
+
+*Happy customizing! If you run into issues, remember to use the `-h` flag for detailed command-line instructions.*
+
+
+
+=== /home/deb/borednomore3/README.md ===
+
+---
+
+# borednomore3
+
+**Universal Dynamic Wallpaper Changer for Debian, Ubuntu, and related distributions**
+
+`borednomore3` is a modular suite designed specifically for Debian based distro's. It combines a high-performance Python backend with a CustomTkinter frontend to deliver smooth, ImageMagick-powered wallpaper transitions across environments like GNOME, KDE, XFCE, Cinnamon, and MATE.
+
+## 📂 Project Architecture
+
+The utility is structured as a native Debian package, ensuring a strict separation between logic, interface, and system configuration:
+
+* **`frontend/bnm3.py`**: A professional GUI controller. It acts as a **Process Manager**, handling the backend lifecycle and providing a real-time console.
+* **`backend/borednomore3.py`**: The core execution engine. It orchestrates the libraries to perform environment detection and execution loops.
+* **`backend/borednomore3_downloader.py`**: A utility for scraping and managing high-resolution wallpaper collections.
+* **`libs/`**: The core modular engine:
+* `core/`: Handles **Shuffle-and-Cycle** logic and **ImageMagick Affine Distortions**.
+* `desktop/`: Identifies specific wallpaper setters via `desktop_detector.py`.
+* `config/` & `utils/`: Manages validation, logging, and configuration parsing.
+
+
+* **`conf/`**: Contains configuration files and pattern lists.
+* **`debian/`**: Full packaging stack including manpages, desktop entries, and build rules.
+
+---
+
+## 🖥 Frontend Logic (`bnm3.py`)
+
+The GUI is a robust **Process Controller** with the following technical behaviors:
+
+1. **Process Management**:
+* **Start/Stop/Kill**: Uses `os.killpg` with `SIGHUP` for graceful exits and `SIGKILL` for hard termination of the backend and ImageMagick sub-processes.
+* **Cleanup**: Automatically purges orphaned backend instances using `pgrep`.
+
+
+2. **Live Console**: Captures real-time `stdout` and `stderr` streams from the backend, piping them into a thread-safe terminal view with auto-scroll.
+3. **State Persistence**: Saves UI settings to a hidden JSON state file to restore session preferences automatically.
+
+---
+
+## ⚙️ Backend & Downloader Logic
+
+The backend follows a strict priority: **CLI Flags > Custom Config > System Default.**
+
+### Core Execution
+
+* **Randomization**: As per the logic, randomization of transitions (`-r`) or wallpapers (`-w`) only occurs if the specific flag is set.
+* **The Deck System**: Uses a Fisher-Yates shuffle to ensure no image or transition is repeated until the entire collection has been cycled.
+* **Transformation**: Generates frames into temporary storage and pipes them to the desktop setter based on user-defined speed and frame counts.
+
+### Image Acquisition
+
+The `borednomore3_downloader.py` utility allows for keyword-based scraping to populate wallpaper directories directly from the command line.
+
+## 📖 Further Documentation about borednomore3_downloader.py 
+For detailed installation steps, troubleshooting, and advanced usage examples, please refer to the [DOWNLOADER.md](./DOWNLOADER.md) file.
+---
+
+## 🛠 Debian System Integration
+
+Designed exclusively for Debian based distro's, the suite includes:
+
+* **Manpages**: Native documentation accessible via the `man` command.
+* **Desktop Entries**: Integrated files for the application menu.
+* **Environment Detection**: Specifically targets Debian standards for wallpaper setting across various desktop environments.
+
+---
+
+## 📜 Installation
+
+**Dependencies:** `python3`, `python3-pil`, `python3-tk`, `imagemagick`, and `feh`.
+
+1. **Install dependencies**: `sudo apt install python3-pil python3-tk imagemagick feh`
+2. **Run GUI**: `python3 frontend/bnm3.py`
+
+---
+
+
+
+=== /home/deb/borednomore3/history/last-100-history.txt ===
+
+../libs/gui/bnm3_theme_manager.py
+../libs/gui/bnm3_wallpaper_preview.py
+../libs/gui/bnm3_monitoring.py
+../libs/gui/bnm3_logger_widget.py
+../libs/gui/bnm3_logo_utils.py
+../libs/gui/bnm3_validators.py
+../libs/gui/bnm3_command_builder.py
+
+bnm3.py
+bnm3_main_window.py
+bnm3_sidebar.py
+bnm3_settings_tab.py
+bnm3_console_tab.py
+bnm3_advanced_tab.py
+bnm3_preview_tab.py
+bnm3_monitoring_tab.py
+apt install psutil
+apt install python3-psutil
+bnm3.py
+bnm3.py
+bnm3.py
+../libs/gui/__init__.py
+bnm3.py
+../libs/gui/__init__.py
+bnm3.py
+apt install python3-tk
+apt install python3-pil.imagetk
+bnm3.py
+bnm3.py
+..
+wallpapers/
+makewallpapers.py
+makewallpapers.py
+makewallpapers.py 10
+makewallpapers.py
+makewallpapers.py 10
+../frontend/
+bnm3.py
+../wallpapers/
+*.png
+*.jpg
+makewallpapers.py
+makewallpapers.py 40
+../frontend/
+bnm3.py
+../wallpapers/
+
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+makewallpapers.py
+*.jpg
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+../frontend/
+bnm3.py
+
+-al
+.gui_state.json
+/tmp
+bnm3.py
+-al
+bnm3.py
+
+-al
+
+-al
+-al ../backend/
+reboot
+
+
+
+=== /home/deb/borednomore3/borednomore3/debian/debian/borednomore3-downloader-gui.1 ===
+
+.TH BOREDNOMORE3-DOWNLOADER-GUI 1 "January 2026" "3.0" "BoredNoMore3 Manual"
+.SH NAME
+borednomore3-downloader-gui \- graphical interface for bulk wallpaper scraping
+.SH SYNOPSIS
+.B borednomore3-downloader-gui
+.SH DESCRIPTION
+.B borednomore3-downloader-gui
+is a specialized tool designed to scrape high-resolution images from multiple web sources simultaneously. It provides a visual dashboard to manage search queries, download limits, and source selection without requiring command-line knowledge.
+
+The application features a modern "Dark" appearance mode and utilizes a threaded backend to ensure the UI remains responsive during network-intensive operations.
+
+.SH GUI COMPONENTS
+.TP
+.B Search Keywords
+Primary input for the scraping engine (e.g., "mountain landscape", "minimalist 4k").
+.TP
+.B Select Folder
+A directory picker to set the destination for downloaded .jpg files.
+.TP
+.B Source Checkboxes
+Allows the user to enable or disable specific scraping engines including:
+\fIUnsplash, Pexels, Pixabay, Picsum, Wallhaven, Google,\fR and \fIBing\fR.
+.TP
+.B Deep Search
+When enabled, the engine will traverse multiple result pages (up to 10) for supported sources (Bing, Pexels, etc.).
+.TP
+.B Random Engines
+Ignores manual checkbox selection and chooses a single engine at random for the current mission.
+.TP
+.B Global Download Limit
+A slider to cap the total number of images saved during the session.
+.TP
+.B Overwrite ID
+If a number is entered, the engine will start naming files from that index, potentially overwriting existing files in the directory.
+.TP
+.B Console Box
+A real-time log window that captures standard output from the scraping thread, displaying [OK] status for successful downloads.
+
+.SH SIDEBAR TOOLS
+The sidebar contains buttons that interface with the CLI version of the downloader to provide metadata:
+.IP \(bu 2
+\fBHelp\fR: Spawns the command-line help documentation.
+.IP \(bu 2
+\fBCredits\fR: Shows authorship information.
+.IP \(bu 2
+\fBVersion\fR: Displays the current build version.
+
+.SH TECHNICAL NOTES
+.SS File Naming
+Images are automatically saved with the format \fIwallpaper_NNNNN.jpg\fR.
+.SS Deduplication
+The engine performs a SHA-256 hash check on every downloaded image. If a file with an identical hash already exists in the target folder, the download is discarded to save space.
+
+.SH AUTHOR
+Nepamuceno Bartolo
+
+.SH SEE ALSO
+.BR borednomore3-gui (1),
+.BR borednomore3-downloader (1)
+
+
+
+=== /home/deb/borednomore3/borednomore3/debian/debian/borednomore3-gui.1 ===
+
+.TH BOREDNOMORE3-GUI 1 "January 2026" "3.1.5" "BoredNoMore3 Manual"
+.SH NAME
+borednomore3-gui \- Advanced Mission Control for the BoredNoMore3 Wallpaper Engine
+.SH SYNOPSIS
+.B borednomore3-gui
+.SH DESCRIPTION
+.B borednomore3-gui
+is a high-performance graphical interface built with \fICustomTkinter\fR. It acts as a wrapper for the \fBborednomore3\fR backend, allowing real-time monitoring of the wallpaper engine, transition selection, and engine parameter tuning through a "Mission Control" style dashboard.
+
+The GUI utilizes a dedicated threading model to ensure the interface remains responsive even while the heavy image-processing transition matrix is active.
+.SH SIDEBAR CONTROLS
+The sidebar provides the primary engine configuration:
+.TP
+.B System Ready / Uptime
+Displays the current engine status and a live clock showing how long the engine has been active.
+.TP
+.B Interval (Sec)
+Numerical input to set the delay between wallpaper changes.
+.TP
+.B Animation Density
+Controls the number of frames used during transitions (Higher = smoother but more CPU intensive).
+.TP
+.B Transition Speed
+Adjusts the floating-point delay between frames. Recommended range: 0.0001 to 0.01.
+.TP
+.B Randomize Sequence
+Toggle switch to choose between sequential or shuffled wallpaper transitions.
+.TP
+.B Initialize / Stop Engine
+Primary triggers to spawn or terminate the background engine thread.
+.SH TRANSITION MATRIX
+The central panel features a grid of 40 checkboxes. Each corresponds to a specific OpenCV-powered transition effect (e.g., crossfade, slide, pixelate).
+.IP \(bu 2
+\fBSelect All\fR: Mass-enables all available transitions.
+.IP \(bu 2
+\fBClear\fR: Disables all transitions (at least one must be selected for the engine to start).
+.SH ENGINE CONSOLE
+A read-only, green-text terminal at the bottom of the window.
+.TP
+.B Output
+Displays real-time logging from the core engine, including file paths of loaded images and transition metadata.
+.TP
+.B Export Log
+Saves the current console buffer to \fIengine_log.txt\fR in the current working directory.
+.SH FILES
+.TP
+.I borednomore3.py
+The required backend logic file containing the \fBBoredNoMore3\fR class.
+.TP
+.I borednomore3_transitions.py
+Metadata file containing the names and IDs of the transition effects.
+.SH AUTHOR
+Deb (Original Author)
+.SH BUGS
+Report GUI layout issues to the project repository. Ensure OpenCV and CustomTkinter are correctly installed via pip.
+.SH SEE ALSO
+.BR borednomore3 (1)
+
+
+
+=== /home/deb/borednomore3/borednomore3/debian/debian/borednomore3.1 ===
+
+.TH BOREDNOMORE3 1 "January 2026" "0.5.0" "BoredNoMore3 Manual"
+.SH NAME
+borednomore3 \- dynamic wallpaper changer for Lubuntu/LXQt with smooth transitions
+.SH SYNOPSIS
+.B borednomore3
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B borednomore3
+is a sophisticated wallpaper management daemon designed for Lubuntu and LXQt environments.
+It uses a professional transition library to change desktop backgrounds with high-quality visual effects.
+The tool calculates transitions in real-time, supports global keyboard interrupts, and integrates
+directly with desktop managers like \fBpcmanfm-qt\fR or \fBfeh\fR.
+.SH OPTIONS
+.TP
+.BI \-i, \-\-interval " seconds"
+Time between wallpaper changes. Default is \fB300\fR (5 minutes).
+.TP
+.BI \-d, \-\-directory " path"
+Directory containing JPG wallpapers. Default is the current directory (\fB.\fR).
+.TP
+.BI \-f, \-\-frames " number"
+Number of transition frames. Higher values (up to 100) create smoother animations. Default: \fB10\fR.
+.TP
+.BI \-s, \-\-speed " seconds"
+Seconds per frame. Controls the speed of the effect. Range: \fB0.0001\fR to \fB1.0\fR. Default: \fB0.001\fR.
+.TP
+.BI \-t, \-\-transitions " list"
+Comma-separated list of transition IDs (1-40) to use.
+.TP
+.B \-r, \-\-randomize
+Randomize the order of transitions. If used with \fB\-t\fR, randomizes only the specified list.
+.TP
+.B \-h, \-\-help
+Display the comprehensive help message including the full transition library list.
+.TP
+.B \-v, \-\-version
+Display version information and exit.
+.TP
+.B \-c, \-\-credits
+Display credits and author information.
+.SH CONTROLS
+.TP
+.B q, Q
+Global Exit. Pressing 'q' anywhere on the desktop will stop the wallpaper changer immediately.
+.TP
+.B Ctrl+C
+Standard terminal interrupt to stop the daemon.
+.SH TRANSITION MODES
+The suite includes 40 transitions. Some popular IDs are:
+.IP \(bu 2
+\fB1-5\fR: Fades and Dissolves
+.IP \(bu 2
+\fB10-12\fR: Wipes and Iris effects
+.IP \(bu 2
+\fB23\fR: Glitch effect
+.IP \(bu 2
+\fB37\fR: Pixelate effect
+.IP \(bu 2
+\fB40\fR: Horizontal Split
+.SH TECHNICAL NOTES
+Images are automatically resized to match the current screen resolution (detected via \fBxrandr\fR)
+before applying transitions to ensure desktop icons remain usable.
+.SH AUTHOR
+Nepamuceno Bartolo <zzerver@gmail.com>
+.SH SEE ALSO
+.BR pcmanfm-qt (1),
+.BR feh (1)
+
+
+
+=== /home/deb/borednomore3/borednomore3/debian/debian/borednomore3-downloader.desktop ===
+
+[Desktop Entry]
+Name=BNM3 Downloader
+Comment=Bulk download high-res wallpapers
+Exec=borednomore3-downloader-gui
+Icon=folder-download
+Terminal=false
+Type=Application
+Categories=Network;FileTransfer;
+
+
+
+=== /home/deb/borednomore3/borednomore3/debian/debian/borednomore3-downloader.1 ===
+
+.TH BOREDNOMORE3-DOWNLOADER 1 "January 2026" "0.5.0" "BoredNoMore3 Manual"
+.SH NAME
+borednomore3-downloader \- advanced wallpaper fetcher with smart numbering and duplicate detection
+.SH SYNOPSIS
+.B borednomore3-downloader
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B borednomore3-downloader
+is a powerful utility designed to fetch high-quality wallpapers from multiple online sources. It features a smart sequential numbering system that prevents filename collisions and utilizes SHA256 hashing to ensure no duplicate images are saved, even when sourced from different websites.
+.SH OPTIONS
+.TP
+.BI \-d, \-\-directory " path"
+Directory where wallpapers will be saved. The script automatically scans this directory to determine the next sequential number. Default: \fB.\fR (current directory).
+.TP
+.BI \-s, \-\-search " query"
+The search term used to find relevant images across all sources. Use quotes for multi-word queries. Default: \fB"dark wallpaper"\fR.
+.TP
+.BI \-n, \-\-number " count"
+Total number of wallpapers to attempt to download. Default: \fB10\fR.
+.TP
+.B \-D, \-\-deep
+Enable deep search mode. The downloader will traverse multiple pages and deeper search results. This increases variety but takes longer.
+.TP
+.BI \-w, \-\-websites " sources"
+Comma-separated list of sources to use. 
+Available: \fBunsplash, pexels, pixabay, picsum, wallhaven, google, bing, all\fR. Default: \fBbing\fR.
+.TP
+.BI \-o, \-\-overwrite " number"
+Force the downloader to start saving files beginning at the specified number, overwriting existing files. \fBNote:\fR Duplicate detection is disabled in this mode.
+.TP
+.B \-R, \-\-random-source
+Randomly select one source from the available library. If \fB\-w\fR is also provided, \fB\-w\fR takes precedence.
+.TP
+.B \-h, \-\-help
+Display the built-in help text and exit.
+.TP
+.B \-v, \-\-version
+Display version information and exit.
+.SH FEATURES
+.TP
+.B Smart Numbering
+Scans the target directory for \fIwallpaper_XXXXX.jpg\fR patterns and automatically starts numbering at \fImax + 1\fR.
+.TP
+.B Duplicate Detection
+Calculates the SHA256 hash of every downloaded file. If the hash matches an existing file in the directory, the download is discarded to save space.
+.TP
+.B Source Variety
+Supports a mix of API-based (Unsplash, Wallhaven) and scraping-based (Google, Bing) retrieval methods to ensure a wide selection of content.
+.SH EXAMPLES
+.TP
+.B Download 20 space-themed wallpapers to a specific folder:
+borednomore3-downloader -s "deep space nebula" -n 20 -d ~/Pictures/Space
+.TP
+.B Use only Unsplash and Pexels with deep search enabled:
+borednomore3-downloader -w unsplash,pexels -D
+.TP
+.B Reset a collection by overwriting from the first image:
+borednomore3-downloader -o 1 -n 50
+.SH AUTHOR
+Nepamuceno Bartolo <zzerver@gmail.com>
+.SH SEE ALSO
+.BR borednomore3 (1),
+.BR borednomore3-gui (1)
+
+
+
+=== /home/deb/borednomore3/borednomore3/debian/debian/borednomore3.desktop ===
+
+[Desktop Entry]
+Name=BoredNoMore3 Mission Control
+Comment=Manage and run wallpaper transitions
+Exec=borednomore3-gui
+Icon=preferences-desktop-wallpaper
+Terminal=false
+Type=Application
+Categories=Settings;DesktopSettings;
+
+
+
+=== /home/deb/borednomore3/borednomore3/libs/desktop/__init__.py ===
+
+"""Desktop environment detection and handling"""
+from .desktop_detector import DesktopDetector
+__all__ = ['DesktopDetector']
+
+
+
+=== /home/deb/borednomore3/borednomore3/libs/desktop/desktop_detector.py ===
+
+"""
+Universal desktop environment detector for Ubuntu/Debian-based systems
+Detects and provides wallpaper-setting capabilities for all major desktops
+"""
+
+import os
+import subprocess
+import shutil
+
+
+class DesktopDetector:
+    """Detects desktop environment and provides wallpaper setting method"""
+    
+    def __init__(self, logger):
+        self.logger = logger
+        self.desktop_name = None
+        self.desktop_session = None
+        self.width = 1920
+        self.height = 1080
+        self.setter_cmd = None
+    
+    def detect(self):
+        """Detect desktop environment and screen resolution"""
+        self.logger.debug("Starting desktop detection...")
+        
+        # Detect desktop
+        self._detect_desktop()
+        
+        # Detect resolution
+        self._detect_resolution()
+        
+        # Select wallpaper setter
+        self._select_wallpaper_setter()
+        
+        return {
+            'name': self.desktop_name,
+            'session': self.desktop_session,
+            'width': self.width,
+            'height': self.height,
+            'setter': self.setter_cmd
+        }
+    
+    def _detect_desktop(self):
+        """Detect which desktop environment is running"""
+        # Check environment variables
+        desktop_session = os.environ.get('DESKTOP_SESSION', '').lower()
+        xdg_current_desktop = os.environ.get('XDG_CURRENT_DESKTOP', '').lower()
+        gdmsession = os.environ.get('GDMSESSION', '').lower()
+        
+        self.logger.debug(f"DESKTOP_SESSION: {desktop_session}")
+        self.logger.debug(f"XDG_CURRENT_DESKTOP: {xdg_current_desktop}")
+        self.logger.debug(f"GDMSESSION: {gdmsession}")
+        
+        # Detect desktop type
+        if 'gnome' in xdg_current_desktop or 'gnome' in desktop_session:
+            self.desktop_name = 'GNOME'
+            self.desktop_session = 'gnome'
+        elif 'kde' in xdg_current_desktop or 'plasma' in desktop_session:
+            self.desktop_name = 'KDE Plasma'
+            self.desktop_session = 'kde'
+        elif 'xfce' in xdg_current_desktop or 'xfce' in desktop_session:
+            self.desktop_name = 'XFCE'
+            self.desktop_session = 'xfce'
+        elif 'lxqt' in xdg_current_desktop or 'lxqt' in desktop_session:
+            self.desktop_name = 'LXQt'
+            self.desktop_session = 'lxqt'
+        elif 'mate' in xdg_current_desktop or 'mate' in desktop_session:
+            self.desktop_name = 'MATE'
+            self.desktop_session = 'mate'
+        elif 'cinnamon' in xdg_current_desktop or 'cinnamon' in desktop_session:
+            self.desktop_name = 'Cinnamon'
+            self.desktop_session = 'cinnamon'
+        elif 'budgie' in xdg_current_desktop or 'budgie' in desktop_session:
+            self.desktop_name = 'Budgie'
+            self.desktop_session = 'budgie'
+        elif 'i3' in desktop_session or 'i3' in xdg_current_desktop:
+            self.desktop_name = 'i3'
+            self.desktop_session = 'i3'
+        else:
+            self.desktop_name = 'Unknown'
+            self.desktop_session = 'generic'
+            self.logger.warning(f"Unknown desktop: {xdg_current_desktop}, {desktop_session}")
+    
+    def _detect_resolution(self):
+        """Detect screen resolution"""
+        try:
+            # Try xrandr first (most reliable)
+            output = subprocess.check_output(['xrandr'], text=True, stderr=subprocess.DEVNULL)
+            for line in output.split('\n'):
+                if ' connected' in line and 'primary' in line:
+                    parts = line.split()
+                    for part in parts:
+                        if 'x' in part and part[0].isdigit():
+                            resolution = part.split('+')[0]
+                            w, h = resolution.split('x')
+                            self.width = int(w)
+                            self.height = int(h)
+                            self.logger.debug(f"Detected resolution via xrandr: {self.width}x{self.height}")
+                            return
+            
+            # If no primary, take first connected
+            output = subprocess.check_output(['xrandr'], text=True, stderr=subprocess.DEVNULL)
+            for line in output.split('\n'):
+                if ' connected' in line:
+                    parts = line.split()
+                    for part in parts:
+                        if 'x' in part and part[0].isdigit():
+                            resolution = part.split('+')[0]
+                            w, h = resolution.split('x')
+                            self.width = int(w)
+                            self.height = int(h)
+                            self.logger.debug(f"Detected resolution via xrandr: {self.width}x{self.height}")
+                            return
+        except:
+            self.logger.debug("xrandr failed, trying xdpyinfo...")
+        
+        try:
+            # Try xdpyinfo
+            output = subprocess.check_output(['xdpyinfo'], text=True, stderr=subprocess.DEVNULL)
+            for line in output.split('\n'):
+                if 'dimensions:' in line:
+                    dims = line.split()[1]
+                    w, h = dims.split('x')
+                    self.width = int(w)
+                    self.height = int(h)
+                    self.logger.debug(f"Detected resolution via xdpyinfo: {self.width}x{self.height}")
+                    return
+        except:
+            self.logger.warning("Could not detect resolution, using default 1920x1080")
+    
+    def _select_wallpaper_setter(self):
+        """Select appropriate wallpaper setter command for desktop"""
+        setters = {
+            'gnome': [
+                ('gsettings', ['gsettings', 'set', 'org.gnome.desktop.background', 'picture-uri', 'file://{}']),
+                ('gsettings', ['gsettings', 'set', 'org.gnome.desktop.background', 'picture-uri-dark', 'file://{}'])
+            ],
+            'kde': [
+                ('qdbus', self._kde_setter)
+            ],
+            'xfce': [
+                ('xfconf-query', self._xfce_setter)
+            ],
+            'lxqt': [
+                ('pcmanfm-qt', ['pcmanfm-qt', '--set-wallpaper', '{}', '--wallpaper-mode=stretch', '--desktop'])
+            ],
+            'mate': [
+                ('gsettings', ['gsettings', 'set', 'org.mate.background', 'picture-filename', '{}'])
+            ],
+            'cinnamon': [
+                ('gsettings', ['gsettings', 'set', 'org.cinnamon.desktop.background', 'picture-uri', 'file://{}'])
+            ],
+            'budgie': [
+                ('gsettings', ['gsettings', 'set', 'org.gnome.desktop.background', 'picture-uri', 'file://{}'])
+            ],
+            'i3': [
+                ('feh', ['feh', '--bg-fill', '{}'])
+            ],
+            'generic': [
+                ('feh', ['feh', '--bg-fill', '{}']),
+                ('nitrogen', ['nitrogen', '--set-zoom-fill', '{}']),
+                ('xwallpaper', ['xwallpaper', '--zoom', '{}'])
+            ]
+        }
+        
+        desktop_setters = setters.get(self.desktop_session, setters['generic'])
+        
+        for tool, cmd in desktop_setters:
+            if shutil.which(tool):
+                self.setter_cmd = cmd
+                self.logger.debug(f"Selected wallpaper setter: {tool}")
+                return
+        
+        # Fallback
+        self.logger.warning("No suitable wallpaper setter found, using feh as fallback")
+        self.setter_cmd = ['feh', '--bg-fill', '{}']
+    
+    def _kde_setter(self, wallpaper_path):
+        """KDE-specific wallpaper setter using qdbus"""
+        script = f"""
+qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+var allDesktops = desktops();
+for (i=0;i<allDesktops.length;i++) {{
+    d = allDesktops[i];
+    d.wallpaperPlugin = "org.kde.image";
+    d.currentConfigGroup = Array("Wallpaper", "org.kde.image", "General");
+    d.writeConfig("Image", "file://{wallpaper_path}");
+}}'
+"""
+        subprocess.run(script, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    
+    def _xfce_setter(self, wallpaper_path):
+        """XFCE-specific wallpaper setter"""
+        try:
+            # Get all xfce4 properties related to backdrop
+            output = subprocess.check_output(
+                ['xfconf-query', '-c', 'xfce4-desktop', '-l'],
+                text=True,
+                stderr=subprocess.DEVNULL
+            )
+            
+            for line in output.split('\n'):
+                if '/backdrop/screen' in line and '/last-image' in line:
+                    subprocess.run(
+                        ['xfconf-query', '-c', 'xfce4-desktop', '-p', line.strip(), '-s', wallpaper_path],
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL
+                    )
+        except:
+            self.logger.debug("XFCE wallpaper setting via xfconf-query failed")
+    
+    def set_wallpaper(self, wallpaper_path):
+        """Set wallpaper using detected desktop method"""
+        if callable(self.setter_cmd):
+            # Custom function (KDE, XFCE)
+            self.logger.debug(f"Setting wallpaper via custom function: {wallpaper_path}")
+            self.setter_cmd(wallpaper_path)
+        else:
+            # Command list
+            if isinstance(self.setter_cmd, list):
+                # Handle multiple commands (GNOME dark mode)
+                if isinstance(self.setter_cmd[0], tuple):
+                    for _, cmd in self.setter_cmd:
+                        final_cmd = [part.format(wallpaper_path) for part in cmd]
+                        self.logger.debug(f"Executing: {' '.join(final_cmd)}")
+                        subprocess.run(final_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                else:
+                    final_cmd = [part.format(wallpaper_path) for part in self.setter_cmd]
+                    self.logger.debug(f"Executing: {' '.join(final_cmd)}")
+                    subprocess.run(final_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+
+=== /home/deb/borednomore3/borednomore3/libs/__init__.py ===
+
+"""Borednomore3 library modules"""
+
+
+
+=== /home/deb/borednomore3/borednomore3/libs/config/config_manager.py ===
+
+"""
+Configuration manager for borednomore3
+Handles loading, saving, and merging configuration from files and CLI args
+"""
+
+import os
+import configparser
+
+# Paths
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
+CONF_DIR = os.path.join(BASE_DIR, 'conf')
+WALLPAPERS_DIR = os.path.join(BASE_DIR, 'wallpapers')
+
+DEFAULT_CONFIG = {
+    'interval': 300,
+    'directory': WALLPAPERS_DIR,
+    'frames': 10,
+    'speed': 0.001,
+    'transitions': None,
+    'randomize': False,
+    'keep_image': False,
+    'randomize_wallpapers': False,
+    'wallpaper_patterns': ['*.jpg', '*.png', '*.jpeg', '*.webp']
+}
+
+DEFAULT_CONF_FILE = os.path.join(CONF_DIR, 'borednomore3.conf')
+DEFAULT_LIST_FILE = os.path.join(CONF_DIR, 'borednomore3.list')
+
+
+class ConfigManager:
+    """Manages configuration from files and command-line arguments"""
+    
+    def __init__(self, logger, config_path=None):
+        self.logger = logger
+        self.config_path = config_path or DEFAULT_CONF_FILE
+        self.config = DEFAULT_CONFIG.copy()
+        
+        # Ensure conf directory exists
+        os.makedirs(CONF_DIR, exist_ok=True)
+        
+        # Create default config if needed
+        if not os.path.exists(self.config_path):
+            self.logger.info(f"Creating default config: {self.config_path}")
+            self._create_default_config()
+        
+        # Load config file
+        self._load_config_file()
+    
+    def _create_default_config(self):
+        """Create default configuration file"""
+        config_dir = os.path.dirname(self.config_path)
+        rel_wallpapers_path = os.path.relpath(WALLPAPERS_DIR, config_dir)
+        
+        parser = configparser.ConfigParser()
+        parser['settings'] = {
+            'interval': str(DEFAULT_CONFIG['interval']),
+            'directory': rel_wallpapers_path,
+            'frames': str(DEFAULT_CONFIG['frames']),
+            'speed': str(DEFAULT_CONFIG['speed']),
+            'transitions': '',
+            'randomize': str(DEFAULT_CONFIG['randomize']),
+            'keep_image': str(DEFAULT_CONFIG['keep_image']),
+            'randomize_wallpapers': str(DEFAULT_CONFIG['randomize_wallpapers'])
+        }
+        
+        try:
+            with open(self.config_path, 'w') as f:
+                parser.write(f)
+            self.logger.debug(f"Created config file: {self.config_path}")
+        except Exception as e:
+            self.logger.error(f"Failed to create config: {e}")
+    
+    def _load_config_file(self):
+        """Load configuration from file"""
+        if not os.path.exists(self.config_path):
+            self.logger.warning(f"Config file not found: {self.config_path}")
+            return
+        
+        try:
+            parser = configparser.ConfigParser()
+            parser.read(self.config_path)
+            
+            if 'settings' in parser:
+                settings = parser['settings']
+                
+                if 'interval' in settings:
+                    self.config['interval'] = int(settings['interval'])
+                    self.logger.debug(f"Config: interval = {self.config['interval']}")
+                
+                if 'directory' in settings:
+                    dir_path = settings['directory']
+                    if not os.path.isabs(dir_path):
+                        dir_path = os.path.join(os.path.dirname(self.config_path), dir_path)
+                    self.config['directory'] = os.path.abspath(dir_path)
+                    self.logger.debug(f"Config: directory = {self.config['directory']}")
+                
+                if 'frames' in settings:
+                    self.config['frames'] = int(settings['frames'])
+                    self.logger.debug(f"Config: frames = {self.config['frames']}")
+                
+                if 'speed' in settings:
+                    self.config['speed'] = float(settings['speed'])
+                    self.logger.debug(f"Config: speed = {self.config['speed']}")
+                
+                if 'transitions' in settings and settings['transitions']:
+                    self.config['transitions'] = settings['transitions']
+                    self.logger.debug(f"Config: transitions = {self.config['transitions']}")
+                
+                if 'randomize' in settings:
+                    self.config['randomize'] = settings.getboolean('randomize')
+                    self.logger.debug(f"Config: randomize = {self.config['randomize']}")
+                
+                if 'keep_image' in settings:
+                    self.config['keep_image'] = settings.getboolean('keep_image')
+                    self.logger.debug(f"Config: keep_image = {self.config['keep_image']}")
+                
+                if 'randomize_wallpapers' in settings:
+                    self.config['randomize_wallpapers'] = settings.getboolean('randomize_wallpapers')
+                    self.logger.debug(f"Config: randomize_wallpapers = {self.config['randomize_wallpapers']}")
+            
+            self.logger.info(f"Loaded config from: {self.config_path}")
+        except Exception as e:
+            self.logger.error(f"Error loading config: {e}")
+    
+    def _load_wallpaper_patterns(self, list_file):
+        """Load wallpaper patterns from list file"""
+        if list_file == 'default':
+            list_file = DEFAULT_LIST_FILE
+        
+        if not os.path.exists(list_file):
+            self.logger.warning(f"Wallpaper list not found: {list_file}")
+            if list_file == DEFAULT_LIST_FILE:
+                self._create_default_list()
+            return DEFAULT_CONFIG['wallpaper_patterns']
+        
+        try:
+            patterns = []
+            with open(list_file, 'r') as f:
+                for line in f:
+                    line = line.split('#', 1)[0].strip()
+                    if line:
+                        patterns.append(line)
+            
+            if not patterns:
+                self.logger.warning(f"No patterns in {list_file}, using defaults")
+                return DEFAULT_CONFIG['wallpaper_patterns']
+            
+            self.logger.info(f"Loaded {len(patterns)} patterns from {list_file}")
+            return patterns
+        except Exception as e:
+            self.logger.error(f"Error reading wallpaper list: {e}")
+            return DEFAULT_CONFIG['wallpaper_patterns']
+    
+    def _create_default_list(self):
+        """Create default wallpaper list file"""
+        patterns = [
+            "*.jpg",
+            "*.png",
+            "*.jpeg",
+            "*.webp",
+            "# Add more patterns, one per line"
+        ]
+        
+        try:
+            with open(DEFAULT_LIST_FILE, 'w') as f:
+                for pattern in patterns:
+                    f.write(pattern + '\n')
+            self.logger.debug(f"Created default wallpaper list: {DEFAULT_LIST_FILE}")
+        except Exception as e:
+            self.logger.error(f"Failed to create wallpaper list: {e}")
+    
+    def get_config(self, args):
+        """Get final configuration by merging file config with CLI args"""
+        # CLI args override file config
+        if args.interval is not None:
+            self.config['interval'] = args.interval
+            self.logger.debug(f"CLI override: interval = {args.interval}")
+        
+        if args.directory is not None:
+            self.config['directory'] = os.path.abspath(os.path.expanduser(args.directory))
+            self.logger.debug(f"CLI override: directory = {self.config['directory']}")
+        
+        if args.frames is not None:
+            self.config['frames'] = args.frames
+            self.logger.debug(f"CLI override: frames = {args.frames}")
+        
+        if args.speed is not None:
+            self.config['speed'] = args.speed
+            self.logger.debug(f"CLI override: speed = {args.speed}")
+        
+        if args.transitions is not None:
+            self.config['transitions'] = args.transitions
+            self.logger.debug(f"CLI override: transitions = {args.transitions}")
+        
+        if args.randomize:
+            self.config['randomize'] = True
+            self.logger.debug("CLI override: randomize = True")
+        
+        if args.randomize_wallpapers:
+            self.config['randomize_wallpapers'] = True
+            self.logger.debug("CLI override: randomize_wallpapers = True")
+        
+        if args.keep_image:
+            self.config['keep_image'] = True
+            self.logger.debug("CLI override: keep_image = True")
+        
+        if args.wallpaper_list is not None:
+            patterns = self._load_wallpaper_patterns(args.wallpaper_list)
+            self.config['wallpaper_patterns'] = patterns
+            self.logger.debug(f"CLI override: wallpaper_patterns = {patterns}")
+        
+        return self.config
+
+
+
+=== /home/deb/borednomore3/borednomore3/libs/config/__init__.py ===
+
+"""Configuration management module"""
+from .config_manager import ConfigManager, DEFAULT_CONFIG
+__all__ = ['ConfigManager', 'DEFAULT_CONFIG']
+
+
+
+=== /home/deb/borednomore3/borednomore3/libs/utils/validator.py ===
+
+"""
+Transition engine - handles transition selection and application
+"""
+
+import os
+import subprocess
+import random
+import sys
+
+
+def validate_args(config, logger):
+    """Validate configuration parameters"""
+    errors = []
+    
+    if config['interval'] < 1:
+        errors.append("Interval must be >= 1 second")
+    
+    if config['frames'] < 5 or config['frames'] > 100:
+        errors.append("Frames must be between 5 and 100")
+    
+    if config['speed'] <= 0 or config['speed'] > 1.0:
+        errors.append("Speed must be between 0.0001 and 1.0")
+    
+    if errors:
+        logger.error("Configuration validation failed:")
+        for error in errors:
+            logger.error(f"  - {error}")
+        sys.exit(1)
+    
+    logger.debug("Configuration validation passed")
+
+
+
+# Transition logic map
+LOGIC_MAP = {
+    0: ["slide-left", "slide-out-l", "slide-in-l"],
+    1: ["slide-right", "slide-out-r", "slide-in-r"],
+    2: ["slide-up", "slide-out-u", "slide-in-u"],
+    3: ["slide-down", "slide-out-d", "slide-in-d"],
+    4: ["spin-cw", "rot-out-cw", "rot-in-cw"],
+    5: ["spin-ccw", "rot-out-ccw", "rot-in-ccw"],
+    6: ["zoom-io", "zoom-out", "zoom-in"]
+}
+
+TRANSITIONS = {i: LOGIC_MAP[i % 7] for i in range(1, 1001)}
+
+# Movement transitions that require keep_image
+MOVEMENT_IDS = list(range(5, 9)) + list(range(37, 49)) + list(range(82, 86))
+
+
+class TransitionEngine:
+    """Handles transition selection and execution"""
+    
+    def __init__(self, transitions, randomize, frames, speed, keep_image, desktop_info, logger):
+        self.logger = logger
+        self.frames = frames
+        self.speed = speed
+        self.keep_image = keep_image
+        self.desktop_info = desktop_info
+        self.width = desktop_info['width']
+        self.height = desktop_info['height']
+        
+        # Parse transition list
+        if transitions:
+            self.transition_list = self._parse_transitions(transitions)
+        else:
+            self.transition_list = list(TRANSITIONS.keys())
+        
+        self.randomize = randomize
+        self.current_index = 0
+        
+        self.logger.info(f"Initialized with {len(self.transition_list)} transitions")
+        self.logger.debug(f"Randomize: {self.randomize}")
+        self.logger.debug(f"Frames: {self.frames}")
+        self.logger.debug(f"Speed: {self.speed}")
+        self.logger.debug(f"Keep image: {self.keep_image}")
+    
+    def _parse_transitions(self, transition_str):
+        """Parse transition string (e.g., '1,5,10-15') into list"""
+        try:
+            parts = [t.strip() for t in transition_str.split(',')]
+            transitions = []
+            
+            for part in parts:
+                if '-' in part:
+                    start_str, end_str = part.split('-')
+                    start, end = int(start_str), int(end_str)
+                    transitions.extend(range(start, end + 1))
+                else:
+                    transitions.append(int(part))
+            
+            # Validate transitions
+            valid = []
+            for t in transitions:
+                if t in TRANSITIONS:
+                    valid.append(t)
+                else:
+                    self.logger.warning(f"Invalid transition ID: {t}, skipping")
+            
+            if not valid:
+                self.logger.error("No valid transitions provided")
+                raise ValueError("No valid transitions")
+            
+            return sorted(set(valid))
+        except ValueError as e:
+            self.logger.error(f"Invalid transition format: {transition_str}")
+            raise
+    
+    def get_next_transition(self):
+        """Get next transition based on selection mode"""
+        if self.randomize:
+            tid = random.choice(self.transition_list)
+            self.logger.debug(f"Random transition selected: {tid}")
+        else:
+            tid = self.transition_list[self.current_index]
+            self.current_index = (self.current_index + 1) % len(self.transition_list)
+            self.logger.debug(f"Sequential transition {self.current_index}/{len(self.transition_list)}: {tid}")
+        
+        transition_data = TRANSITIONS[tid]
+        return {
+            'id': tid,
+            'name': transition_data[0],
+            'exit_mode': transition_data[1],
+            'entry_mode': transition_data[2]
+        }
+    
+    def _get_imagemagick_cmd(self, img, mode, frames, width, height):
+        """Generate ImageMagick command for transition phase"""
+        t_step = "(t+1)"
+        
+        # Exit modes (old image leaving)
+        if mode == "slide-out-l":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 %[fx:-{t_step}*({width}/{frames})],0' "
+        elif mode == "slide-out-r":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 %[fx:{t_step}*({width}/{frames})],0' "
+        elif mode == "slide-out-u":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 0,%[fx:-{t_step}*({height}/{frames})]' "
+        elif mode == "slide-out-d":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 0,%[fx:{t_step}*({height}/{frames})]' "
+        elif mode == "rot-out-cw":
+            return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:{t_step}*(90/{frames})]' "
+        elif mode == "rot-out-ccw":
+            return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:-{t_step}*(90/{frames})]' "
+        elif mode == "zoom-out":
+            return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:1-{t_step}*(1/{frames})]' "
+        
+        # Entry modes (new image arriving)
+        elif mode == "slide-in-l":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 %[fx:{width}-{t_step}*({width}/{frames})],0' "
+        elif mode == "slide-in-r":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 %[fx:-{width}+{t_step}*({width}/{frames})],0' "
+        elif mode == "slide-in-u":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 0,%[fx:{height}-{t_step}*({height}/{frames})]' "
+        elif mode == "slide-in-d":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 0,%[fx:-{height}+{t_step}*({height}/{frames})]' "
+        elif mode == "rot-in-cw":
+            return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:90-{t_step}*(90/{frames})]' "
+        elif mode == "rot-in-ccw":
+            return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:-90+{t_step}*(90/{frames})]' "
+        elif mode == "zoom-in":
+            return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:{t_step}*(1/{frames})]' "
+        
+        # Fallback
+        return rf"convert '{img}' -morph {frames} "
+    
+    def apply(self, old_img, new_img, transition, set_wallpaper_func):
+        """Apply transition between two images"""
+        tid = transition['id']
+        exit_mode = transition['exit_mode']
+        entry_mode = transition['entry_mode']
+        
+        self.logger.transition_start(transition['name'], tid)
+        
+        # Auto-enable keep_image for movement transitions
+        effective_keep = self.keep_image or (tid in MOVEMENT_IDS)
+        if tid in MOVEMENT_IDS and not self.keep_image:
+            self.logger.debug("Auto-enabling keep_image for movement transition")
+        
+        tmp_dir = "/tmp/bnm3_frames"
+        os.makedirs(tmp_dir, exist_ok=True)
+        
+        self.logger.debug(f"Cleaning temp directory: {tmp_dir}")
+        subprocess.run(f"rm -f {tmp_dir}/*.jpg", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        # Calculate frame split
+        exit_frames = self.frames // 2
+        entry_frames = self.frames - exit_frames
+        
+        # Generate exit frames
+        if exit_frames > 0:
+            self.logger.debug(f"Generating {exit_frames} exit frames ({exit_mode})...")
+            cmd_exit = self._get_imagemagick_cmd(old_img, exit_mode, exit_frames, self.width, self.height)
+            cmd_exit += f"{tmp_dir}/f01_%03d.jpg"
+            self.logger.debug(f"Command: {cmd_exit[:100]}...")
+            subprocess.run(cmd_exit, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        # Generate entry frames
+        self.logger.debug(f"Generating {entry_frames} entry frames ({entry_mode})...")
+        cmd_entry = self._get_imagemagick_cmd(new_img, entry_mode, entry_frames, self.width, self.height)
+        cmd_entry += f"{tmp_dir}/f02_%03d.jpg"
+        self.logger.debug(f"Command: {cmd_entry[:100]}...")
+        subprocess.run(cmd_entry, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        # Play frames
+        frames_list = sorted([os.path.join(tmp_dir, f) for f in os.listdir(tmp_dir) if f.endswith('.jpg')])
+        total_frames = len(frames_list)
+        
+        self.logger.debug(f"Playing {total_frames} frames...")
+        for i, frame in enumerate(frames_list):
+            self.logger.transition_progress(i + 1, total_frames)
+            set_wallpaper_func(frame)
+        
+        # Set final wallpaper
+        self.logger.debug("Setting final wallpaper...")
+        set_wallpaper_func(new_img)
+        
+        # Cleanup
+        self.logger.debug("Cleaning up frames...")
+        subprocess.run(f"rm -f {tmp_dir}/*.jpg", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        self.logger.transition_complete()
+
+
+
+=== /home/deb/borednomore3/borednomore3/libs/utils/logger.py ===
+
+"""
+Logger utility for real-time debug and info messages with rotation
+"""
+import sys
+import os
+from datetime import datetime
+
+# Log levels
+DEBUG = 0
+INFO = 1
+WARNING = 2
+ERROR = 3
+
+
+class Logger:
+    """Real-time logging with debug support and auto-rotation"""
+    
+    def __init__(self, level=INFO, log_file=None, max_lines=1000):
+        self.level = level
+        self.log_file = log_file
+        self.max_lines = max_lines
+        self.line_count = 0
+        self.colors = {
+            'DEBUG': '\033[36m',
+            'INFO': '\033[32m',
+            'WARNING': '\033[33m',
+            'ERROR': '\033[31m',
+            'RESET': '\033[0m'
+        }
+        
+        # Clear console on start only if terminal
+        if sys.stdout.isatty():
+            os.system('clear' if os.name != 'nt' else 'cls')
+        
+        # Trim log file if it exists
+        if self.log_file and os.path.exists(self.log_file):
+            self._trim_log_file()
+    
+    def _trim_log_file(self):
+        """Keep only last max_lines in log file"""
+        try:
+            with open(self.log_file, 'r') as f:
+                lines = f.readlines()
+            
+            if len(lines) > self.max_lines:
+                with open(self.log_file, 'w') as f:
+                    f.writelines(lines[-self.max_lines:])
+        except:
+            pass
+    
+    def _trim_console(self):
+        """Clear console when line count exceeds max_lines"""
+        if not sys.stdout.isatty():
+            return
+        self.line_count += 1
+        if self.line_count >= self.max_lines:
+            os.system('clear' if os.name != 'nt' else 'cls')
+            self.line_count = 0
+            print(f"[Console cleared at {self.max_lines} lines]")
+    
+    def _log(self, level, level_name, message):
+        """Internal log method"""
+        if level < self.level:
+            return
+        
+        timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+        
+        # Console output with color only if terminal
+        if sys.stdout.isatty():
+            color = self.colors.get(level_name, '')
+            reset = self.colors['RESET']
+            prefix = f"{color}[{timestamp}] [{level_name}]{reset}"
+        else:
+            prefix = f"[{timestamp}] [{level_name}]"
+        
+        print(f"{prefix} {message}", flush=True)
+        self._trim_console()
+        
+        # File output without color
+        if self.log_file:
+            try:
+                with open(self.log_file, 'a') as f:
+                    f.write(f"[{timestamp}] [{level_name}] {message}\n")
+                self._trim_log_file()
+            except:
+                pass
+    
+    def debug(self, message):
+        self._log(DEBUG, 'DEBUG', message)
+    
+    def info(self, message):
+        self._log(INFO, 'INFO', message)
+    
+    def warning(self, message):
+        self._log(WARNING, 'WARNING', message)
+    
+    def error(self, message):
+        self._log(ERROR, 'ERROR', message)
+    
+    def transition_start(self, transition_name, transition_id):
+        self.info(f"Starting transition: {transition_name} (ID: {transition_id})")
+    
+    def transition_progress(self, current, total):
+        if self.level <= DEBUG:
+            percent = (current / total) * 100
+            self.debug(f"Transition progress: {current}/{total} ({percent:.1f}%)")
+    
+    def transition_complete(self):
+        self.info("Transition complete")
+    
+    def wallpaper_change(self, wallpaper_name, index, total):
+        self.info(f"Changing to wallpaper {index + 1}/{total}: {wallpaper_name}")
+
+
+
+=== /home/deb/borednomore3/borednomore3/libs/utils/__init__.py ===
+
+"""Utility modules"""
+from .logger import Logger, DEBUG, INFO, WARNING, ERROR
+from .validator import validate_args
+__all__ = ['Logger', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'validate_args']
+
+
+
+=== /home/deb/borednomore3/borednomore3/libs/core/wallpaper_manager.py ===
+
+"""
+Wallpaper manager - handles wallpaper loading and selection
+"""
+
+import os
+import glob
+import random
+import time
+
+
+class WallpaperManager:
+    """Manages wallpaper collection and selection"""
+    
+    def __init__(self, directory, patterns, randomize, logger):
+        # Initialize random seed to ensure different results on script restart
+        random.seed(time.time_ns())
+        
+        self.directory = os.path.abspath(os.path.expanduser(directory))
+        self.patterns = patterns
+        self.randomize = randomize
+        self.logger = logger
+        self.wallpapers = []
+        self.playlist = []  # The actual playback queue
+        self.current_index = -1
+        
+        self._load_wallpapers()
+        self._prepare_playlist()
+    
+    def _load_wallpapers(self):
+        """Load wallpapers from directory using patterns"""
+        if not os.path.isdir(self.directory):
+            self.logger.error(f"Directory not found: {self.directory}")
+            raise FileNotFoundError(f"Wallpaper directory not found: {self.directory}")
+        
+        self.logger.debug(f"Loading wallpapers from: {self.directory}")
+        self.logger.debug(f"Using patterns: {self.patterns}")
+        
+        self.wallpapers = []
+        for pattern in self.patterns:
+            full_pattern = os.path.join(self.directory, pattern)
+            matched = sorted(glob.glob(full_pattern))
+            self.wallpapers.extend(matched)
+            self.logger.debug(f"Pattern '{pattern}' matched {len(matched)} files")
+        
+        # Remove duplicates
+        self.wallpapers = sorted(list(set(self.wallpapers)))
+        
+        if not self.wallpapers:
+            self.logger.error(f"No wallpapers found in {self.directory}")
+            self.logger.error(f"Patterns used: {self.patterns}")
+            raise FileNotFoundError("No wallpapers matched the patterns")
+        
+        self.logger.info(f"Loaded {len(self.wallpapers)} wallpapers")
+        
+        # Log first few wallpapers in debug mode
+        if self.logger.level == 0:  # DEBUG
+            for i, wp in enumerate(self.wallpapers[:5]):
+                self.logger.debug(f"  [{i}] {os.path.basename(wp)}")
+            if len(self.wallpapers) > 5:
+                self.logger.debug(f"  ... and {len(self.wallpapers) - 5} more")
+
+    def _prepare_playlist(self):
+        """Initializes the playlist and shuffles if randomize is enabled"""
+        self.playlist = list(self.wallpapers)
+        if self.randomize:
+            self.logger.debug("Shuffling wallpaper playlist for true randomization...")
+            random.shuffle(self.playlist)
+        self.current_index = -1
+    
+    def get_next(self):
+        """Get next wallpaper based on selection mode"""
+        # Increment index
+        self.current_index += 1
+
+        # If we reached the end of the playlist, reshuffle and restart
+        if self.current_index >= len(self.playlist):
+            self.logger.info("Playlist cycle complete. Reshuffling...")
+            self._prepare_playlist()
+            self.current_index = 0
+
+        wallpaper = self.playlist[self.current_index]
+        
+        # Log debug info based on mode
+        if self.randomize:
+            self.logger.debug(f"Random selection (shuffled): {self.current_index + 1}/{len(self.playlist)}")
+        else:
+            self.logger.debug(f"Sequential selection: index {self.current_index}/{len(self.playlist) - 1}")
+        
+        self.logger.debug(f"Selected: {wallpaper}")
+        return wallpaper
+    
+    def get_current(self):
+        """Get current wallpaper"""
+        if 0 <= self.current_index < len(self.playlist):
+            return self.playlist[self.current_index]
+        return None
+    
+    def reload(self):
+        """Reload wallpaper list"""
+        self.logger.info("Reloading wallpapers...")
+        old_count = len(self.wallpapers)
+        self._load_wallpapers()
+        self._prepare_playlist() # Also re-prepare the playlist on reload
+        new_count = len(self.wallpapers)
+        self.logger.info(f"Wallpapers: {old_count} -> {new_count}")
+
+
+
+=== /home/deb/borednomore3/borednomore3/libs/core/transition_engine.py ===
+
+"""
+Transition engine - handles transition selection and application
+Fixed: Implemented synchronous frame purging and targeted file globbing to prevent ghost frames.
+"""
+
+import os
+import subprocess
+import random
+import glob
+import time
+
+# Transition logic map
+LOGIC_MAP = {
+    0: ["slide-left", "slide-out-l", "slide-in-l"],
+    1: ["slide-right", "slide-out-r", "slide-in-r"],
+    2: ["slide-up", "slide-out-u", "slide-in-u"],
+    3: ["slide-down", "slide-out-d", "slide-in-d"],
+    4: ["spin-cw", "rot-out-cw", "rot-in-cw"],
+    5: ["spin-ccw", "rot-out-ccw", "rot-in-ccw"],
+    6: ["zoom-io", "zoom-out", "zoom-in"]
+}
+
+TRANSITIONS = {i: LOGIC_MAP[i % 7] for i in range(1, 1001)}
+
+# Movement transitions that require keep_image
+MOVEMENT_IDS = list(range(5, 9)) + list(range(37, 49)) + list(range(82, 86))
+
+
+class TransitionEngine:
+    """Handles transition selection and execution"""
+    
+    def __init__(self, transitions, randomize, frames, speed, keep_image, desktop_info, logger):
+        # Initialize random seed for unique results every session
+        random.seed(time.time_ns())
+
+        self.logger = logger
+        self.frames = frames
+        self.speed = speed
+        self.keep_image = keep_image
+        self.desktop_info = desktop_info
+        self.width = desktop_info['width']
+        self.height = desktop_info['height']
+        
+        # Parse transition list
+        if transitions:
+            self.transition_list = self._parse_transitions(transitions)
+        else:
+            self.transition_list = list(TRANSITIONS.keys())
+        
+        self.randomize = randomize
+        self.current_index = -1
+        self.transition_playlist = [] # The "deck" of transitions
+        
+        # Prepare the first cycle
+        self._prepare_transition_playlist()
+        
+        self.logger.info(f"Initialized with {len(self.transition_list)} transitions")
+        self.logger.debug(f"Randomize: {self.randomize}")
+        self.logger.debug(f"Frames: {self.frames}")
+        self.logger.debug(f"Speed: {self.speed}")
+        self.logger.debug(f"Keep image: {self.keep_image}")
+
+    def _parse_transitions(self, transition_str):
+        """Parse transition string (e.g., '1,5,10-15') into list"""
+        try:
+            parts = [t.strip() for t in transition_str.split(',')]
+            transitions = []
+            
+            for part in parts:
+                if '-' in part:
+                    start_str, end_str = part.split('-')
+                    start, end = int(start_str), int(end_str)
+                    transitions.extend(range(start, end + 1))
+                else:
+                    transitions.append(int(part))
+            
+            # Validate transitions
+            valid = []
+            for t in transitions:
+                if t in TRANSITIONS:
+                    valid.append(t)
+                else:
+                    self.logger.warning(f"Invalid transition ID: {t}, skipping")
+            
+            if not valid:
+                self.logger.error("No valid transitions provided")
+                raise ValueError("No valid transitions")
+            
+            return sorted(set(valid))
+        except ValueError as e:
+            self.logger.error(f"Invalid transition format: {transition_str}")
+            raise
+
+    def _prepare_transition_playlist(self):
+        """Creates the playback queue for transitions and shuffles if needed"""
+        self.transition_playlist = list(self.transition_list)
+        if self.randomize:
+            self.logger.debug("Shuffling transition playlist for non-repeating randomization...")
+            random.shuffle(self.transition_playlist)
+        self.current_index = -1
+
+    def get_next_transition(self):
+        """Get next transition based on selection mode"""
+        # Increment index
+        self.current_index += 1
+
+        # Reshuffle if we've used all transitions in the current list
+        if self.current_index >= len(self.transition_playlist):
+            self.logger.info("Transition cycle complete. Reshuffling transitions...")
+            self._prepare_transition_playlist()
+            self.current_index = 0
+
+        tid = self.transition_playlist[self.current_index]
+        
+        if self.randomize:
+            self.logger.debug(f"Random transition selected (from playlist): {tid}")
+        else:
+            tid = self.transition_playlist[self.current_index]
+            self.logger.debug(f"Sequential transition {self.current_index + 1}/{len(self.transition_playlist)}: {tid}")
+        
+        transition_data = TRANSITIONS[tid]
+        return {
+            'id': tid,
+            'name': transition_data[0],
+            'exit_mode': transition_data[1],
+            'entry_mode': transition_data[2]
+        }
+
+    def _get_imagemagick_cmd(self, img, mode, frames, width, height):
+        """Generate ImageMagick command for transition phase"""
+        t_step = "(t+1)"
+        
+        # Exit modes (old image leaving)
+        if mode == "slide-out-l":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 %[fx:-{t_step}*({width}/{frames})],0' "
+        elif mode == "slide-out-r":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 %[fx:{t_step}*({width}/{frames})],0' "
+        elif mode == "slide-out-u":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 0,%[fx:-{t_step}*({height}/{frames})]' "
+        elif mode == "slide-out-d":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 0,%[fx:{t_step}*({height}/{frames})]' "
+        elif mode == "rot-out-cw":
+            return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:{t_step}*(90/{frames})]' "
+        elif mode == "rot-out-ccw":
+            return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:-{t_step}*(90/{frames})]' "
+        elif mode == "zoom-out":
+            return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:1-{t_step}*(1/{frames})]' "
+        
+        # Entry modes (new image arriving)
+        elif mode == "slide-in-l":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 %[fx:{width}-{t_step}*({width}/{frames})],0' "
+        elif mode == "slide-in-r":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 %[fx:-{width}+{t_step}*({width}/{frames})],0' "
+        elif mode == "slide-in-u":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 0,%[fx:{height}-{t_step}*({height}/{frames})]' "
+        elif mode == "slide-in-d":
+            return rf"convert '{img}' -duplicate {frames-1} -distort Affine '0,0 0,%[fx:-{height}+{t_step}*({height}/{frames})]' "
+        elif mode == "rot-in-cw":
+            return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:90-{t_step}*(90/{frames})]' "
+        elif mode == "rot-in-ccw":
+            return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:-90+{t_step}*(90/{frames})]' "
+        elif mode == "zoom-in":
+            return rf"convert '{img}' -duplicate {frames-1} -distort SRT '%[fx:{t_step}*(1/{frames})]' "
+        
+        return rf"convert '{img}' -morph {frames} "
+
+    def apply(self, old_img, new_img, transition, set_wallpaper_func):
+        """Apply transition between two images with clean frame state."""
+        tid = transition['id']
+        exit_mode = transition['exit_mode']
+        entry_mode = transition['entry_mode']
+        
+        self.logger.transition_start(transition['name'], tid)
+        
+        tmp_dir = "/tmp/bnm3_frames"
+        os.makedirs(tmp_dir, exist_ok=True)
+        
+        # --- HARD PURGE (FIX) ---
+        # Using native Python to ensure files are deleted synchronously 
+        # before ImageMagick starts writing.
+        self.logger.debug(f"Purging old frames from: {tmp_dir}")
+        for f in os.listdir(tmp_dir):
+            if f.endswith('.jpg'):
+                try:
+                    os.remove(os.path.join(tmp_dir, f))
+                except OSError:
+                    pass
+
+        exit_frames = self.frames // 2
+        entry_frames = self.frames - exit_frames
+        
+        # Generate exit frames
+        if exit_frames > 0:
+            self.logger.debug(f"Generating {exit_frames} exit frames...")
+            cmd_exit = self._get_imagemagick_cmd(old_img, exit_mode, exit_frames, self.width, self.height)
+            cmd_exit += f" {tmp_dir}/f01_%03d.jpg"
+            subprocess.run(cmd_exit, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        # Generate entry frames
+        self.logger.debug(f"Generating {entry_frames} entry frames...")
+        cmd_entry = self._get_imagemagick_cmd(new_img, entry_mode, entry_frames, self.width, self.height)
+        cmd_entry += f" {tmp_dir}/f02_%03d.jpg"
+        subprocess.run(cmd_entry, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        # Play frames (Targeted Filter)
+        # We only play files starting with our specific session prefixes
+        frames_list = sorted([
+            os.path.join(tmp_dir, f) for f in os.listdir(tmp_dir) 
+            if f.endswith('.jpg') and (f.startswith('f01_') or f.startswith('f02_'))
+        ])
+        
+        total_frames = len(frames_list)
+        self.logger.debug(f"Playing {total_frames} clean frames...")
+        
+        for i, frame in enumerate(frames_list):
+            self.logger.transition_progress(i + 1, total_frames)
+            set_wallpaper_func(frame)
+        
+        # Set final wallpaper
+        set_wallpaper_func(new_img)
+        
+        # Post-transition cleanup
+        self.logger.debug("Finalizing cleanup...")
+        for f in frames_list:
+            try:
+                os.remove(frame)
+            except:
+                pass
+        
+        self.logger.transition_complete()
+
+
+
+=== /home/deb/borednomore3/borednomore3/libs/core/__init__.py ===
+
+"""Core functionality modules"""
+from .wallpaper_manager import WallpaperManager
+from .transition_engine import TransitionEngine, TRANSITIONS
+__all__ = ['WallpaperManager', 'TransitionEngine', 'TRANSITIONS']
+
+
+
+=== /home/deb/borednomore3/borednomore3/backend/README.md ===
+
+# Borednomore3 - Main Script
+
+**Location:** `backend/borednomore3.py`  
+**Version:** 0.7.0  
+**Type:** Main entry point for the wallpaper changer
+
+## Description
+
+This is the main executable script for borednomore3. It coordinates all libraries and handles the main execution loop for dynamic wallpaper changing with smooth transitions.
+
+## Quick Start
+```bash
+# From backend directory
+python3 borednomore3.py
+
+# With debug mode
+python3 borednomore3.py -D
+
+# Show help
+python3 borednomore3.py -h
+```
+
+## Command-Line Arguments
+
+### Information (Exit Immediately)
+```bash
+python3 borednomore3.py -h    # Help
+python3 borednomore3.py -v    # Version
+python3 borednomore3.py -c    # Credits
+```
+**Note:** These exit with code 0 after displaying information.
+
+### Execution Options (Continue Running)
+```bash
+-D, --debug                     # Enable detailed debug output
+-i, --interval <seconds>        # Wallpaper change interval (default: 300)
+-d, --directory <path>          # Wallpaper directory
+-f, --frames <number>           # Transition frames 5-100 (default: 10)
+-s, --speed <seconds>           # Frame delay (default: 0.001)
+-t, --transitions <list>        # Specific transitions (e.g., 1,5,10-20)
+-r, --randomize                 # Randomize transition order
+-w, --randomize-wallpapers      # Randomize wallpaper order
+-k, --keep-image                # Keep previous image during transition
+-l, --wallpaper-list <file>     # Custom pattern file
+--config <path>                 # Custom config file
+```
+
+## Examples
+
+### Basic Usage
+```bash
+# Run with defaults
+python3 borednomore3.py
+
+# Every 60 seconds with debug
+python3 borednomore3.py -D -i 60
+
+# Random everything
+python3 borednomore3.py -r -w -i 120
+```
+
+### Advanced Usage
+```bash
+# Fast transitions, specific IDs only
+python3 borednomore3.py -D -t 1-10,50-60 -f 5 -s 0.0001
+
+# Custom wallpaper directory
+python3 borednomore3.py -d ~/Pictures/Wallpapers -i 180
+
+# Slow smooth transitions
+python3 borednomore3.py -f 50 -s 0.01 -i 600
+```
+
+## Dependencies
+
+### Python Modules
+- **config.config_manager** - Configuration handling
+- **core.wallpaper_manager** - Wallpaper loading/selection
+- **core.transition_engine** - Transition effects
+- **desktop.desktop_detector** - Desktop environment detection
+- **utils.logger** - Logging system
+- **utils.validator** - Configuration validation
+
+All modules are loaded from `../libs/`
+
+### System Requirements
+```bash
+# Install dependencies
+sudo apt install imagemagick python3-pil python3-pynput
+```
+
+## How It Works
+
+1. **Parse Arguments** - Command-line arguments override config file
+2. **Detect Desktop** - Auto-detect DE (GNOME, KDE, XFCE, etc.) and resolution
+3. **Load Config** - Read from config file, merge with CLI args
+4. **Validate** - Check all parameters are valid
+5. **Initialize Managers** - Set up wallpaper and transition handlers
+6. **Main Loop** - Continuously change wallpapers with transitions
+
+## Output Modes
+
+### INFO Mode (Default)
+```
+[12:30:45.123] [INFO] borednomore3 v0.7.0
+[12:30:45.150] [INFO] Desktop: GNOME
+[12:30:45.151] [INFO] Resolution: 1920x1080
+[12:30:45.200] [INFO] Loaded 50 wallpapers
+[12:30:45.201] [INFO] Next wallpaper: sunset.jpg
+[12:30:45.202] [INFO] Applying transition: slide-left (ID: 1)
+[12:30:47.500] [INFO] Transition complete
+```
+
+### DEBUG Mode (-D flag)
+```
+[12:30:45.125] [DEBUG] Starting desktop detection...
+[12:30:45.126] [DEBUG] DESKTOP_SESSION: ubuntu
+[12:30:45.151] [DEBUG] Detected resolution via xrandr: 1920x1080
+[12:30:45.182] [DEBUG] Loading wallpapers from: /home/user/wallpapers
+[12:30:45.184] [DEBUG] Pattern '*.jpg' matched 30 files
+[12:30:45.201] [DEBUG] Sequential selection: index 0/49
+[12:30:45.210] [DEBUG] Generating 5 exit frames (slide-out-l)...
+[12:30:46.901] [DEBUG] Transition progress: 1/10 (10.0%)
+[12:30:47.491] [DEBUG] Executing: gsettings set...
+```
+
+## Path Resolution
+```python
+SCRIPT_DIR = backend/
+LIBS_DIR = ../libs/
+```
+
+The script automatically locates libraries relative to its location:
+- From `backend/` → looks in `../libs/`
+- Supports `libs/config/`, `libs/core/`, `libs/desktop/`, `libs/utils/`
+
+## Error Handling
+
+### Import Errors
+```
+Error importing libraries: cannot import name 'X' from 'Y'
+Make sure all libraries are in: /path/to/libs
+```
+**Solution:** Check that all library files exist in `../libs/`
+
+### Configuration Errors
+```
+[ERROR] Configuration validation failed:
+  - Interval must be >= 1 second
+  - Frames must be between 5 and 100
+```
+**Solution:** Fix the invalid parameter values
+
+### Desktop Detection Errors
+```
+[WARNING] Unknown desktop: X, Y
+```
+**Solution:** Script falls back to generic mode using feh/nitrogen
+
+## Exit Codes
+
+- **0** - Normal exit or info flag (-h, -v, -c)
+- **1** - Error (missing dependencies, invalid config, no wallpapers)
+
+## Keyboard Controls
+
+- **q** or **Q** - Exit gracefully at any time
+- **Ctrl+C** - Exit gracefully
+
+## Configuration Priority
+
+1. **CLI Arguments** (highest priority)
+2. **Config File** (`--config` or default)
+3. **Default Values** (built-in)
+
+## File Locations
+
+- **Script:** `backend/borednomore3.py`
+- **Libraries:** `../libs/*/*.py`
+- **Config:** `../conf/borednomore3.conf`
+- **Patterns:** `../conf/borednomore3.list`
+- **Wallpapers:** `../wallpapers/`
+
+## Logging
+
+- **Console:** Auto-clears every 1000 lines
+- **Log File:** Optional, auto-rotates (keep last 1000 lines)
+- **Colors:** Enabled for console output
+  - DEBUG: Cyan
+  - INFO: Green
+  - WARNING: Yellow
+  - ERROR: Red
+
+## Supported Desktops
+
+- GNOME (gsettings)
+- KDE Plasma (qdbus)
+- XFCE (xfconf-query)
+- LXQt (pcmanfm-qt)
+- MATE (gsettings)
+- Cinnamon (gsettings)
+- Budgie (gsettings)
+- i3 (feh)
+- Generic (feh/nitrogen/xwallpaper)
+
+## Notes
+
+- All library imports are relative to `../libs/`
+- Config file is auto-created if missing
+- Wallpaper directory must exist
+- Supports 1000 built-in transitions
+- Transitions auto-repeat if list is exhausted
+
+## Troubleshooting
+
+**Q: Script can't find libraries?**  
+A: Check `../libs/` exists and contains all subdirectories with `__init__.py`
+
+**Q: No wallpapers found?**  
+A: Run with `-D` to see which directory is being scanned
+
+**Q: Desktop not detected?**  
+A: Run with `-D` to see environment variables
+
+**Q: Transitions not working?**  
+A: Verify `imagemagick` is installed: `convert --version`
+
+## See Also
+
+- `../libs/config/config_manager.py` - Configuration handling
+- `../libs/core/wallpaper_manager.py` - Wallpaper management
+- `../libs/core/transition_engine.py` - Transition effects
+- `../libs/desktop/desktop_detector.py` - Desktop detection
+- `../conf/borednomore3.conf` - Main configuration file
+
+---
+
+**Author:** Nepamuceno  
+**Repository:** https://github.com/nepamuceno/borednomore3  
+**License:** See LICENSE file
+
+
+
+=== /home/deb/borednomore3/borednomore3/backend/borednomore3.py ===
+
+#!/usr/bin/env python3
+"""
+Dynamic Wallpaper Changer - Universal Desktop Support
+Main entry point with debug capabilities
+
+Author: Nepamuceno
+Version: 0.7.0 - Modular refactor with debug mode
+"""
+
+import os
+import sys
+import time
+import argparse
+
+# Path setup
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+LIBS_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'libs'))
+sys.path.insert(0, LIBS_DIR)
+
+# Import libraries
+try:
+    from config.config_manager import ConfigManager, DEFAULT_CONFIG
+    from core.wallpaper_manager import WallpaperManager
+    from core.transition_engine import TransitionEngine
+    from desktop.desktop_detector import DesktopDetector
+    from utils.logger import Logger, DEBUG, INFO
+    from utils.validator import validate_args
+except ImportError as e:
+    print(f"Error importing libraries: {e}")
+    print(f"Make sure all libraries are in: {LIBS_DIR}")
+    sys.exit(1)
+
+VERSION = "0.7.0"
+AUTHOR = "Nepamuceno"
+GITHUB = "https://github.com/nepamuceno/borednomore3"
+
+
+def print_help():
+    help_text = f"""
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                      borednomore3 - Dynamic Wallpaper Changer                 ║
+║                                  Version {VERSION}                            ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+DESCRIPTION:
+    Universal wallpaper changer with smooth transitions for all major Linux desktops
+    (GNOME, KDE, XFCE, LXQt, MATE, Cinnamon, and more)
+
+USAGE:
+    borednomore3 [OPTIONS]
+
+OPTIONS:
+    -h, --help                  Show this help and exit
+    -v, --version               Show version and exit
+    -c, --credits               Show credits and exit
+    -D, --debug                 Enable debug mode (detailed real-time info)
+    
+    --config <path>             Config file path
+    -i, --interval <sec>        Change interval in seconds (default: 300)
+    -d, --directory <path>      Wallpaper directory
+    -f, --frames <num>          Transition frames (5-100, default: 10)
+    -s, --speed <sec>           Frame delay (default: 0.001)
+    -t, --transitions <list>    Transition IDs (e.g., 1,5,23 or 1-10)
+    -r, --randomize             Randomize transitions
+    -w, --randomize-wallpapers  Randomize wallpaper selection
+    -k, --keep-image            Keep previous image during transition
+    -l, --wallpaper-list <file> Custom wallpaper pattern file
+
+AUTHOR:
+    {AUTHOR} - {GITHUB}
+
+NOTE:
+    Options -v, -c, -h exit immediately after displaying information.
+    All other options continue execution with the specified settings.
+"""
+    print(help_text)
+
+
+def print_version():
+    print(f"borednomore3 v{VERSION}")
+
+
+def print_credits():
+    print(f"""
+borednomore3 v{VERSION}
+Author: {AUTHOR}
+GitHub: {GITHUB}
+
+Universal dynamic wallpaper changer with smooth transitions.
+Supports all major Linux desktop environments.
+""")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='borednomore3 - Universal Wallpaper Changer',
+        add_help=False
+    )
+    
+    parser.add_argument('-h', '--help', action='store_true')
+    parser.add_argument('-v', '--version', action='store_true')
+    parser.add_argument('-c', '--credits', action='store_true')
+    parser.add_argument('-D', '--debug', action='store_true')
+    parser.add_argument('--config', type=str, default=None)
+    parser.add_argument('-i', '--interval', type=int, default=None)
+    parser.add_argument('-d', '--directory', type=str, default=None)
+    parser.add_argument('-f', '--frames', type=int, default=None)
+    parser.add_argument('-s', '--speed', type=float, default=None)
+    parser.add_argument('-t', '--transitions', type=str, default=None)
+    parser.add_argument('-r', '--randomize', action='store_true')
+    parser.add_argument('-w', '--randomize-wallpapers', action='store_true')
+    parser.add_argument('-k', '--keep-image', action='store_true')
+    parser.add_argument('-l', '--wallpaper-list', nargs='?', const='default', default=None)
+    
+    args = parser.parse_args()
+    
+    # Info flags exit immediately
+    if args.help:
+        print_help()
+        sys.exit(0)
+    if args.version:
+        print_version()
+        sys.exit(0)
+    if args.credits:
+        print_credits()
+        sys.exit(0)
+    
+    # Initialize logger
+    log_level = DEBUG if args.debug else INFO
+    logger = Logger(log_level)
+    
+    logger.info(f"borednomore3 v{VERSION}")
+    logger.info("=" * 80)
+    
+    # Detect desktop environment
+    logger.info("Detecting desktop environment...")
+    desktop = DesktopDetector(logger)
+    desktop_info = desktop.detect()
+    
+    logger.info(f"Desktop: {desktop_info['name']}")
+    logger.info(f"Resolution: {desktop_info['width']}x{desktop_info['height']}")
+    logger.debug(f"Wallpaper setter: {desktop_info['setter']}")
+    
+    # Load configuration
+    logger.info("Loading configuration...")
+    config_manager = ConfigManager(logger, args.config)
+    config = config_manager.get_config(args)
+    
+    # Validate configuration
+    logger.debug("Validating configuration...")
+    validate_args(config, logger)
+    
+    # Initialize managers
+    logger.info("Initializing wallpaper manager...")
+    wallpaper_mgr = WallpaperManager(
+        config['directory'],
+        config['wallpaper_patterns'],
+        config['randomize_wallpapers'],
+        logger
+    )
+    
+    logger.info("Initializing transition engine...")
+    transition_engine = TransitionEngine(
+        config['transitions'],
+        config['randomize'],
+        config['frames'],
+        config['speed'],
+        config['keep_image'],
+        desktop_info,
+        logger
+    )
+    
+    # Main loop
+    logger.info(f"Starting main loop (interval: {config['interval']}s)")
+    logger.info("Press 'q' or Ctrl+C to exit\n")
+
+    try:
+        current_wallpaper = wallpaper_mgr.get_next()
+    
+        while True:
+            next_wallpaper = wallpaper_mgr.get_next()
+        
+            logger.info(f"Next wallpaper: {os.path.basename(next_wallpaper)}")
+            logger.debug(f"Full path: {next_wallpaper}")
+        
+            transition = transition_engine.get_next_transition()
+            logger.info(f"Applying transition: {transition['name']} (ID: {transition['id']})")
+            logger.debug(f"Transition details: {transition}")
+        
+            transition_engine.apply(
+                current_wallpaper,
+                next_wallpaper,
+                transition,
+                desktop.set_wallpaper
+            )
+        
+            current_wallpaper = next_wallpaper
+            logger.debug(f"Waiting {config['interval']} seconds...")
+            time.sleep(config['interval'])
+        
+    except KeyboardInterrupt:
+        logger.info("\nExiting gracefully...")
+        sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+=== /home/deb/borednomore3/borednomore3/frontend/bnm3.py ===
+
+#!/usr/bin/env python3
+"""
+BNM3 GUI - BoredNoMore3 Dynamic Wallpaper Manager
+Professional interface with REAL command execution output
+
+Author: Nepamuceno
+Version: 1.0.3
+Slogan: "Never Stare At The Same Wall Twice"
+"""
+
+import customtkinter as ctk
+import tkinter as tk
+from tkinter import filedialog, messagebox
+from PIL import Image, ImageDraw, ImageFont
+import os, sys, json, subprocess, signal, threading, time
+from datetime import datetime
+
+ctk.set_appearance_mode("System")
+ctk.set_default_color_theme("blue")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+STATE_FILE = os.path.join(SCRIPT_DIR, '.bnm3_gui_state.json')
+DEFAULT_SCRIPT = os.path.join(SCRIPT_DIR, '..', 'backend', 'borednomore3.py')
+CONF_DIR = os.path.join(SCRIPT_DIR, '..', 'conf')
+DEFAULT_CONF = os.path.join(CONF_DIR, 'borednomore3.conf')
+DEFAULT_LIST = os.path.join(CONF_DIR, 'borednomore3.list')
+WALLPAPERS_DIR = os.path.join(SCRIPT_DIR, '..', 'wallpapers')
+
+def create_logo():
+    size = 128
+    img = Image.new('RGBA', (size, size), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    
+    # Gradient background circle
+    for i in range(size//2, 0, -2):
+        alpha = int(255 * (i / (size//2)))
+        draw.ellipse([size//2 - i, size//2 - i, size//2 + i, size//2 + i], 
+                     fill=(30, 144, 255, alpha))
+    
+    # Draw "BNM3" instead of "B3"
+    try:
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 36)
+    except:
+        font = ImageFont.load_default()
+    
+    text = "BNM3"
+    bbox = draw.textbbox((0, 0), text, font=font)
+    tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+    pos = ((size - tw) // 2, (size - th) // 2 - 5)
+    
+    # Text shadow
+    draw.text((pos[0] + 2, pos[1] + 2), text, fill=(0, 0, 0, 180), font=font)
+    # Main text
+    draw.text(pos, text, fill=(255, 255, 255, 255), font=font)
+    
+    return img
+
+class ProcessManager:
+    def __init__(self):
+        self.process = None
+        self.pid = None
+        self.is_running = False
+        
+    def start_process(self, command, callback=None):
+        try:
+            self.process = subprocess.Popen(
+                command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                universal_newlines=True, bufsize=1,
+                preexec_fn=os.setsid if os.name != 'nt' else None
+            )
+            self.pid = self.process.pid
+            self.is_running = True
+            threading.Thread(target=self._read_output, args=(callback,), daemon=True).start()
+            return True, self.pid
+        except Exception as e:
+            return False, str(e)
+    
+    def _read_output(self, callback):
+        try:
+            while self.is_running and self.process and self.process.poll() is None:
+                line = self.process.stdout.readline()
+                if line and callback:
+                    callback(line)
+                time.sleep(0.001)
+        except:
+            pass
+        finally:
+            if self.process and self.process.stdout:
+                try:
+                    remaining = self.process.stdout.read()
+                    if remaining and callback:
+                        callback(remaining)
+                except:
+                    pass
+    
+    def stop_process(self, force=False):
+        if not self.process or not self.pid:
+            return True, "No process running"
+        try:
+            self.is_running = False
+            if os.name == 'nt':
+                self.process.kill() if force else self.process.terminate()
+                msg = f"Process {self.pid} {'killed' if force else 'stopped'}"
+            else:
+                os.killpg(os.getpgid(self.pid), signal.SIGKILL if force else signal.SIGHUP)
+                if not force:
+                    try:
+                        self.process.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        os.killpg(os.getpgid(self.pid), signal.SIGKILL)
+                msg = f"Process {self.pid} {'killed (SIGKILL)' if force else 'stopped (SIGHUP)'}"
+            self._cleanup_zombies()
+            self.process, self.pid = None, None
+            return True, msg
+        except Exception as e:
+            return False, f"Error: {str(e)}"
+    
+    def _cleanup_zombies(self):
+        if os.name != 'nt':
+            try:
+                result = subprocess.run(['pgrep', '-f', 'borednomore3.py'], capture_output=True, text=True)
+                if result.returncode == 0:
+                    for pid in result.stdout.strip().split('\n'):
+                        if pid and pid.isdigit():
+                            try:
+                                os.kill(int(pid), signal.SIGKILL)
+                            except:
+                                pass
+            except:
+                pass
+    
+    def is_process_running(self):
+        if not self.pid:
+            return False
+        try:
+            return (self.process and self.process.poll() is None) if os.name == 'nt' else (os.kill(self.pid, 0) or True)
+        except:
+            return False
+
+
+class BNM3GUI(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        sw, sh = self.winfo_screenwidth(), self.winfo_screenheight()
+        ww, wh = min(int(sw * 0.9), 1600), min(int(sh * 0.9), 1000)
+        x, y = (sw - ww) // 2, (sh - wh) // 2
+        
+        self.title("BNM3 - BoredNoMore3 Wallpaper Manager")
+        self.geometry(f"{ww}x{wh}+{x}+{y}")
+        self.minsize(1400, 900)
+        
+        try:
+            logo = create_logo()
+            import io
+            with io.BytesIO() as output:
+                logo.save(output, format="PNG")
+                output.seek(0)
+                self.iconphoto(True, tk.PhotoImage(data=output.read()))
+        except:
+            pass
+        
+        self.process_manager = ProcessManager()
+        self.state = self.load_state()
+        self.create_ui()
+        self.restore_state()
+        self.after(1000, self.update_status)
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
+    
+    def create_ui(self):
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        self.create_sidebar()
+        self.create_main_content()
+    
+    def create_sidebar(self):
+        sidebar = ctk.CTkFrame(self, width=300, corner_radius=0)
+        sidebar.grid(row=0, column=0, sticky="nsew")
+        sidebar.grid_rowconfigure(15, weight=1)
+        
+        try:
+            logo_img = create_logo().resize((80, 80), Image.Resampling.LANCZOS)
+            logo_photo = ctk.CTkImage(light_image=logo_img, dark_image=logo_img, size=(80, 80))
+            ctk.CTkLabel(sidebar, image=logo_photo, text="").grid(row=0, column=0, padx=20, pady=(20, 10))
+        except:
+            pass
+        
+        ctk.CTkLabel(sidebar, text="BNM3", font=ctk.CTkFont(size=32, weight="bold")).grid(row=1, column=0, padx=20, pady=(5, 0))
+        ctk.CTkLabel(sidebar, text="BoredNoMore3", font=ctk.CTkFont(size=14)).grid(row=2, column=0, padx=20, pady=0)
+        ctk.CTkLabel(sidebar, text='"Never Stare At The Same Wall Twice"', font=ctk.CTkFont(size=10, slant="italic"), text_color="gray").grid(row=3, column=0, padx=20, pady=(0, 5))
+        ctk.CTkLabel(sidebar, text="v1.0.3", font=ctk.CTkFont(size=9), text_color="gray50").grid(row=4, column=0, padx=20, pady=(0, 15))
+        
+        quick_frame = ctk.CTkFrame(sidebar, fg_color="transparent")
+        quick_frame.grid(row=5, column=0, padx=20, pady=(5, 10), sticky="ew")
+        quick_frame.grid_columnconfigure((0, 1, 2), weight=1)
+        
+        ctk.CTkButton(quick_frame, text="❓", command=self.show_help, width=60, height=30).grid(row=0, column=0, padx=2)
+        ctk.CTkButton(quick_frame, text="ℹ️", command=self.show_version, width=60, height=30).grid(row=0, column=1, padx=2)
+        ctk.CTkButton(quick_frame, text="👤", command=self.show_credits, width=60, height=30).grid(row=0, column=2, padx=2)
+        
+        self.debug_var = tk.BooleanVar(value=self.state.get('debug', False))
+        ctk.CTkCheckBox(sidebar, text="Enable Debug Mode (-D)", variable=self.debug_var, font=ctk.CTkFont(size=10), height=20).grid(row=6, column=0, padx=20, pady=(0, 8), sticky="w")
+        
+        self.start_button = ctk.CTkButton(sidebar, text="▶ START", command=self.start_wallpapers, height=45, font=ctk.CTkFont(size=15, weight="bold"), fg_color="#28a745", hover_color="#218838")
+        self.start_button.grid(row=7, column=0, padx=20, pady=8, sticky="ew")
+        
+        self.stop_button = ctk.CTkButton(sidebar, text="■ STOP", command=lambda: self.stop_wallpapers(False), height=38, font=ctk.CTkFont(size=13), fg_color="#fd7e14", hover_color="#e67700", state="disabled")
+        self.stop_button.grid(row=8, column=0, padx=20, pady=8, sticky="ew")
+        
+        self.kill_button = ctk.CTkButton(sidebar, text="⚠ FORCE KILL", command=lambda: self.stop_wallpapers(True), height=38, font=ctk.CTkFont(size=13), fg_color="#dc3545", hover_color="#c82333", state="disabled")
+        self.kill_button.grid(row=9, column=0, padx=20, pady=8, sticky="ew")
+        
+        status_frame = ctk.CTkFrame(sidebar)
+        status_frame.grid(row=10, column=0, padx=20, pady=15, sticky="ew")
+        status_frame.grid_columnconfigure(1, weight=1)
+        
+        ctk.CTkLabel(status_frame, text="Status:", font=ctk.CTkFont(size=11, weight="bold")).grid(row=0, column=0, padx=8, pady=6, sticky="w")
+        self.status_indicator = ctk.CTkLabel(status_frame, text="● Stopped", text_color="gray", font=ctk.CTkFont(size=11))
+        self.status_indicator.grid(row=0, column=1, padx=8, pady=6, sticky="e")
+        
+        ctk.CTkLabel(status_frame, text="PID:", font=ctk.CTkFont(size=11, weight="bold")).grid(row=1, column=0, padx=8, pady=6, sticky="w")
+        self.pid_label = ctk.CTkLabel(status_frame, text="N/A", font=ctk.CTkFont(size=11))
+        self.pid_label.grid(row=1, column=1, padx=8, pady=6, sticky="e")
+        
+        ctk.CTkLabel(sidebar, text="Theme:", font=ctk.CTkFont(size=11, weight="bold")).grid(row=11, column=0, padx=20, pady=(15, 3))
+        self.theme_var = tk.StringVar(value=self.state.get('theme', 'System'))
+        ctk.CTkOptionMenu(sidebar, values=["Light", "Dark", "System"], variable=self.theme_var, command=self.change_theme, height=32).grid(row=12, column=0, padx=20, pady=3, sticky="ew")
+        
+        ctk.CTkFrame(sidebar, height=2, fg_color="gray30").grid(row=13, column=0, padx=20, pady=15, sticky="ew")
+        
+        ctk.CTkButton(sidebar, text="💾 Save Log", command=self.save_log, height=32).grid(row=14, column=0, padx=20, pady=4, sticky="ew")
+        ctk.CTkButton(sidebar, text="🗑 Clear Console", command=self.clear_log, height=32, fg_color="gray40", hover_color="gray30").grid(row=15, column=0, padx=20, pady=4, sticky="ew")
+        ctk.CTkButton(sidebar, text="🧹 Cleanup Processes", command=self.cleanup_zombies_manual, height=32, fg_color="gray40", hover_color="gray30").grid(row=16, column=0, padx=20, pady=4, sticky="ew")
+        
+        ctk.CTkButton(sidebar, text="🚪 EXIT PROGRAM", command=self.exit_program, height=40, font=ctk.CTkFont(size=13, weight="bold"), fg_color="#dc3545", hover_color="#c82333").grid(row=18, column=0, padx=20, pady=(10, 20), sticky="ew")
+    
+    def create_main_content(self):
+        self.tabview = ctk.CTkTabview(self)
+        self.tabview.grid(row=0, column=1, padx=15, pady=15, sticky="nsew")
+        
+        self.tab_settings = self.tabview.add("⚙ Settings")
+        self.tab_console = self.tabview.add("🖥 Console")
+        self.tab_advanced = self.tabview.add("🔧 Advanced")
+        
+        self.tab_settings.grid_columnconfigure(0, weight=1)
+        self.tab_console.grid_columnconfigure(0, weight=1)
+        self.tab_console.grid_rowconfigure(1, weight=1)
+        self.tab_advanced.grid_columnconfigure(0, weight=1)
+        
+        self.create_settings_tab()
+        self.create_console_tab()
+        self.create_advanced_tab()
+    
+    def create_settings_tab(self):
+        main_frame = ctk.CTkFrame(self.tab_settings, fg_color="transparent")
+        main_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        main_frame.grid_columnconfigure(0, weight=1)
+        main_frame.grid_columnconfigure(1, weight=1)
+        
+        left_col = ctk.CTkFrame(main_frame, fg_color="transparent")
+        left_col.grid(row=0, column=0, sticky="nsew", padx=5)
+        left_col.grid_columnconfigure(1, weight=1)
+        
+        row = 0
+        ctk.CTkLabel(left_col, text="📁 FILE PATHS", font=ctk.CTkFont(size=13, weight="bold")).grid(row=row, column=0, columnspan=3, padx=5, pady=(5, 8), sticky="w")
+        row += 1
+        
+        ctk.CTkLabel(left_col, text="Script Path:", font=ctk.CTkFont(size=10)).grid(row=row, column=0, padx=5, pady=3, sticky="w")
+        self.script_path_var = tk.StringVar(value=self.state.get('script_path', DEFAULT_SCRIPT))
+        ctk.CTkEntry(left_col, textvariable=self.script_path_var, height=26, font=ctk.CTkFont(size=10)).grid(row=row, column=1, padx=3, pady=3, sticky="ew")
+        ctk.CTkButton(left_col, text="...", width=35, height=26, command=lambda: self.browse_file(self.script_path_var, "Python", "*.py")).grid(row=row, column=2, padx=3, pady=3)
+        row += 1
+        
+        self.use_config_var = tk.BooleanVar(value=self.state.get('use_config', False))
+        self.use_config_cb = ctk.CTkCheckBox(left_col, text="Use custom configuration file", variable=self.use_config_var, font=ctk.CTkFont(size=10, weight="bold"), height=22, command=self.toggle_config_state)
+        self.use_config_cb.grid(row=row, column=0, columnspan=3, padx=5, pady=3, sticky="w")
+        row += 1
+        
+        ctk.CTkLabel(left_col, text="Config File:", font=ctk.CTkFont(size=10)).grid(row=row, column=0, padx=5, pady=3, sticky="w")
+        self.config_path_var = tk.StringVar(value=self.state.get('config_path', DEFAULT_CONF))
+        self.config_entry = ctk.CTkEntry(left_col, textvariable=self.config_path_var, height=26, font=ctk.CTkFont(size=10))
+        self.config_entry.grid(row=row, column=1, padx=3, pady=3, sticky="ew")
+        self.config_browse = ctk.CTkButton(left_col, text="...", width=35, height=26, command=lambda: self.browse_file(self.config_path_var, "Config", "*.conf"))
+        self.config_browse.grid(row=row, column=2, padx=3, pady=3)
+        row += 1
+        
+        self.use_directory_var = tk.BooleanVar(value=self.state.get('use_directory', False))
+        self.use_directory_cb = ctk.CTkCheckBox(left_col, text="Use custom wallpaper folder", variable=self.use_directory_var, font=ctk.CTkFont(size=10), height=22, command=self.toggle_directory_state)
+        self.use_directory_cb.grid(row=row, column=0, columnspan=3, padx=5, pady=3, sticky="w")
+        row += 1
+        
+        ctk.CTkLabel(left_col, text="Folder:", font=ctk.CTkFont(size=10)).grid(row=row, column=0, padx=5, pady=3, sticky="w")
+        self.directory_var = tk.StringVar(value=self.state.get('directory', WALLPAPERS_DIR))
+        self.directory_entry = ctk.CTkEntry(left_col, textvariable=self.directory_var, height=26, font=ctk.CTkFont(size=10))
+        self.directory_entry.grid(row=row, column=1, padx=3, pady=3, sticky="ew")
+        self.directory_browse = ctk.CTkButton(left_col, text="...", width=35, height=26, command=self.browse_directory)
+        self.directory_browse.grid(row=row, column=2, padx=3, pady=3)
+        row += 1
+        
+        self.use_wallpaper_list_var = tk.BooleanVar(value=self.state.get('use_wallpaper_list', False))
+        self.use_list_cb = ctk.CTkCheckBox(left_col, text="Use patterns file (file with wallpaper patterns)", variable=self.use_wallpaper_list_var, font=ctk.CTkFont(size=10), height=22, command=self.toggle_list_state)
+        self.use_list_cb.grid(row=row, column=0, columnspan=3, padx=5, pady=3, sticky="w")
+        row += 1
+        
+        ctk.CTkLabel(left_col, text="Patterns File:", font=ctk.CTkFont(size=10)).grid(row=row, column=0, padx=5, pady=3, sticky="w")
+        self.list_path_var = tk.StringVar(value=self.state.get('list_path', DEFAULT_LIST))
+        self.list_entry = ctk.CTkEntry(left_col, textvariable=self.list_path_var, height=26, font=ctk.CTkFont(size=10))
+        self.list_entry.grid(row=row, column=1, padx=3, pady=3, sticky="ew")
+        self.list_browse = ctk.CTkButton(left_col, text="...", width=35, height=26, command=lambda: self.browse_file(self.list_path_var, "List", "*.list"))
+        self.list_browse.grid(row=row, column=2, padx=3, pady=3)
+        row += 1
+        
+        ctk.CTkLabel(left_col, text="⏱ TIMING", font=ctk.CTkFont(size=13, weight="bold")).grid(row=row, column=0, columnspan=3, padx=5, pady=(12, 8), sticky="w")
+        row += 1
+        
+        # Change every (with slider)
+        ctk.CTkLabel(left_col, text="Change every (seconds):", font=ctk.CTkFont(size=10)).grid(row=row, column=0, padx=5, pady=3, sticky="w")
+        self.interval_var = tk.IntVar(value=int(self.state.get('interval', 300)))
+        self.interval_entry = ctk.CTkEntry(left_col, textvariable=self.interval_var, width=80, height=26, font=ctk.CTkFont(size=10))
+        self.interval_entry.grid(row=row, column=1, padx=3, pady=3, sticky="w")
+        row += 1
+        
+        self.interval_slider = ctk.CTkSlider(left_col, from_=1, to=3600, variable=self.interval_var, width=300, command=lambda v: self.interval_var.set(int(v)))
+        self.interval_slider.grid(row=row, column=0, columnspan=3, padx=5, pady=(0, 8), sticky="ew")
+        row += 1
+        
+        # Animation frames (with slider)
+        ctk.CTkLabel(left_col, text="Animation frames (5-100):", font=ctk.CTkFont(size=10)).grid(row=row, column=0, padx=5, pady=3, sticky="w")
+        self.frames_var = tk.IntVar(value=int(self.state.get('frames', 10)))
+        self.frames_entry = ctk.CTkEntry(left_col, textvariable=self.frames_var, width=80, height=26, font=ctk.CTkFont(size=10))
+        self.frames_entry.grid(row=row, column=1, padx=3, pady=3, sticky="w")
+        row += 1
+        
+        self.frames_slider = ctk.CTkSlider(left_col, from_=5, to=100, variable=self.frames_var, width=300, command=lambda v: self.frames_var.set(int(v)))
+        self.frames_slider.grid(row=row, column=0, columnspan=3, padx=5, pady=(0, 8), sticky="ew")
+        row += 1
+        
+        # Delay per frame (with slider)
+        ctk.CTkLabel(left_col, text="Delay per frame (seconds):", font=ctk.CTkFont(size=10)).grid(row=row, column=0, padx=5, pady=3, sticky="w")
+        self.speed_var = tk.DoubleVar(value=float(self.state.get('speed', 0.001)))
+        self.speed_entry = ctk.CTkEntry(left_col, textvariable=self.speed_var, width=80, height=26, font=ctk.CTkFont(size=10))
+        self.speed_entry.grid(row=row, column=1, padx=3, pady=3, sticky="w")
+        row += 1
+        
+        self.speed_slider = ctk.CTkSlider(left_col, from_=0.0001, to=1.0, variable=self.speed_var, width=300, command=lambda v: self.speed_var.set(round(float(v), 4)))
+        self.speed_slider.grid(row=row, column=0, columnspan=3, padx=5, pady=(0, 8), sticky="ew")
+        row += 1
+        
+        ctk.CTkLabel(left_col, text="🎬 TRANSITIONS", font=ctk.CTkFont(size=13, weight="bold")).grid(row=row, column=0, columnspan=3, padx=5, pady=(12, 8), sticky="w")
+        row += 1
+        
+        ctk.CTkLabel(left_col, text="Effect IDs (e.g. 1,5,10-15):", font=ctk.CTkFont(size=10)).grid(row=row, column=0, padx=5, pady=3, sticky="w")
+        self.transitions_var = tk.StringVar(value=self.state.get('transitions', ''))
+        ctk.CTkEntry(left_col, textvariable=self.transitions_var, height=26, font=ctk.CTkFont(size=10)).grid(row=row, column=1, columnspan=2, padx=3, pady=3, sticky="ew")
+        row += 1
+        
+        right_col = ctk.CTkFrame(main_frame, fg_color="transparent")
+        right_col.grid(row=0, column=1, sticky="nsew", padx=5)
+        
+        rrow = 0
+        ctk.CTkLabel(right_col, text="⚡ OPTIONS", font=ctk.CTkFont(size=13, weight="bold")).grid(row=rrow, column=0, padx=5, pady=(5, 8), sticky="w")
+        rrow += 1
+        
+        self.randomize_var = tk.BooleanVar(value=self.state.get('randomize', False))
+        self.randomize_cb = ctk.CTkCheckBox(right_col, text="Randomize transitions", variable=self.randomize_var, font=ctk.CTkFont(size=11), height=24)
+        self.randomize_cb.grid(row=rrow, column=0, padx=5, pady=4, sticky="w")
+        rrow += 1
+        
+        self.randomize_wallpapers_var = tk.BooleanVar(value=self.state.get('randomize_wallpapers', False))
+        self.randomize_wp_cb = ctk.CTkCheckBox(right_col, text="Randomize wallpapers", variable=self.randomize_wallpapers_var, font=ctk.CTkFont(size=11), height=24)
+        self.randomize_wp_cb.grid(row=rrow, column=0, padx=5, pady=4, sticky="w")
+        rrow += 1
+        
+        self.keep_image_var = tk.BooleanVar(value=self.state.get('keep_image', False))
+        self.keep_image_cb = ctk.CTkCheckBox(right_col, text="Keep previous image", variable=self.keep_image_var, font=ctk.CTkFont(size=11), height=24)
+        self.keep_image_cb.grid(row=rrow, column=0, padx=5, pady=4, sticky="w")
+        rrow += 1
+        
+        ctk.CTkLabel(right_col, text="ℹ️ INFO", font=ctk.CTkFont(size=13, weight="bold")).grid(row=rrow, column=0, padx=5, pady=(12, 8), sticky="w")
+        rrow += 1
+        
+        info_frame = ctk.CTkFrame(right_col, fg_color=("gray85", "gray20"))
+        info_frame.grid(row=rrow, column=0, padx=5, pady=5, sticky="nsew")
+        
+        info_text = """PRIORITY (highest → lowest):
+1. Custom Config File
+2. GUI Settings
+3. Default borednomore3.conf
+4. Script Defaults
+
+When "Use custom configuration" is
+checked, ALL other GUI settings
+are IGNORED.
+
+Transitions: Leave empty for all,
+or specify IDs like: 1,5,10-15
+
+Use sliders for easy adjustment
+of timing values."""
+        
+        ctk.CTkLabel(info_frame, text=info_text, justify="left", font=ctk.CTkFont(size=9)).pack(padx=10, pady=10, anchor="w")
+    
+    def create_console_tab(self):
+        header = ctk.CTkFrame(self.tab_console, fg_color="transparent", height=35)
+        header.grid(row=0, column=0, sticky="ew", padx=5, pady=(5, 0))
+        header.grid_columnconfigure(0, weight=1)
+        
+        ctk.CTkLabel(header, text="🖥 Live Terminal Output (Real-time from script)", font=ctk.CTkFont(size=14, weight="bold")).grid(row=0, column=0, sticky="w", padx=10)
+        
+        self.autoscroll_var = tk.BooleanVar(value=True)
+        ctk.CTkCheckBox(header, text="Auto-scroll", variable=self.autoscroll_var, font=ctk.CTkFont(size=10), width=100).grid(row=0, column=1, padx=10)
+        
+        self.console_text = ctk.CTkTextbox(self.tab_console, wrap="none", font=ctk.CTkFont(family="Courier New", size=10), border_width=2)
+        self.console_text.grid(row=1, column=0, sticky="nsew", padx=5, pady=(5, 5))
+    
+    def create_advanced_tab(self):
+        main_frame = ctk.CTkFrame(self.tab_advanced, fg_color="transparent")
+        main_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        main_frame.grid_columnconfigure(0, weight=1)
+        
+        row = 0
+        ctk.CTkLabel(main_frame, text="🔧 ADVANCED OPTIONS", font=ctk.CTkFont(size=14, weight="bold")).grid(row=row, column=0, padx=5, pady=(5, 10), sticky="w")
+        row += 1
+        
+        opt_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
+        opt_frame.grid(row=row, column=0, sticky="ew", padx=5, pady=5)
+        opt_frame.grid_columnconfigure(1, weight=1)
+        
+        ctk.CTkLabel(opt_frame, text="Python Interpreter:", font=ctk.CTkFont(size=11)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        self.python_var = tk.StringVar(value=self.state.get('python_path', sys.executable))
+        ctk.CTkEntry(opt_frame, textvariable=self.python_var, height=28, font=ctk.CTkFont(size=10)).grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+        
+        ctk.CTkLabel(opt_frame, text="Extra Arguments:", font=ctk.CTkFont(size=11)).grid(row=1, column=0, padx=5, pady=5, sticky="w")
+        self.extra_args_var = tk.StringVar(value=self.state.get('extra_args', ''))
+        ctk.CTkEntry(opt_frame, textvariable=self.extra_args_var, height=28, font=ctk.CTkFont(size=10)).grid(row=1, column=1, padx=5, pady=5, sticky="ew")
+        
+        row += 1
+        ctk.CTkLabel(main_frame, text="📋 COMMAND PREVIEW", font=ctk.CTkFont(size=14, weight="bold")).grid(row=row, column=0, padx=5, pady=(15, 10), sticky="w")
+        row += 1
+        
+        self.command_preview = ctk.CTkTextbox(main_frame, height=100, font=ctk.CTkFont(family="Courier New", size=9), wrap="word")
+        self.command_preview.grid(row=row, column=0, padx=5, pady=5, sticky="ew")
+        row += 1
+        
+        ctk.CTkButton(main_frame, text="🔄 Update Preview", command=self.update_command_preview, height=32, font=ctk.CTkFont(size=11)).grid(row=row, column=0, padx=5, pady=5)
+    
+    def run_command_and_show_output(self, command, title):
+        self.tabview.set("🖥 Console")
+        self.log_message(f"\n{'='*80}\n{title}\n{'='*80}\n")
+        self.log_message(f"Executing: {' '.join(command)}\n\n")
+        
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, timeout=10)
+            output = result.stdout if result.stdout else result.stderr
+            if output:
+                self.log_message(output)
+            else:
+                self.log_message("[No output received]\n")
+            if result.returncode != 0:
+                self.log_message(f"\n[Exit code: {result.returncode}]\n")
+        except subprocess.TimeoutExpired:
+            self.log_message("[Command timed out]\n")
+        except Exception as e:
+            self.log_message(f"[ERROR] {str(e)}\n")
+        self.log_message(f"\n{'='*80}\n\n")
+    
+    def show_help(self):
+        script = self.script_path_var.get()
+        if os.path.exists(script):
+            self.run_command_and_show_output([self.python_var.get(), script, '-h'], "HELP OUTPUT")
+        else:
+            messagebox.showerror("Error", f"Script not found:\n{script}")
+    
+    def show_version(self):
+        script = self.script_path_var.get()
+        if os.path.exists(script):
+            self.run_command_and_show_output([self.python_var.get(), script, '--version'], "VERSION INFO")
+        else:
+            messagebox.showerror("Error", f"Script not found:\n{script}")
+    
+    def show_credits(self):
+        script = self.script_path_var.get()
+        if os.path.exists(script):
+            self.run_command_and_show_output([self.python_var.get(), script, '-c'], "CREDITS")
+        else:
+            messagebox.showerror("Error", f"Script not found:\n{script}")
+    
+    def toggle_config_state(self):
+        state = "normal" if self.use_config_var.get() else "disabled"
+        self.config_entry.configure(state=state)
+        self.config_browse.configure(state=state)
+    
+    def toggle_directory_state(self):
+        state = "normal" if self.use_directory_var.get() else "disabled"
+        self.directory_entry.configure(state=state)
+        self.directory_browse.configure(state=state)
+    
+    def toggle_list_state(self):
+        state = "normal" if self.use_wallpaper_list_var.get() else "disabled"
+        self.list_entry.configure(state=state)
+        self.list_browse.configure(state=state)
+    
+    def update_command_preview(self):
+        try:
+            cmd = self.build_command()
+            cmd_str = ' '.join([f'"{arg}"' if ' ' in arg else arg for arg in cmd])
+            self.command_preview.configure(state="normal")
+            self.command_preview.delete("1.0", "end")
+            self.command_preview.insert("1.0", cmd_str)
+            self.command_preview.configure(state="disabled")
+        except Exception as e:
+            self.command_preview.configure(state="normal")
+            self.command_preview.delete("1.0", "end")
+            self.command_preview.insert("1.0", f"Error: {str(e)}")
+            self.command_preview.configure(state="disabled")
+    
+    def browse_file(self, var, title, filetypes):
+        filename = filedialog.askopenfilename(title=f"Select {title}", filetypes=[(title, filetypes), ("All Files", "*.*")])
+        if filename:
+            var.set(filename)
+    
+    def browse_directory(self):
+        directory = filedialog.askdirectory(title="Select Wallpaper Directory")
+        if directory:
+            self.directory_var.set(directory)
+    
+    def build_command(self):
+        cmd = [self.python_var.get(), self.script_path_var.get()]
+        if self.debug_var.get():
+            cmd.append('-D')
+        if self.use_config_var.get():
+            cmd.extend(['--config', self.config_path_var.get()])
+        else:
+            if self.interval_var.get():
+                cmd.extend(['-i', str(self.interval_var.get())])
+            if self.use_directory_var.get() and self.directory_var.get():
+                cmd.extend(['-d', self.directory_var.get()])
+            if self.frames_var.get():
+                cmd.extend(['-f', str(self.frames_var.get())])
+            if self.speed_var.get():
+                cmd.extend(['-s', str(self.speed_var.get())])
+            if self.transitions_var.get():
+                cmd.extend(['-t', self.transitions_var.get()])
+            if self.randomize_var.get():
+                cmd.append('-r')
+            if self.randomize_wallpapers_var.get():
+                cmd.append('-w')
+            if self.keep_image_var.get():
+                cmd.append('-k')
+            if self.use_wallpaper_list_var.get():
+                cmd.extend(['-l', self.list_path_var.get()])
+        if self.extra_args_var.get().strip():
+            cmd.extend(self.extra_args_var.get().split())
+        return cmd
+    
+    def disable_settings_controls(self):
+        #Disable ONLY Settings tab controls
+        for ctrl in [self.randomize_cb, self.randomize_wp_cb, self.keep_image_cb, self.use_list_cb, self.use_config_cb, self.use_directory_cb]:
+               ctrl.configure(state="disabled")
+    
+        self.interval_entry.configure(state="disabled")
+        self.interval_slider.configure(state="disabled")
+        self.frames_entry.configure(state="disabled")
+        self.frames_slider.configure(state="disabled")
+        self.speed_entry.configure(state="disabled")
+        self.speed_slider.configure(state="disabled")
+    
+        for widget in [self.config_entry, self.config_browse, self.directory_entry, self.directory_browse, self.list_entry, self.list_browse]:
+              widget.configure(state="disabled")
+
+    def enable_settings_controls(self):
+        # Enable Settings tab controls
+        for ctrl in [self.randomize_cb, self.randomize_wp_cb, self.keep_image_cb, self.use_list_cb, self.use_config_cb, self.use_directory_cb]:
+            ctrl.configure(state="normal")
+    
+        self.interval_entry.configure(state="normal")
+        self.interval_slider.configure(state="normal")
+        self.frames_entry.configure(state="normal")
+        self.frames_slider.configure(state="normal")
+        self.speed_entry.configure(state="normal")
+        self.speed_slider.configure(state="normal")
+    
+        self.toggle_config_state()
+        self.toggle_directory_state()
+        self.toggle_list_state()
+    
+    def start_wallpapers(self):
+        if self.process_manager.is_process_running():
+            messagebox.showwarning("Already Running", "Wallpaper changer is already running!")
+            return
+        
+        if not os.path.exists(self.script_path_var.get()):
+            messagebox.showerror("Error", f"Script file not found:\n{self.script_path_var.get()}")
+            return
+        
+        try:
+            cmd = self.build_command()
+            cmd_str = ' '.join([f'"{a}"' if ' ' in a else a for a in cmd])
+            self.log_message("=" * 80 + "\nSTARTING WALLPAPER CHANGER\n" + "=" * 80 + "\n")
+            self.log_message(f"Command: {cmd_str}\n" + "=" * 80 + "\n\n")
+            
+            success, result = self.process_manager.start_process(cmd, callback=lambda line: self.after(0, lambda l=line: self.log_message(l)))
+            
+            if success:
+                self.log_message(f"[Process started with PID: {result}]\n\n")
+                self.start_button.configure(state="disabled")
+                self.stop_button.configure(state="normal")
+                self.kill_button.configure(state="normal")
+                self.disable_settings_controls()
+                self.save_state()
+            else:
+                self.log_message(f"[FAILED] {result}\n")
+                messagebox.showerror("Error", f"Failed to start process:\n{result}")
+        except Exception as e:
+            self.log_message(f"[ERROR] {str(e)}\n")
+            messagebox.showerror("Error", f"Failed to start:\n{str(e)}")
+    
+    def stop_wallpapers(self, force=False):
+        if not self.process_manager.is_process_running():
+            self.process_manager._cleanup_zombies()
+            messagebox.showinfo("Not Running", "No process found. Attempted cleanup.")
+            return
+        
+        action = "FORCE KILLING (SIGKILL)" if force else "STOPPING (SIGHUP)"
+        self.log_message("\n" + "=" * 80 + f"\n{action} process PID {self.process_manager.pid}\n" + "=" * 80 + "\n")
+        
+        success, message = self.process_manager.stop_process(force=force)
+        self.log_message(f"{message}\n" + "=" * 80 + "\n\n")
+        
+        if success:
+            self.start_button.configure(state="normal")
+            self.stop_button.configure(state="disabled")
+            self.kill_button.configure(state="disabled")
+            self.enable_settings_controls()
+    
+    def cleanup_zombies_manual(self):
+        self.log_message("\n[Scanning for background processes...]\n")
+        self.process_manager._cleanup_zombies()
+        self.log_message("[Cleanup complete]\n\n")
+        messagebox.showinfo("Cleanup", "Background processes cleaned")
+    
+    def log_message(self, message):
+        self.console_text.configure(state="normal")
+        self.console_text.insert("end", message)
+        if self.autoscroll_var.get():
+            self.console_text.see("end")
+        self.console_text.configure(state="disabled")
+    
+    def clear_log(self):
+        if messagebox.askyesno("Clear Console", "Clear all console output?"):
+            self.console_text.configure(state="normal")
+            self.console_text.delete("1.0", "end")
+            self.console_text.configure(state="disabled")
+            self.log_message("[Console cleared]\n\n")
+    
+    def save_log(self):
+        filename = filedialog.asksaveasfilename(defaultextension=".log",
+            filetypes=[("Log Files", "*.log"), ("Text Files", "*.txt"), ("All Files", "*.*")],
+            initialfile=f"bnm3_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+        if filename:
+            try:
+                with open(filename, 'w') as f:
+                    f.write(self.console_text.get("1.0", "end-1c"))
+                messagebox.showinfo("Success", f"Log saved to:\n{filename}")
+                self.log_message(f"\n[Log saved to: {filename}]\n\n")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to save log:\n{str(e)}")
+    
+    def change_theme(self, theme):
+        ctk.set_appearance_mode(theme)
+        self.save_state()
+    
+    def update_status(self):
+        if self.process_manager.is_process_running():
+            self.status_indicator.configure(text="● Running", text_color="#28a745")
+            self.pid_label.configure(text=str(self.process_manager.pid))
+        else:
+            self.status_indicator.configure(text="● Stopped", text_color="gray")
+            self.pid_label.configure(text="N/A")
+            if self.stop_button.cget("state") == "normal":
+                self.start_button.configure(state="normal")
+                self.stop_button.configure(state="disabled")
+                self.kill_button.configure(state="disabled")
+                self.enable_settings_controls()
+                self.log_message("\n[Process ended]\n\n")
+        self.after(1000, self.update_status)
+    
+    def save_state(self):
+        state = {
+            'theme': self.theme_var.get(),
+            'script_path': self.script_path_var.get(),
+            'config_path': self.config_path_var.get(),
+            'list_path': self.list_path_var.get(),
+            'interval': self.interval_var.get(),
+            'directory': self.directory_var.get(),
+            'frames': self.frames_var.get(),
+            'speed': self.speed_var.get(),
+            'transitions': self.transitions_var.get(),
+            'randomize': self.randomize_var.get(),
+            'randomize_wallpapers': self.randomize_wallpapers_var.get(),
+            'keep_image': self.keep_image_var.get(),
+            'use_wallpaper_list': self.use_wallpaper_list_var.get(),
+            'use_config': self.use_config_var.get(),
+            'use_directory': self.use_directory_var.get(),
+            'debug': self.debug_var.get(),
+            'python_path': self.python_var.get(),
+            'extra_args': self.extra_args_var.get(),
+            'running_pid': self.process_manager.pid,
+            'window_geometry': self.geometry()
+        }
+        try:
+            with open(STATE_FILE, 'w') as f:
+                json.dump(state, f, indent=2)
+        except:
+            pass
+    
+    def load_state(self):
+        if os.path.exists(STATE_FILE):
+            try:
+                with open(STATE_FILE, 'r') as f:
+                    return json.load(f)
+            except:
+                pass
+        return {}
+    
+    def restore_state(self):
+        if 'window_geometry' in self.state:
+            try:
+                self.geometry(self.state['window_geometry'])
+            except:
+                pass
+        
+        if 'running_pid' in self.state and self.state['running_pid']:
+            pid = self.state['running_pid']
+            try:
+                if os.name != 'nt':
+                    os.kill(pid, 0)
+                    if messagebox.askyesno("Orphaned Process", f"Found process from previous session (PID: {pid})\n\nKill it?"):
+                        try:
+                            os.killpg(os.getpgid(pid), signal.SIGKILL)
+                            self.log_message(f"[Killed orphaned process {pid}]\n\n")
+                        except Exception as e:
+                            self.log_message(f"[ERROR killing {pid}: {e}]\n\n")
+            except:
+                pass
+        
+        self.toggle_config_state()
+        self.toggle_directory_state()
+        self.toggle_list_state()
+    
+    def exit_program(self):
+        if self.process_manager.is_process_running():
+            response = messagebox.askyesnocancel("Process Running",
+                f"Wallpaper changer is running (PID: {self.process_manager.pid})\n\n"
+                "Yes = Stop process and exit\nNo = Leave running and exit\nCancel = Don't exit")
+            if response is None:
+                return
+            elif response:
+                self.stop_wallpapers(force=True)
+                time.sleep(0.5)
+        
+        self.log_message("\n[Saving state...]\n")
+        self.save_state()
+        self.log_message("[Exiting]\n\n")
+        self.process_manager.is_running = False
+        self.destroy()
+    
+    def on_closing(self):
+        self.exit_program()
+
+
+if __name__ == "__main__":
+    try:
+        import customtkinter
+    except ImportError:
+        print("\nERROR: CustomTkinter required\nInstall: pip install customtkinter\n")
+        sys.exit(1)
+    
+    BNM3GUI().mainloop()
+
+
+
+=== /home/deb/borednomore3/borednomore3/conf/borednomore3.list ===
+
+# BoredNoMore3 Wallpaper Pattern Configuration File
+# =================================================
+#
+# PURPOSE:
+# Defines file patterns for automatic wallpaper discovery. Each pattern
+# matches wallpaper files in the directory specified in borednomore3.conf
+# or via the --directory command-line argument.
+#
+# USAGE:
+# 1. Copy this file to 'borednomore3.list' in ${CONF_DIR}/
+# 2. Uncomment or add patterns below to match your wallpaper collection
+# 3. Save the file and run borednomore3 with --wallpaper-list option
+#
+# FILE LOCATION:
+# Default: ${CONF_DIR}/borednomore3.list
+# When running from backend/: ../conf/borednomore3.list
+#
+# PATTERN SYNTAX:
+# - One pattern per line
+# - Lines starting with # are comments
+# - Empty lines are ignored
+# - Standard glob pattern matching (*, ?, [])
+# - Patterns are relative to wallpaper directory
+# - Order matters: earlier matches appear first in rotation
+#
+# FALLBACK BEHAVIOR:
+# If this file is missing, empty, or contains no valid patterns,
+# the following defaults are used:
+#   *.jpg, *.png, *.jpeg, *.webp
+#
+# COMMAND-LINE INTEGRATION:
+# Use with: borednomore3 --wallpaper-list borednomore3.list
+# Or specify custom file: borednomore3 --wallpaper-list custom.list
+
+# SECTION 1: Standard Image Formats
+# ==================================
+
+# JPEG Images (Most Common Format)
+*.jpg
+*.jpeg
+
+# PNG Images (Supports Transparency)
+*.png
+
+# WebP Images (Modern Compression)
+*.webp
+
+# SECTION 2: Extended Format Support
+# ===================================
+# Uncomment lines below to enable additional formats
+
+# BMP Images (Uncompressed)
+# *.bmp
+
+# TIFF Images (High Quality/Print)
+# *.tiff
+# *.tif
+
+# GIF Images (Animated/Static)
+# *.gif
+
+# SECTION 3: Thematic Pattern Examples
+# =====================================
+# Use these as templates for organizing wallpaper collections
+
+# Nature Themes
+# nature_*.jpg
+# landscape_*.png
+# forest-*.jpg
+# mountain_*.*
+
+# Abstract/Art Themes  
+# abstract_*.jpg
+# art_*.png
+# pattern_*.*
+
+# Technology/Cyberpunk
+# cyberpunk_*.jpg
+# tech_*.png
+# neon_*.*
+
+# Minimalist Themes
+# minimal_*.jpg
+# simple_*.png
+# white_*.*
+
+# SECTION 4: Structured Naming Conventions
+# =========================================
+# For organized collections with numbered sequences
+
+# Numbered Sequences (5 digits)
+# wallpaper_[0-9][0-9][0-9][0-9][0-9].jpg
+# bg_[0-9][0-9][0-9][0-9].png
+
+# Categorized Sequences
+# nature_[0-9][0-9].jpg
+# abstract_[0-9][0-9][0-9].png
+# city_[A-Z][0-9][0-9].jpg
+
+# SECTION 5: Quality/Resolution Indicators
+# =========================================
+
+# Resolution Tags
+# *_4k.*
+# *_1080p.*
+# *_HD.*
+# *_UHD.*
+
+# Quality Indicators
+# *_highres.*
+# *_hq.*
+# *_premium.*
+
+# SECTION 6: Subdirectory Patterns
+# =================================
+# For wallpapers organized in folder structures
+# Requires wallpaper directory to contain these subfolders
+
+# Single Level Subdirectories
+# nature/*.jpg
+# abstract/*.png
+# cities/*.*
+
+# Recursive Matching (All Subdirectories)
+# **/*.jpg
+# **/*.png
+
+# SECTION 7: Advanced Pattern Examples
+# =====================================
+
+# Time-Based Selection
+# morning_*.jpg
+# day_*.png
+# night_*.jpg
+# sunset_*.*
+
+# Mood-Based Selection
+# calm_*.jpg
+# energetic_*.png
+# dark_*.*
+# bright_*.*
+
+# EXCLUSION PATTERNS (Note: Requires negative logic in separate system)
+# To exclude specific patterns, consider organizing files in separate
+# directories or using a more advanced file management system.
+
+# FILE METADATA
+# =============
+# Pattern Specification Version: 1.0
+# Compatible with: borednomore3 v0.6.0+
+# Last Updated: $(date)
+# Author: Nepamuceno
+# GitHub: https://github.com/nepamuceno/borednomore3
+
+# TECHNICAL NOTES:
+# ================
+# 1. Pattern matching uses Python's glob module
+# 2. Patterns are case-sensitive on Linux, case-insensitive on Windows
+# 3. For recursive patterns (**) Python 3.5+ is required
+# 4. Character classes: [abc], [a-z], [0-9], [!abc] (negation)
+# 5. Wildcards: * (any characters), ? (single character)
+# 6. Pattern order determines file display order in sequential mode
+# 7. Duplicate files matching multiple patterns are deduplicated
+#
+# RELATED FILES:
+# - borednomore3.conf: Main configuration settings
+# - borednomore3.py: Main application logic
+# - documentation/: User guide and API reference
+
+
+
+=== /home/deb/borednomore3/borednomore3/conf/borednomore3.conf ===
+
+[settings]
+interval = 300
+directory = ../wallpapers
+frames = 10
+speed = 0.001
+transitions = 
+randomize = False
+keep_image = False
+randomize_wallpapers = False
+borednomore3_gui_binary = borednomore3-gui
+
+
+
+
+=== /home/deb/borednomore3/subir_borednomore3.sh ===
+
+#!/bin/bash
+
+# 1. Cargar el secreto desde el archivo .env
+if [ -f .env ]; then
+    # Exportamos las variables (esto cargará NEPA_TOKEN)
+    export $(grep -v '^#' .env | xargs)
+else
+    echo "❌ Error: No se encontró el archivo .env"
+    exit 1
+fi
+
+# 2. Validación de Token y Definición de URL
+# Cambiamos borednomore3_TOKEN por NEPA_TOKEN para que coincida con tu archivo .env
+if [ -z "$NEPA_TOKEN" ]; then
+    echo "❌ Error: La variable NEPA_TOKEN está vacía en el archivo .env"
+    exit 1
+fi
+
+# Definimos la URL usando tu usuario y el token cargado
+GITHUB_USER="nepamuceno"
+REPO_URL="https://${GITHUB_USER}:${NEPA_TOKEN}@github.com/${GITHUB_USER}/borednomore3.git"
+
+# 3. Configuración de Rutas e Historial
+PROJECT_DIR=$(pwd)
+HIST_DIR="$PROJECT_DIR/history"
+HIST_FILE="$HIST_DIR/last-100-history.txt"
+mkdir -p "$HIST_DIR"
+
+if [ -f "$HOME/.bash_history" ]; then
+    tail -n 100 "$HOME/.bash_history" | awk '{$1=""; sub(/^ /,""); print}' > "$HIST_FILE"
+fi
+
+
+# 4. Preparación de Mensajes y Tags
+echo "--- Subiendo cambios a GitHub (borednomore3 - Modo Seguro) ---"
+read -p "Ingresa mensaje del commit: " COMMIT_MSG
+
+if [ -z "$COMMIT_MSG" ]; then
+    COMMIT_MSG="Update: $(date +'%Y-%m-%d %H:%M')"
+fi
+
+read -p "Nota extra para el tag (opcional): " EXTRA_NOTE
+EXTRA_NOTE_CLEAN=$(echo "$EXTRA_NOTE" | tr ' ' '_')
+
+BASE_TAG="stable-$(date +'%d_%m_%Y_%H_%M')"
+if [ -n "$EXTRA_NOTE_CLEAN" ]; then
+    TAG_MSG="${BASE_TAG}-${EXTRA_NOTE_CLEAN}"
+else
+    TAG_MSG="$BASE_TAG"
+fi
+
+# 5. Operaciones de Git
+git add -A
+
+# Solo hace commit si hay cambios detectados
+if ! git diff-index --quiet HEAD --; then
+    git commit -m "$COMMIT_MSG"
+else
+    echo "ℹ️ No hay cambios nuevos, solo se actualizarán tags si es necesario."
+fi
+
+git tag "$TAG_MSG"
+
+# 6. Push con verificación de errores
+echo "Enviando a GitHub..."
+if git push "$REPO_URL" main --tags; then
+    echo "✅ Subida completada con éxito como tag: $TAG_MSG"
+else
+    echo "❌ Error: Falló la subida. Eliminando tag local fallido..."
+    git tag -d "$TAG_MSG"
+    exit 1
+fi
+
+
+
+=== /home/deb/borednomore3/borednomore3_downloader.py ===
+
+#!/usr/bin/env python3
+"""
+BoredNoMore3 Downloader
+Advanced wallpaper downloader from multiple sources
+
+Downloads high-quality wallpapers from:
+- Pexels (https://pexels.com)
+- Lorem Picsum (https://picsum.photos)
+
+Author: Nepamuceno Bartolo
+GitHub: https://github.com/nepamuceno/borednomore3
+Version: 0.5.2 (Modified)
+"""
+
+import os
+import sys
+import time
+import random
+import hashlib
+import argparse
+import requests
+import re
+import glob
+
+VERSION = "0.5.2"
+AUTHOR = "Nepamuceno Bartolo"
+GITHUB = "https://github.com/nepamuceno/borednomore3"
+
+class BoredNoMore3Downloader:
+    """Advanced wallpaper downloader with smart numbering and duplicate detection"""
+
+    def __init__(self, directory="./wallpapers", search="wallpaper", count=10,
+                 deep_search=False, sources=None, start_from=None, randomize_source=False):
+        self.directory = os.path.abspath(os.path.expanduser(directory))
+        self.search = search
+        self.total_target = count
+        self.deep_search = deep_search
+        self.randomize_source = randomize_source
+        self.downloaded = []
+        self.downloaded_hashes = set()
+        self.next_number = 1
+        self.start_from = start_from
+        
+        # Available sources
+        self.available_sources = {
+            'pexels': self.download_from_pexels,
+            'picsum': self.download_from_picsum,
+        }
+        
+        if randomize_source:
+            random_source = random.choice(list(self.available_sources.keys()))
+            self.sources = [random_source]
+            print(f"Random source selected: {random_source}")
+        elif sources:
+            self.sources = sources
+        else:
+            self.sources = ['all']
+        
+        if not os.path.isdir(self.directory):
+            try:
+                os.makedirs(self.directory, exist_ok=True)
+                print(f"Created directory: {self.directory}")
+            except Exception as e:
+                print(f"Error: Cannot create directory '{self.directory}': {e}")
+                sys.exit(1)
+        
+        self._scan_existing_files()
+
+    def _scan_existing_files(self):
+        print(f"Scanning directory: {self.directory}")
+        existing_files = glob.glob(os.path.join(self.directory, "*.jpg"))
+        
+        if not existing_files:
+            print("No existing wallpapers found. Starting from 1.")
+            self.next_number = self.start_from if self.start_from else 1
+            return
+        
+        max_number = 0
+        number_pattern = re.compile(r'(\d+)')
+        
+        for filepath in existing_files:
+            filename = os.path.basename(filepath)
+            numbers = number_pattern.findall(filename)
+            if numbers:
+                num = int(numbers[-1])
+                max_number = max(max_number, num)
+            if self.start_from is None:
+                try:
+                    file_hash = self._get_file_hash(filepath)
+                    self.downloaded_hashes.add(file_hash)
+                except:
+                    pass
+        
+        if self.start_from is not None:
+            self.next_number = self.start_from
+            print(f"Override mode: Starting from wallpaper number {self.next_number}")
+        else:
+            self.next_number = max_number + 1
+            print(f"Next wallpaper will be numbered: {self.next_number}")
+
+    def _get_file_hash(self, filepath):
+        sha256_hash = hashlib.sha256()
+        try:
+            with open(filepath, "rb") as f:
+                for byte_block in iter(lambda: f.read(4096), b""):
+                    sha256_hash.update(byte_block)
+            return sha256_hash.hexdigest()
+        except:
+            return None
+
+    def _is_duplicate(self, image_data):
+        sha256_hash = hashlib.sha256()
+        sha256_hash.update(image_data)
+        file_hash = sha256_hash.hexdigest()
+        if file_hash in self.downloaded_hashes:
+            return True
+        self.downloaded_hashes.add(file_hash)
+        return False
+
+    def _save_image(self, image_data, source_name):
+        if self.start_from is None:
+            if self._is_duplicate(image_data):
+                print(f"  Skipped duplicate from {source_name}")
+                return False
+        else:
+            sha256_hash = hashlib.sha256()
+            sha256_hash.update(image_data)
+            self.downloaded_hashes.add(sha256_hash.hexdigest())
+        
+        filename = f"wallpaper_{self.next_number:05d}.jpg"
+        save_path = os.path.join(self.directory, filename)
+        overwrite_msg = " (OVERWRITTEN)" if os.path.exists(save_path) else ""
+        
+        try:
+            with open(save_path, "wb") as f:
+                f.write(image_data)
+            self.downloaded.append(save_path)
+            print(f"  Downloaded: {filename} from {source_name}{overwrite_msg}")
+            self.next_number += 1
+            return True
+        except Exception as e:
+            print(f"  Error saving {filename}: {e}")
+            return False
+
+    def download_from_pexels(self, limit):
+        print(f"\n[Pexels] Searching for '{self.search}' (Limit: {limit})...")
+        downloaded_count = 0
+        pages = 5 if self.deep_search else 2
+        photo_ranges = [(1000000, 5000000), (100000, 999999), (10000, 99999)]
+        
+        for start, end in photo_ranges[:pages]:
+            if downloaded_count >= limit:
+                break
+            # Try a reasonable number of random IDs to hit the target
+            for _ in range(limit * 3):
+                if downloaded_count >= limit:
+                    break
+                photo_id = random.randint(start, end)
+                url = f"https://images.pexels.com/photos/{photo_id}/pexels-photo-{photo_id}.jpeg?auto=compress&cs=tinysrgb&w=1920"
+                try:
+                    response = requests.get(url, timeout=10)
+                    if response.status_code == 200 and len(response.content) > 50000:
+                        if self._save_image(response.content, "Pexels"):
+                            downloaded_count += 1
+                    time.sleep(0.2)
+                except:
+                    continue
+        print(f"[Pexels] Downloaded {downloaded_count} images")
+        return downloaded_count
+
+    def download_from_picsum(self, limit):
+        print(f"\n[Lorem Picsum] Downloading random wallpapers (Limit: {limit})...")
+        downloaded_count = 0
+        for i in range(limit):
+            url = f"https://picsum.photos/1920/1080?random={random.randint(1, 100000)}"
+            try:
+                response = requests.get(url, timeout=10, allow_redirects=True)
+                if response.status_code == 200:
+                    if self._save_image(response.content, "Picsum"):
+                        downloaded_count += 1
+                time.sleep(0.2)
+            except Exception as e:
+                print(f"  Error downloading from Picsum: {e}")
+                continue
+        print(f"[Picsum] Downloaded {downloaded_count} images")
+        return downloaded_count
+
+    def fetch_all_sources(self):
+        print("\n" + "=" * 80)
+        print("BoredNoMore3 Downloader - Starting Download Process")
+        print("=" * 80)
+        print(f"Search query: '{self.search}'")
+        print(f"Total target: {self.total_target} wallpapers")
+        print(f"Save directory: {self.directory}")
+        
+        active_keys = list(self.available_sources.keys()) if 'all' in self.sources else self.sources
+        print(f"Sources: {', '.join(active_keys)}")
+        print("=" * 80)
+        
+        initial_count = len(self.downloaded)
+        num_sources = len(active_keys)
+        
+        # Calculate distribution
+        count_per_source = self.total_target // num_sources
+        remainder = self.total_target % num_sources
+
+        for i, source_key in enumerate(active_keys):
+            # Add remainder to the last source
+            quota = count_per_source + (remainder if i == num_sources - 1 else 0)
+            if quota > 0:
+                self.available_sources[source_key](limit=quota)
+        
+        print("\n" + "=" * 80)
+        print("Download Process Completed")
+        print("=" * 80)
+        total_new = len(self.downloaded) - initial_count
+        print(f"Total new wallpapers downloaded: {total_new}")
+        print(f"Total wallpapers in directory: {self.next_number - 1}")
+        print(f"Saved to: {self.directory}")
+        print("=" * 80)
+
+def print_help():
+    help_text = f"""
+BoredNoMore3 Downloader v{VERSION}
+
+USAGE:
+    borednomore3_downloader.py [OPTIONS]
+
+OPTIONS:
+    -h, --help      Show this help
+    -d <path>       Save directory (Default: ./wallpapers)
+    -s <query>      Search query (Default: "wallpaper")
+    -n <count>      TOTAL wallpapers to download (Default: 10)
+    -D, --deep      Enable deep search (Pexels)
+    -w <sources>    Sources (pexels, picsum, all)
+    -o <number>     Overwrite starting from specific number
+    -R              Randomly pick ONE source
+"""
+    print(help_text)
+
+def main():
+    try:
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument('-h', '--help', action='store_true')
+        parser.add_argument('-v', '--version', action='store_true')
+        parser.add_argument('-d', '--directory', type=str, default='./wallpapers')
+        parser.add_argument('-s', '--search', type=str, default='wallpaper')
+        parser.add_argument('-n', '--number', type=int, default=10)
+        parser.add_argument('-D', '--deep', action='store_true')
+        parser.add_argument('-w', '--websites', type=str, default=None)
+        parser.add_argument('-o', '--overwrite', type=int, default=None)
+        parser.add_argument('-R', '--random-source', action='store_true')
+        args = parser.parse_args()
+
+        if args.help:
+            print_help(); sys.exit(0)
+        
+        sources = None
+        if args.websites:
+            if args.websites.lower() != 'all':
+                sources = [s.strip().lower() for s in args.websites.split(',')]
+
+        downloader = BoredNoMore3Downloader(
+            directory=args.directory,
+            search=args.search,
+            count=args.number,
+            deep_search=args.deep,
+            sources=sources,
+            start_from=args.overwrite,
+            randomize_source=args.random_source
+        )
+        downloader.fetch_all_sources()
+
+    except KeyboardInterrupt:
+        print("\nDownload interrupted by user."); sys.exit(0)
+    except Exception as e:
+        print(f"\nAn error occurred: {str(e)}")
+
+if __name__ == "__main__":
+    main()
+
+
+

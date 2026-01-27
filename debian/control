@@ -1,0 +1,45 @@
+Source: borednomore3
+Section: graphics
+Priority: optional
+Maintainer: Nepamuceno Bartolo <packager@example.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all (>= 3.8),
+               python3-setuptools
+Standards-Version: 4.6.2
+Homepage: https://github.com/nepamuceno/borednomore3
+Vcs-Git: https://github.com/nepamuceno/borednomore3.git
+Vcs-Browser: https://github.com/nepamuceno/borednomore3
+Rules-Requires-Root: no
+
+Package: borednomore3
+Architecture: all
+Depends: ${python3:Depends},
+         ${misc:Depends},
+         python3 (>= 3.8),
+         python3-pil,
+         python3-tk,
+         python3-pynput,
+         imagemagick,
+         feh | nitrogen | pcmanfm-qt
+Recommends: python3-customtkinter,
+            xrandr,
+            gsettings-desktop-schemas,
+            python3-psutil
+Description: Dynamic wallpaper changer with smooth transitions
+ BoredNoMore3 is a sophisticated wallpaper management daemon for
+ Debian-based distributions. It provides smooth, ImageMagick-powered
+ transitions across environments like GNOME, KDE, XFCE, Cinnamon, and MATE.
+ .
+ Features:
+  - 1000+ built-in transition effects using ImageMagick distortions
+  - Universal desktop environment support (GNOME, KDE, XFCE, LXQt, MATE, etc.)
+  - Professional CustomTkinter GUI (borednomore3-gui)
+  - Command-line backend daemon (borednomore3)
+  - Configurable intervals and transition parameters
+  - Wallpaper downloader utility
+  - Debug mode for troubleshooting
+  - True random shuffle with no repeats until full cycle
+ .
+ The package includes both a backend daemon for automated wallpaper
+ rotation and a modern GUI frontend for easy configuration and monitoring.

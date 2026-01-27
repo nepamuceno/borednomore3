@@ -1,0 +1,47 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    configure)
+        # Set proper permissions
+        chmod 755 /etc/borednomore3
+        chmod 644 /etc/borednomore3/borednomore3.conf
+        chmod 644 /etc/borednomore3/borednomore3.list
+        chmod 755 /usr/share/borednomore3/wallpapers
+        
+        # Update desktop database
+        if [ -x /usr/bin/update-desktop-database ]; then
+            update-desktop-database -q /usr/share/applications || true
+        fi
+        
+        # Update man database
+        if [ -x /usr/bin/mandb ]; then
+            mandb -q || true
+        fi
+        
+        echo ""
+        echo "BoredNoMore3 v0.7.0 installed successfully!"
+        echo ""
+        echo "Quick Start:"
+        echo "  borednomore3           - Run backend daemon"
+        echo "  borednomore3-gui       - Launch GUI interface"
+        echo "  borednomore3 -h        - Show help"
+        echo "  man borednomore3       - Read manual"
+        echo ""
+        echo "Configuration: /etc/borednomore3/"
+        echo "Wallpapers: /usr/share/borednomore3/wallpapers/"
+        echo ""
+        ;;
+        
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+        
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
