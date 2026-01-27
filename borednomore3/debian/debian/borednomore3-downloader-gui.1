@@ -1,0 +1,59 @@
+.TH BOREDNOMORE3-DOWNLOADER-GUI 1 "January 2026" "3.0" "BoredNoMore3 Manual"
+.SH NAME
+borednomore3-downloader-gui \- graphical interface for bulk wallpaper scraping
+.SH SYNOPSIS
+.B borednomore3-downloader-gui
+.SH DESCRIPTION
+.B borednomore3-downloader-gui
+is a specialized tool designed to scrape high-resolution images from multiple web sources simultaneously. It provides a visual dashboard to manage search queries, download limits, and source selection without requiring command-line knowledge.
+
+The application features a modern "Dark" appearance mode and utilizes a threaded backend to ensure the UI remains responsive during network-intensive operations.
+
+.SH GUI COMPONENTS
+.TP
+.B Search Keywords
+Primary input for the scraping engine (e.g., "mountain landscape", "minimalist 4k").
+.TP
+.B Select Folder
+A directory picker to set the destination for downloaded .jpg files.
+.TP
+.B Source Checkboxes
+Allows the user to enable or disable specific scraping engines including:
+\fIUnsplash, Pexels, Pixabay, Picsum, Wallhaven, Google,\fR and \fIBing\fR.
+.TP
+.B Deep Search
+When enabled, the engine will traverse multiple result pages (up to 10) for supported sources (Bing, Pexels, etc.).
+.TP
+.B Random Engines
+Ignores manual checkbox selection and chooses a single engine at random for the current mission.
+.TP
+.B Global Download Limit
+A slider to cap the total number of images saved during the session.
+.TP
+.B Overwrite ID
+If a number is entered, the engine will start naming files from that index, potentially overwriting existing files in the directory.
+.TP
+.B Console Box
+A real-time log window that captures standard output from the scraping thread, displaying [OK] status for successful downloads.
+
+.SH SIDEBAR TOOLS
+The sidebar contains buttons that interface with the CLI version of the downloader to provide metadata:
+.IP \(bu 2
+\fBHelp\fR: Spawns the command-line help documentation.
+.IP \(bu 2
+\fBCredits\fR: Shows authorship information.
+.IP \(bu 2
+\fBVersion\fR: Displays the current build version.
+
+.SH TECHNICAL NOTES
+.SS File Naming
+Images are automatically saved with the format \fIwallpaper_NNNNN.jpg\fR.
+.SS Deduplication
+The engine performs a SHA-256 hash check on every downloaded image. If a file with an identical hash already exists in the target folder, the download is discarded to save space.
+
+.SH AUTHOR
+Nepamuceno Bartolo
+
+.SH SEE ALSO
+.BR borednomore3-gui (1),
+.BR borednomore3-downloader (1)

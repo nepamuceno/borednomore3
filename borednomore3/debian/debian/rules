@@ -1,0 +1,47 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE = 1
+
+# 1. Enable ccache to speed up repeated builds
+export CCACHE_DIR = $(CURDIR)/.ccache
+export PATH := /usr/lib/ccache:$(PATH)
+
+# Determine the number of CPU cores for parallel Nuitka builds
+NJOBS := $(shell nproc)
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	# 2. Compile using all CPU cores (--jobs) and Nuitka cache
+	python3 -m nuitka --standalone --onefile --plugin-enable=tk-inter \
+		--jobs=$(NJOBS) --assume-yes-for-downloads \
+		--output-filename=borednomore3-gui borednomore3_gui.py
+
+	python3 -m nuitka --standalone --onefile \
+		--jobs=$(NJOBS) --assume-yes-for-downloads \
+		--output-filename=borednomore3 borednomore3.py
+	
+	python3 -m nuitka --standalone --onefile \
+		--jobs=$(NJOBS) --assume-yes-for-downloads \
+		--output-filename=borednomore3-downloader borednomore3_downloader.py
+	
+	python3 -m nuitka --standalone --onefile --plugin-enable=tk-inter \
+		--jobs=$(NJOBS) --assume-yes-for-downloads \
+		--output-filename=borednomore3-downloader-gui borednomore3_downloader_gui.py
+
+override_dh_auto_install:
+	install -d debian/borednomore3/usr/bin
+	install -m 0755 borednomore3-gui debian/borednomore3/usr/bin/
+	install -m 0755 borednomore3 debian/borednomore3/usr/bin/
+	install -m 0755 borednomore3-downloader debian/borednomore3/usr/bin/
+	install -m 0755 borednomore3-downloader-gui debian/borednomore3/usr/bin/
+
+	# Install Desktop Entries
+	install -d debian/borednomore3/usr/share/applications
+	install -m 0644 debian/borednomore3.desktop debian/borednomore3/usr/share/applications/
+	install -m 0644 debian/borednomore3-downloader.desktop debian/borednomore3/usr/share/applications/
+
+override_dh_installman:
+	# 4. Correctly install the 4 man pages listed in debian/manpages
+	dh_installman

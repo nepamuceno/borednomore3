@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=BoredNoMore3 Mission Control
+Comment=Manage and run wallpaper transitions
+Exec=borednomore3-gui
+Icon=preferences-desktop-wallpaper
+Terminal=false
+Type=Application
+Categories=Settings;DesktopSettings;
