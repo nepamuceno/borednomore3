@@ -1,0 +1,36 @@
+Format: 1.8
+Date: Mon, 12 Jan 2026 00:00:00 -0600
+Source: borednomore3
+Binary: borednomore3
+Built-For-Profiles: noudeb
+Architecture: source amd64
+Version: 0.5.4-1
+Distribution: unstable
+Urgency: low
+Maintainer: Nepamuceno Bartolo <zzerver@gmail.com>
+Changed-By: Nepamuceno Bartolo <zzerver@gmail.com>
+Description:
+ borednomore3 - Wallpaper suite with transitions and downloader
+Changes:
+ borednomore3 (0.5.4-1) unstable; urgency=low
+ .
+   * Initial release to Debian.
+   * Added Nuitka compilation support.
+Checksums-Sha1:
+ 5f9305e89552b3f083ab537d4b51573017e233a5 982 borednomore3_0.5.4-1.dsc
+ f3f7b5666004903b038663c547310d5a63c3cedf 60573656 borednomore3_0.5.4.orig.tar.xz
+ 872a613b25c94ece48a176bfe2968396211e1f1c 5572 borednomore3_0.5.4-1.debian.tar.xz
+ c6814b9d9e40dc285efca01aa8bc549991e91b90 9536 borednomore3_0.5.4-1_amd64.buildinfo
+ b55a578b63e0cd017a707d119e71cdfb315f91ff 49886 borednomore3_0.5.4-1_amd64.deb
+Checksums-Sha256:
+ f3fcba4068159d356f48ba4849ba143edfe7c33a9dbb6a786238be3d01fbed13 982 borednomore3_0.5.4-1.dsc
+ 4da5e5a4e25d915261e3e914877398bad0811ee566e03afab5829c68cc4f80fc 60573656 borednomore3_0.5.4.orig.tar.xz
+ a08ae099ef4f87542c83018ceec21f9783100ce5e9649264f217b6fa92985a6d 5572 borednomore3_0.5.4-1.debian.tar.xz
+ 414349890789a5ee1d0ee9e3fe9bfae0fd788ad0d23fe9eee55b87af7499630e 9536 borednomore3_0.5.4-1_amd64.buildinfo
+ 9fe61d2be9c2e107f13491ba87ccf6f26a6bef24adb7a74a75ba3d954a96c072 49886 borednomore3_0.5.4-1_amd64.deb
+Files:
+ 92be87cd7fd2d26c32400050d12ff720 982 utils optional borednomore3_0.5.4-1.dsc
+ 6b48f21bfedcc6cf4aff263ac778e633 60573656 utils optional borednomore3_0.5.4.orig.tar.xz
+ b70f7ab64bd18b0da85b925fbdab3bfd 5572 utils optional borednomore3_0.5.4-1.debian.tar.xz
+ 1eae7f1ebf06b275bb93f6dce2ec8127 9536 utils optional borednomore3_0.5.4-1_amd64.buildinfo
+ d2e3244139cf93f2975754c46ff8f427 49886 utils optional borednomore3_0.5.4-1_amd64.deb

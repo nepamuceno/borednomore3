@@ -1,0 +1,65 @@
+Task 1: in borednomore3.py
+
+Modify 1: In borednomore3.py or borednomore3 (binary): like to add a new argument to load a config named borednomore.conf, in this
+file is containing all de arguments default values including the string for the borednomore3-gui binary
+When borednomore3.py is launched, the borednomore3.py reads the filename assigned by the argument if exist.
+If does not exist search for borednomore3.conf file and loads those values from the borednomore3.conf file
+after that overwrite those values with the arguments values if are available, if any argument or conf variable
+is missing, default to the borednomore3.py or binary borednomore3 default values inside the program for safety.
+
+Modify 2: Add another argument that when exist this flag is true, default is False when not especified, this
+flag is gone control the way transitions are served, call this flag KEEP_IMAGE
+
+Task 2: in borednomore3_gui (binary version)
+
+Problem 1: Still trying to run the .py version insted of the compiled version when
+the binary file borednomore3-gui is called.
+
+Task 3:
+In borednomore3_gui (binary version)
+
+Modify 1, add all arguments from default values to be able to be modify via <program> [args]
+and add a new one to load the borednomore3.conf file, the handle of the arguments will be
+the same way as borednomore3 is doing it, explain When borednomore3_gui.py or binary borednomore3_gui
+is executed, the program reads the filename assigned by the argument if exist.
+If does not exist search for borednomore3.conf file and loads those values from the borednomore3.conf file
+after that overwrite those values with the arguments values if are available, if any argument or conf variable
+is missing, default to the borednomore3.py or binary borednomore3 default values inside the program for safety.
+
+Modify 2: Rebuild the borednomore3_gui.py to load the final values into the gui, including a space to
+define the configuration file (borednomore3.conf or the one input into the argument that defines
+the .conf file path/file, make it browsable so user can choose from and add a checkbox for the new
+KEEP_IMAGE flag.
+
+Modify 3: When the service is started, the program will look for the string that define
+the borednomore3 (.py or binary version) and execute that program, i like to see
+the way that program was called [program] [arguments] in the console log screen.
+Problem 1: Still trying to run the .py version insted of the compiled version when
+the binary file borednomore3-gui is called.
+
+Console Log: This is the console log screen output,
+and there is no \n separating the log lines, here is output of the console
+log screen:
+
+Log Console Output:
+[*] BoredNoMore3 Mission Control v3.2.0 initialized[*] Ready to launch background engine
+[*] Launching background engine...[*] Command: /tmp/onefile_4649_1768310864_413824/python3 -u borednomore3.py -d /home/deb/borednomore3/borednomore3 -i 300 -f 10 -s 0.001 -t 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40 -r[ERROR] Failed to start engine: [Errno 2] No such file or directory: '/tmp/onefile_4649_1768310864_413824/python3'
+[*] Executing: /tmp/onefile_4649_1768310864_413824/python3 -u borednomore3.py -h[ERROR] Command failed: [Errno 2] No such file or directory: '/tmp/onefile_4649_1768310864_413824/python3'
+[*] Executing: /tmp/onefile_4649_1768310864_413824/python3 -u borednomore3.py -h[ERROR] Command failed: [Errno 2] No such file or directory: '/tmp/onefile_4649_1768310864_413824/python3'
+[*] Executing: /tmp/onefile_4649_1768310864_413824/python3 -u borednomore3.py -c[ERROR] Command failed: [Errno 2] No such file or directory: '/tmp/onefile_4649_1768310864_413824/python3'
+[*] Executing: /tmp/onefile_4649_1768310864_413824/python3 -u borednomore3.py -v[ERROR] Command failed: [Errno 2] No such file or directory: '/tmp/onefile_4649_1768310864_413824/python3'
+
+
+Task 3: in borednomore3_transitions.py
+
+Problem 1: Some Transition do the same as other transitions, i like to modify them
+as the very first transition be a just go from imageA to ImageB, then when KEEP_IMAGE is True de IMAGEA stays 
+in the desktop when transition is executing and ImageB overwrites ImageA into overwrites the whole desktop, when
+is false the ImageA moves togather with ImageB to the left, right, up, down, etc
+
+Problem 2: Fix Duplicate translations, i like 2: right-left, left-right, down-up, up-down, fade-in, fade-ot, zoom-in, 
+zoom-out, focus-in, focus out, add more as need itm do not be shine to just 40 transition make 100 or more but make
+it like if for example: left-upper-corner to right-bottom-corner make sure you have the reversed version too: 
+right-bottom-corner to left-upper-corner, etc, in other words, make on transition and add the reversed version.
+
+Net i will provide the 3 files for modification: borednomore3_transitions.py borednomore3.py borednomore3_gui.py

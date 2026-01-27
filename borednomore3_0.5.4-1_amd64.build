@@ -1,0 +1,358 @@
+ dpkg-buildpackage -us -uc -ui
+dpkg-buildpackage: info: source package borednomore3
+dpkg-buildpackage: info: source version 0.5.4-1
+dpkg-buildpackage: info: source distribution unstable
+dpkg-buildpackage: info: source changed by Nepamuceno Bartolo <zzerver@gmail.com>
+ dpkg-source --before-build .
+dpkg-buildpackage: info: host architecture amd64
+dpkg-source: info: using options from borednomore3/debian/source/local-options: --extend-diff-ignore=(\.env|prepare_debian_repo\.sh|subir_borednomore3\.sh|history/.*|\.ccache|.*\.build|.*\.dist|.*\.onefile-build)
+ fakeroot debian/rules clean
+dh clean
+   dh_auto_clean
+	make -j2 clean
+make[1]: Entering directory '/home/deb/borednomore3/borednomore3'
+[0;34m✓ Cleaned[0m
+make[1]: Leaving directory '/home/deb/borednomore3/borednomore3'
+   dh_clean
+	rm -f debian/debhelper-build-stamp
+	rm -rf debian/.debhelper/
+	rm -f -- debian/borednomore3.substvars debian/files
+	rm -fr -- debian/borednomore3/ debian/tmp/
+	find .  \( \( \
+		\( -path .\*/.git -o -path .\*/.svn -o -path .\*/.bzr -o -path .\*/.hg -o -path .\*/CVS -o -path .\*/.pc -o -path .\*/_darcs \) -prune -o -type f -a \
+	        \( -name '#*#' -o -name '.*~' -o -name '*~' -o -name DEADJOE \
+		 -o -name '*.orig' -o -name '*.rej' -o -name '*.bak' \
+		 -o -name '.*.orig' -o -name .*.rej -o -name '.SUMS' \
+		 -o -name TAGS -o \( -path '*/.deps/*' -a -name '*.P' \) \
+		\) -exec rm -f {} + \) -o \
+		\( -type d -a \( -name autom4te.cache -o -name __pycache__ \) -prune -exec rm -rf {} + \) \)
+ dpkg-source -b .
+dpkg-source: info: using options from borednomore3/debian/source/local-options: --extend-diff-ignore=(\.env|prepare_debian_repo\.sh|subir_borednomore3\.sh|history/.*|\.ccache|.*\.build|.*\.dist|.*\.onefile-build)
+dpkg-source: info: using source format '3.0 (quilt)'
+dpkg-source: info: building borednomore3 using existing ./borednomore3_0.5.4.orig.tar.xz
+dpkg-source: info: building borednomore3 in borednomore3_0.5.4-1.debian.tar.xz
+dpkg-source: info: building borednomore3 in borednomore3_0.5.4-1.dsc
+ debian/rules build
+dh build
+   dh_update_autotools_config
+   dh_autoreconf
+   dh_auto_configure
+   debian/rules override_dh_auto_build
+make[1]: Entering directory '/home/deb/borednomore3/borednomore3'
+# 2. Compile using all CPU cores (--jobs) and Nuitka cache
+python3 -m nuitka --standalone --onefile --plugin-enable=tk-inter \
+	--jobs=2 --assume-yes-for-downloads \
+	--output-filename=borednomore3-gui borednomore3_gui.py
+Nuitka-Options: Used command line options:
+Nuitka-Options:   --standalone --onefile --plugin-enable=tk-inter --jobs=2 --assume-yes-for-downloads --output-filename=borednomore3-gui borednomore3_gui.py
+Nuitka: Starting Python compilation with:
+Nuitka:   Version '2.8.9' on Python 3.12 (flavor 'Debian Python') commercial grade 'not installed'.
+Nuitka: Using Debian packages for 'PIL,olefile,packaging,typing_extensions'.
+Nuitka:WARNING: Standalone with Python package from Debian installation may not be working.
+Nuitka:WARNING:     Complex topic! More information can be found at [94mhttps://nuitka.net/info/debian-dist-packages.html
+Nuitka-Plugins:anti-bloat: Not including 'PIL.ImageQt' automatically in order to avoid bloat, but this may cause: PIL will not be able to create Qt image objects.
+Nuitka-Plugins:anti-bloat: Not including '_json' automatically in order to avoid bloat, but this may cause: may slow down by using fallback implementation.
+Nuitka: Completed Python level compilation and optimization.
+Nuitka: Generating source code for C backend compiler.
+Nuitka: Running data composer tool for optimal constant value handling.
+Nuitka: Running C compilation via Scons.
+Nuitka-Scons: Backend C compiler: gcc (gcc 13).
+Nuitka-Scons: Scons: Inherited CPPFLAGS='-Wdate-time -D_FORTIFY_SOURCE=3' variable.
+Nuitka-Scons: Inherited CFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited CXXFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited LDFLAGS='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro' variable.
+Nuitka-Scons: Backend C linking with 131 files (no progress information available for this stage).
+Nuitka-Scons: Slow C linking detected, used 360s so far, consider using '--lto=no' for faster linking, or '--lto=yes"' to disable this message.
+Nuitka-Scons: Running gcc -o ~/borednomore3/borednomore3/borednomore3_gui.dist/borednomore3-gui.bin -flto=2 -fuse-linker-plugin -fpartial-inlining -freorder-functions -O2 -s -z noexecstack -Xlinker -export-dynamic -rdynamic -Wl,-rpath=/usr/lib -Wl,-R,'$ORIGIN' -Wl,--disable-new-dtags -Wl,-b -Wl,binary -Wl,./__constants.bin -Wl,-b -Wl,elf64-x86-64 -Wl,-defsym -Wl,constant_bin_data=_binary_____constants_bin_start -Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro @"./@link_input.txt -L/usr/lib -ldl -lm /usr/lib/python3.12/config-3.12-x86_64-linux-gnu/libpython3.12-pic.a -lz -lm -lutil -lpthread -lexpat took 724.84 seconds
+Nuitka-Scons: Compiled 131 C files using ccache.
+Nuitka-Scons: Cached C files (using ccache) with result 'cache miss': 131
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/fonts/CustomTkinter_shapes_font.otf' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/fonts/Roboto/Roboto-Medium.ttf' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/fonts/Roboto/Roboto-Regular.ttf' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/icons/CustomTkinter_icon_Windows.ico' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/themes/blue.json' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/themes/dark-blue.json' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/themes/green.json' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:tk-inter: Included 88 data files due to Tk needed for tkinter usage.
+Nuitka-Plugins:tk-inter: Included 227 data files due to Tcl needed for tkinter usage.
+Nuitka-Onefile: Creating single file from dist folder, this may take a while.
+Nuitka-Onefile: Running bootstrap binary compilation via Scons.
+Nuitka-Scons: Onefile C compiler: gcc (gcc 13).
+Nuitka-Scons: Scons: Inherited CPPFLAGS='-Wdate-time -D_FORTIFY_SOURCE=3' variable.
+Nuitka-Scons: Inherited CFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited CXXFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited LDFLAGS='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro' variable.
+Nuitka-Scons: Onefile C linking.
+Nuitka-Scons: Compiled 1 C files using ccache.
+Nuitka-Scons: Cached C files (using ccache) with result 'cache miss': 1
+Nuitka-Onefile: Using compression for onefile payload.
+Nuitka-Onefile: Onefile payload compression ratio (28.53%) size 47479929 to 13547452.
+Nuitka-Onefile: Keeping onefile build directory 'borednomore3_gui.onefile-build'.
+Nuitka: Keeping dist folder 'borednomore3_gui.dist' for inspection, no need to use it.
+Nuitka: Keeping build directory 'borednomore3_gui.build'.
+Nuitka: Successfully created 'borednomore3-gui'.
+python3 -m nuitka --standalone --onefile \
+	--jobs=2 --assume-yes-for-downloads \
+	--output-filename=borednomore3 borednomore3.py
+Nuitka-Options: Used command line options:
+Nuitka-Options:   --standalone --onefile --jobs=2 --assume-yes-for-downloads --output-filename=borednomore3 borednomore3.py
+Nuitka: Starting Python compilation with:
+Nuitka:   Version '2.8.9' on Python 3.12 (flavor 'Debian Python') commercial grade 'not installed'.
+Nuitka: Using Debian packages for 'PIL,Xlib,olefile,pynput,six'.
+Nuitka:WARNING: Standalone with Python package from Debian installation may not be working.
+Nuitka:WARNING:     Complex topic! More information can be found at [94mhttps://nuitka.net/info/debian-dist-packages.html
+Nuitka-Plugins:anti-bloat: Not including 'PIL.ImageQt' automatically in order to avoid bloat, but this may cause: PIL will not be able to create Qt image objects.
+Nuitka: Completed Python level compilation and optimization.
+Nuitka: Generating source code for C backend compiler.
+Nuitka: Running data composer tool for optimal constant value handling.
+Nuitka: Running C compilation via Scons.
+Nuitka-Scons: Backend C compiler: gcc (gcc 13).
+Nuitka-Scons: Scons: Inherited CPPFLAGS='-Wdate-time -D_FORTIFY_SOURCE=3' variable.
+Nuitka-Scons: Inherited CFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited CXXFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited LDFLAGS='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro' variable.
+Nuitka-Scons: Slow C compilation detected, used 360s so far, scalability problem.
+Nuitka-Scons: Running gcc -o module.Xlib.protocol.request.o -c -std=c11 -flto=2 -fuse-linker-plugin -fno-fat-lto-objects -fvisibility=hidden -fwrapv -pipe -Wno-unused-but-set-variable -fpartial-inlining -ftrack-macro-expansion=0 -Wno-deprecated-declarations -fno-var-tracking -Wno-misleading-indentation -fcompare-debug-second -O2 -g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1 -Wdate-time -D_FORTIFY_SOURCE=3 -D_NUITKA_STANDALONE_MODE -D_NUITKA_ONEFILE_MODE -D_NUITKA_ONEFILE_TEMP_BOOL -D_NUITKA_EXE_MODE -D__NUITKA_NO_ASSERT__ -D_NUITKA_STATIC_LIBPYTHON -DPy_NO_ENABLE_SHARED -D_NUITKA_USE_UNEXPOSED_API -D_NUITKA_INLINE_COPY_HACL -DHACL_CAN_COMPILE_VEC256 -D_NUITKA_CONSTANTS_FROM_LINKER -D_NUITKA_FROZEN=151 -I~/.local/lib/python3.12/site-packages/nuitka/build/inline_copy/zlib -I/usr/include/python3.12 -I~/.local/lib/python3.12/site-packages/nuitka/build/inline_copy/python_hacl/hacl_312 -I~/.local/lib/python3.12/site-packages/nuitka/build/inline_copy/python_hacl/hacl_312/include -I. -I~/.local/lib/python3.12/site-packages/nuitka/build/include -I~/.local/lib/python3.12/site-packages/nuitka/build/static_src -I~/.local/lib/python3.12/site-packages/nuitka/build/inline_copy/libbacktrace module.Xlib.protocol.request.c took 683.99 seconds
+Nuitka-Scons: Backend C linking with 157 files (no progress information available for this stage).
+Nuitka-Scons: Slow C linking detected, used 361s so far, consider using '--lto=no' for faster linking, or '--lto=yes"' to disable this message.
+Nuitka-Scons: Running gcc -o ~/borednomore3/borednomore3/borednomore3.dist/borednomore3.bin -flto=2 -fuse-linker-plugin -fpartial-inlining -freorder-functions -O2 -s -z noexecstack -Xlinker -export-dynamic -rdynamic -Wl,-rpath=/usr/lib -Wl,-R,'$ORIGIN' -Wl,--disable-new-dtags -Wl,-b -Wl,binary -Wl,./__constants.bin -Wl,-b -Wl,elf64-x86-64 -Wl,-defsym -Wl,constant_bin_data=_binary_____constants_bin_start -Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro @"./@link_input.txt -L/usr/lib -ldl -lm /usr/lib/python3.12/config-3.12-x86_64-linux-gnu/libpython3.12-pic.a -lz -lm -lutil -lpthread -lexpat took 1087.67 seconds
+Nuitka-Scons: Compiled 157 C files using ccache.
+Nuitka-Scons: Cached C files (using ccache) with result 'cache miss': 157
+Nuitka-Onefile: Creating single file from dist folder, this may take a while.
+Nuitka-Onefile: Running bootstrap binary compilation via Scons.
+Nuitka-Scons: Onefile C compiler: gcc (gcc 13).
+Nuitka-Scons: Scons: Inherited CPPFLAGS='-Wdate-time -D_FORTIFY_SOURCE=3' variable.
+Nuitka-Scons: Inherited CFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited CXXFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited LDFLAGS='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro' variable.
+Nuitka-Scons: Onefile C linking.
+Nuitka-Scons: Compiled 1 C files using ccache.
+Nuitka-Scons: Cached C files (using ccache) with result 'cache miss': 1
+Nuitka-Onefile: Using compression for onefile payload.
+Nuitka-Onefile: Onefile payload compression ratio (27.24%) size 37072614 to 10097451.
+Nuitka-Onefile: Keeping onefile build directory 'borednomore3.onefile-build'.
+Nuitka: Keeping dist folder 'borednomore3.dist' for inspection, no need to use it.
+Nuitka: Keeping build directory 'borednomore3.build'.
+Nuitka: Successfully created 'borednomore3'.
+python3 -m nuitka --standalone --onefile \
+	--jobs=2 --assume-yes-for-downloads \
+	--output-filename=borednomore3-downloader borednomore3_downloader.py
+Nuitka-Options: Used command line options:
+Nuitka-Options:   --standalone --onefile --jobs=2 --assume-yes-for-downloads --output-filename=borednomore3-downloader borednomore3_downloader.py
+Nuitka: Starting Python compilation with:
+Nuitka:   Version '2.8.9' on Python 3.12 (flavor 'Debian Python') commercial grade 'not installed'.
+Nuitka: Using Debian packages for '_cffi_backend,bcrypt,bs4,certifi,chardet,cryptography,html5lib,idna,lxml,requests,six,soupsieve,urllib3,webencodings'.
+Nuitka:WARNING: Standalone with Python package from Debian installation may not be working.
+Nuitka:WARNING:     Complex topic! More information can be found at [94mhttps://nuitka.net/info/debian-dist-packages.html
+Nuitka-Plugins:anti-bloat: Not including '_json' automatically in order to avoid bloat, but this may cause: may slow down by using fallback implementation.
+Nuitka: Completed Python level compilation and optimization.
+Nuitka: Generating source code for C backend compiler.
+Nuitka: Running data composer tool for optimal constant value handling.
+Nuitka: Running C compilation via Scons.
+Nuitka-Scons: Backend C compiler: gcc (gcc 13).
+Nuitka-Scons: Scons: Inherited CPPFLAGS='-Wdate-time -D_FORTIFY_SOURCE=3' variable.
+Nuitka-Scons: Inherited CFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited CXXFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited LDFLAGS='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro' variable.
+Nuitka-Scons: Backend C linking with 210 files (no progress information available for this stage).
+Nuitka-Scons: Slow C linking detected, used 360s so far, consider using '--lto=no' for faster linking, or '--lto=yes"' to disable this message.
+Nuitka-Scons: Running gcc -o ~/borednomore3/borednomore3/borednomore3_downloader.dist/borednomore3-downloader.bin -flto=2 -fuse-linker-plugin -fpartial-inlining -freorder-functions -O2 -s -z noexecstack -Xlinker -export-dynamic -rdynamic -Wl,-rpath=/usr/lib -Wl,-R,'$ORIGIN' -Wl,--disable-new-dtags -Wl,-b -Wl,binary -Wl,./__constants.bin -Wl,-b -Wl,elf64-x86-64 -Wl,-defsym -Wl,constant_bin_data=_binary_____constants_bin_start -Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro @"./@link_input.txt -L/usr/lib -ldl -lm /usr/lib/python3.12/config-3.12-x86_64-linux-gnu/libpython3.12-pic.a -lz -lm -lutil -lpthread -lexpat took 653.47 seconds
+Nuitka-Scons: Compiled 210 C files using ccache.
+Nuitka-Scons: Cached C files (using ccache) with result 'cache miss': 210
+Nuitka-Plugins:data-files: Included data file 'certifi/cacert.pem' due to package data for 'certifi'.
+Nuitka-Onefile: Creating single file from dist folder, this may take a while.
+Nuitka-Onefile: Running bootstrap binary compilation via Scons.
+Nuitka-Scons: Onefile C compiler: gcc (gcc 13).
+Nuitka-Scons: Scons: Inherited CPPFLAGS='-Wdate-time -D_FORTIFY_SOURCE=3' variable.
+Nuitka-Scons: Inherited CFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited CXXFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited LDFLAGS='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro' variable.
+Nuitka-Scons: Onefile C linking.
+Nuitka-Scons: Compiled 1 C files using ccache.
+Nuitka-Scons: Cached C files (using ccache) with result 'cache miss': 1
+Nuitka-Onefile: Using compression for onefile payload.
+Nuitka-Onefile: Onefile payload compression ratio (24.07%) size 69125978 to 16641308.
+Nuitka-Onefile: Keeping onefile build directory 'borednomore3_downloader.onefile-build'.
+Nuitka: Keeping dist folder 'borednomore3_downloader.dist' for inspection, no need to use it.
+Nuitka: Keeping build directory 'borednomore3_downloader.build'.
+Nuitka: Successfully created 'borednomore3-downloader'.
+python3 -m nuitka --standalone --onefile --plugin-enable=tk-inter \
+	--jobs=2 --assume-yes-for-downloads \
+	--output-filename=borednomore3-downloader-gui borednomore3_downloader_gui.py
+Nuitka-Options: Used command line options:
+Nuitka-Options:   --standalone --onefile --plugin-enable=tk-inter --jobs=2 --assume-yes-for-downloads --output-filename=borednomore3-downloader-gui borednomore3_downloader_gui.py
+Nuitka: Starting Python compilation with:
+Nuitka:   Version '2.8.9' on Python 3.12 (flavor 'Debian Python') commercial grade 'not installed'.
+Nuitka: Using Debian packages for 'PIL,_cffi_backend,bcrypt,bs4,certifi,chardet,cryptography,html5lib,idna,lxml,olefile,packaging,requests,six,soupsieve,typing_extensions,urllib3,webencodings'.
+Nuitka:WARNING: Standalone with Python package from Debian installation may not be working.
+Nuitka:WARNING:     Complex topic! More information can be found at [94mhttps://nuitka.net/info/debian-dist-packages.html
+Nuitka-Plugins:anti-bloat: Not including '_json' automatically in order to avoid bloat, but this may cause: may slow down by using fallback implementation.
+Nuitka-Plugins:anti-bloat: Not including 'PIL.ImageQt' automatically in order to avoid bloat, but this may cause: PIL will not be able to create Qt image objects.
+Nuitka: Completed Python level compilation and optimization.
+Nuitka: Generating source code for C backend compiler.
+Nuitka: Running data composer tool for optimal constant value handling.
+Nuitka: Running C compilation via Scons.
+Nuitka-Scons: Backend C compiler: gcc (gcc 13).
+Nuitka-Scons: Scons: Inherited CPPFLAGS='-Wdate-time -D_FORTIFY_SOURCE=3' variable.
+Nuitka-Scons: Inherited CFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited CXXFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited LDFLAGS='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro' variable.
+Nuitka-Scons: Backend C linking with 331 files (no progress information available for this stage).
+Nuitka-Scons: Compiled 330 C files using ccache.
+Nuitka-Scons: Cached C files (using ccache) with result 'cache miss': 330
+Nuitka-Plugins:data-files: Included data file 'certifi/cacert.pem' due to package data for 'certifi'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/fonts/CustomTkinter_shapes_font.otf' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/fonts/Roboto/Roboto-Medium.ttf' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/fonts/Roboto/Roboto-Regular.ttf' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/icons/CustomTkinter_icon_Windows.ico' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/themes/blue.json' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/themes/dark-blue.json' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:data-files: Included data file 'customtkinter/assets/themes/green.json' due to package data directory 'assets' for 'customtkinter'.
+Nuitka-Plugins:tk-inter: Included 88 data files due to Tk needed for tkinter usage.
+Nuitka-Plugins:tk-inter: Included 227 data files due to Tcl needed for tkinter usage.
+Nuitka-Onefile: Creating single file from dist folder, this may take a while.
+Nuitka-Onefile: Running bootstrap binary compilation via Scons.
+Nuitka-Scons: Onefile C compiler: gcc (gcc 13).
+Nuitka-Scons: Scons: Inherited CPPFLAGS='-Wdate-time -D_FORTIFY_SOURCE=3' variable.
+Nuitka-Scons: Inherited CFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited CXXFLAGS='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/home/deb/borednomore3/borednomore3=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/home/deb/borednomore3/borednomore3=/usr/src/borednomore3-0.5.4-1' variable.
+Nuitka-Scons: Scons: Inherited LDFLAGS='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro' variable.
+Nuitka-Scons: Onefile C linking.
+Nuitka-Scons: Compiled 1 C files using ccache.
+Nuitka-Scons: Cached C files (using ccache) with result 'cache miss': 1
+Nuitka-Onefile: Using compression for onefile payload.
+Nuitka-Onefile: Onefile payload compression ratio (25.09%) size 93721103 to 23513809.
+Nuitka-Onefile: Keeping onefile build directory 'borednomore3_downloader_gui.onefile-build'.
+Nuitka: Keeping dist folder 'borednomore3_downloader_gui.dist' for inspection, no need to use it.
+Nuitka: Keeping build directory 'borednomore3_downloader_gui.build'.
+Nuitka: Successfully created 'borednomore3-downloader-gui'.
+make[1]: Leaving directory '/home/deb/borednomore3/borednomore3'
+   dh_auto_test
+	rm -fr -- /tmp/dh-xdg-rundir-LyDikjCg
+   create-stamp debian/debhelper-build-stamp
+ fakeroot debian/rules binary
+dh binary
+   dh_testroot
+   dh_prep
+	rm -f -- debian/borednomore3.substvars
+	rm -fr -- debian/.debhelper/generated/borednomore3/ debian/borednomore3/ debian/tmp/
+   debian/rules override_dh_auto_install
+make[1]: Entering directory '/home/deb/borednomore3/borednomore3'
+install -d debian/borednomore3/usr/bin
+install -m 0755 borednomore3-gui debian/borednomore3/usr/bin/
+install -m 0755 borednomore3 debian/borednomore3/usr/bin/
+install -m 0755 borednomore3-downloader debian/borednomore3/usr/bin/
+install -m 0755 borednomore3-downloader-gui debian/borednomore3/usr/bin/
+# Install Desktop Entries
+install -d debian/borednomore3/usr/share/applications
+install -m 0644 debian/borednomore3.desktop debian/borednomore3/usr/share/applications/
+install -m 0644 debian/borednomore3-downloader.desktop debian/borednomore3/usr/share/applications/
+make[1]: Leaving directory '/home/deb/borednomore3/borednomore3'
+   dh_installdocs
+	install -m0755 -d debian/borednomore3/usr/share/doc/borednomore3
+	install -p -m0644 debian/copyright debian/borednomore3/usr/share/doc/borednomore3/copyright
+   dh_installchangelogs
+	install -m0755 -d debian/borednomore3/usr/share/doc/borednomore3
+	install -p -m0644 debian/.debhelper/generated/borednomore3/dh_installchangelogs.dch.trimmed debian/borednomore3/usr/share/doc/borednomore3/changelog.Debian
+   debian/rules override_dh_installman
+make[1]: Entering directory '/home/deb/borednomore3/borednomore3'
+# 4. Correctly install the 4 man pages listed in debian/manpages
+dh_installman
+	install -m0755 -d debian/borednomore3/usr/share/man/man1/
+	install -p -m0644 ./debian/borednomore3.1 debian/borednomore3/usr/share/man/man1/borednomore3.1
+	install -m0755 -d debian/borednomore3/usr/share/man/man1/
+	install -p -m0644 ./debian/borednomore3-downloader.1 debian/borednomore3/usr/share/man/man1/borednomore3-downloader.1
+	install -m0755 -d debian/borednomore3/usr/share/man/man1/
+	install -p -m0644 ./debian/borednomore3-downloader-gui.1 debian/borednomore3/usr/share/man/man1/borednomore3-downloader-gui.1
+	install -m0755 -d debian/borednomore3/usr/share/man/man1/
+	install -p -m0644 ./debian/borednomore3-gui.1 debian/borednomore3/usr/share/man/man1/borednomore3-gui.1
+	man-recode --to-code UTF-8 --suffix .dh-new debian/borednomore3/usr/share/man/man1/borednomore3-downloader-gui.1 debian/borednomore3/usr/share/man/man1/borednomore3-downloader.1
+	man-recode --to-code UTF-8 --suffix .dh-new debian/borednomore3/usr/share/man/man1/borednomore3-gui.1 debian/borednomore3/usr/share/man/man1/borednomore3.1
+	mv debian/borednomore3/usr/share/man/man1/borednomore3-downloader-gui.1.dh-new debian/borednomore3/usr/share/man/man1/borednomore3-downloader-gui.1
+	mv debian/borednomore3/usr/share/man/man1/borednomore3-downloader.1.dh-new debian/borednomore3/usr/share/man/man1/borednomore3-downloader.1
+	chmod 0644 -- debian/borednomore3/usr/share/man/man1/borednomore3-downloader-gui.1 debian/borednomore3/usr/share/man/man1/borednomore3-downloader.1
+	mv debian/borednomore3/usr/share/man/man1/borednomore3-gui.1.dh-new debian/borednomore3/usr/share/man/man1/borednomore3-gui.1
+	mv debian/borednomore3/usr/share/man/man1/borednomore3.1.dh-new debian/borednomore3/usr/share/man/man1/borednomore3.1
+	chmod 0644 -- debian/borednomore3/usr/share/man/man1/borednomore3-gui.1 debian/borednomore3/usr/share/man/man1/borednomore3.1
+make[1]: Leaving directory '/home/deb/borednomore3/borednomore3'
+   dh_perl
+   dh_link
+   dh_strip_nondeterminism
+   dh_compress
+	cd debian/borednomore3
+	chmod a-x usr/share/doc/borednomore3/changelog.Debian usr/share/man/man1/borednomore3-downloader-gui.1 usr/share/man/man1/borednomore3-downloader.1 usr/share/man/man1/borednomore3-gui.1 usr/share/man/man1/borednomore3.1
+	gzip -9nf usr/share/doc/borednomore3/changelog.Debian usr/share/man/man1/borednomore3-downloader-gui.1 usr/share/man/man1/borednomore3-downloader.1 usr/share/man/man1/borednomore3-gui.1 usr/share/man/man1/borednomore3.1
+	cd '/home/deb/borednomore3/borednomore3'
+   dh_fixperms
+	find debian/borednomore3 -true -print0 2>/dev/null | xargs -0r chown --no-dereference 0:0
+	find debian/borednomore3 ! -type l -a -true -a -true -print0 2>/dev/null | xargs -0r chmod go=rX,u+rw,a-s
+	find debian/borednomore3/usr/share/doc -type f -a -true -a ! -regex 'debian/borednomore3/usr/share/doc/[^/]*/examples/.*' -print0 2>/dev/null | xargs -0r chmod 0644
+	find debian/borednomore3/usr/share/doc -type d -a -true -a -true -print0 2>/dev/null | xargs -0r chmod 0755
+	find debian/borednomore3/usr/share/man debian/borednomore3/usr/share/applications -type f -a -true -a -true -print0 2>/dev/null | xargs -0r chmod 0644
+	find debian/borednomore3 -type f \( -name '*.so.*' -o -name '*.so' -o -name '*.la' -o -name '*.a' -o -name '*.js' -o -name '*.css' -o -name '*.scss' -o -name '*.sass' -o -name '*.jpeg' -o -name '*.jpg' -o -name '*.png' -o -name '*.gif' -o -name '*.cmxs' -o -name '*.node' \) -a -true -a -true -print0 2>/dev/null | xargs -0r chmod 0644
+	find debian/borednomore3/usr/bin -type f -a -true -a -true -print0 2>/dev/null | xargs -0r chmod a+x
+   dh_missing
+   dh_dwz -a
+	install -m0755 -d debian/borednomore3/usr/lib/debug/.dwz/x86_64-linux-gnu
+	dwz -mdebian/borednomore3/usr/lib/debug/.dwz/x86_64-linux-gnu/borednomore3.debug -M/usr/lib/debug/.dwz/x86_64-linux-gnu/borednomore3.debug -- debian/borednomore3/usr/bin/borednomore3 debian/borednomore3/usr/bin/borednomore3-downloader debian/borednomore3/usr/bin/borednomore3-downloader-gui debian/borednomore3/usr/bin/borednomore3-gui
+dwz: debian/borednomore3/usr/bin/borednomore3: .debug_info section not present
+dwz: debian/borednomore3/usr/bin/borednomore3-downloader: .debug_info section not present
+dwz: debian/borednomore3/usr/bin/borednomore3-downloader-gui: .debug_info section not present
+dwz: debian/borednomore3/usr/bin/borednomore3-gui: .debug_info section not present
+dwz: Too few files for multifile optimization
+dh_dwz: warning: No dwz multifile created, but not explicitly requested either so ignoring it.
+dh_dwz: warning: Common issues include no debug information at all (missing -g) and
+dh_dwz: warning: compressed debug information (#931891).
+	rmdir -p --ignore-fail-on-non-empty debian/borednomore3/usr/lib/debug/.dwz/x86_64-linux-gnu
+   dh_strip -a
+	strip --remove-section=.comment --remove-section=.note -o /tmp/fVO27LUJHg/stripDTIeWB debian/borednomore3/usr/bin/borednomore3-gui
+	chmod --reference debian/borednomore3/usr/bin/borednomore3-gui /tmp/fVO27LUJHg/stripDTIeWB
+	cat '/tmp/fVO27LUJHg/stripDTIeWB' > 'debian/borednomore3/usr/bin/borednomore3-gui'
+	chmod --reference /tmp/fVO27LUJHg/stripDTIeWB debian/borednomore3/usr/bin/borednomore3-gui
+	strip --remove-section=.comment --remove-section=.note -o /tmp/fVO27LUJHg/stripcbpVjQ debian/borednomore3/usr/bin/borednomore3
+	chmod --reference debian/borednomore3/usr/bin/borednomore3 /tmp/fVO27LUJHg/stripcbpVjQ
+	cat '/tmp/fVO27LUJHg/stripcbpVjQ' > 'debian/borednomore3/usr/bin/borednomore3'
+	chmod --reference /tmp/fVO27LUJHg/stripcbpVjQ debian/borednomore3/usr/bin/borednomore3
+	strip --remove-section=.comment --remove-section=.note -o /tmp/fVO27LUJHg/stripj9ciwK debian/borednomore3/usr/bin/borednomore3-downloader
+	chmod --reference debian/borednomore3/usr/bin/borednomore3-downloader /tmp/fVO27LUJHg/stripj9ciwK
+	cat '/tmp/fVO27LUJHg/stripj9ciwK' > 'debian/borednomore3/usr/bin/borednomore3-downloader'
+	chmod --reference /tmp/fVO27LUJHg/stripj9ciwK debian/borednomore3/usr/bin/borednomore3-downloader
+	strip --remove-section=.comment --remove-section=.note -o /tmp/fVO27LUJHg/stripKn3x6x debian/borednomore3/usr/bin/borednomore3-downloader-gui
+	chmod --reference debian/borednomore3/usr/bin/borednomore3-downloader-gui /tmp/fVO27LUJHg/stripKn3x6x
+	cat '/tmp/fVO27LUJHg/stripKn3x6x' > 'debian/borednomore3/usr/bin/borednomore3-downloader-gui'
+	chmod --reference /tmp/fVO27LUJHg/stripKn3x6x debian/borednomore3/usr/bin/borednomore3-downloader-gui
+   dh_makeshlibs -a
+	rm -f debian/borednomore3/DEBIAN/shlibs
+   dh_shlibdeps -a
+	install -m0755 -d debian/borednomore3/DEBIAN
+	dpkg-shlibdeps -Tdebian/borednomore3.substvars debian/borednomore3/usr/bin/borednomore3-gui debian/borednomore3/usr/bin/borednomore3 debian/borednomore3/usr/bin/borednomore3-downloader debian/borednomore3/usr/bin/borednomore3-downloader-gui
+   dh_installdeb
+	install -m0755 -d debian/borednomore3/DEBIAN
+   dh_gencontrol
+	install -m0755 -d debian/borednomore3/DEBIAN
+	echo misc:Depends= >> debian/borednomore3.substvars
+	echo misc:Pre-Depends= >> debian/borednomore3.substvars
+	dpkg-gencontrol -pborednomore3 -ldebian/changelog -Tdebian/borednomore3.substvars -Pdebian/borednomore3
+	chmod 0644 -- debian/borednomore3/DEBIAN/control
+	chown 0:0 -- debian/borednomore3/DEBIAN/control
+   dh_md5sums
+	install -m0755 -d debian/borednomore3/DEBIAN
+	cd debian/borednomore3 >/dev/null && xargs -r0 md5sum | perl -pe 'if (s@^\\@@) { s/\\\\/\\/g; }' > DEBIAN/md5sums
+	chmod 0644 -- debian/borednomore3/DEBIAN/md5sums
+	chown 0:0 -- debian/borednomore3/DEBIAN/md5sums
+   dh_builddeb
+	dpkg-deb --build debian/borednomore3 ..
+dpkg-deb: building package 'borednomore3' in '../borednomore3_0.5.4-1_amd64.deb'.
+ dpkg-genbuildinfo -O../borednomore3_0.5.4-1_amd64.buildinfo
+ dpkg-genchanges -O../borednomore3_0.5.4-1_amd64.changes
+dpkg-genchanges: info: including full source code in upload
+ dpkg-source --after-build .
+dpkg-source: info: using options from borednomore3/debian/source/local-options: --extend-diff-ignore=(\.env|prepare_debian_repo\.sh|subir_borednomore3\.sh|history/.*|\.ccache|.*\.build|.*\.dist|.*\.onefile-build)
+dpkg-buildpackage: info: full upload (original source is included)
+Now running lintian borednomore3_0.5.4-1_amd64.changes ...
+E: borednomore3 changes: bad-distribution-in-changes-file unstable
+E: borednomore3 source: source-is-missing [borednomore3-downloader-gui]
+E: borednomore3 source: source-is-missing [borednomore3-downloader]
+E: borednomore3 source: source-is-missing [borednomore3]
+W: borednomore3: initial-upload-closes-no-bugs [usr/share/doc/borednomore3/changelog.Debian.gz:1]
+Finished running lintian.

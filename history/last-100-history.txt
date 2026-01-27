@@ -1,100 +1,100 @@
-all
+../libs/gui/bnm3_theme_manager.py
+../libs/gui/bnm3_wallpaper_preview.py
+../libs/gui/bnm3_monitoring.py
+../libs/gui/bnm3_logger_widget.py
+../libs/gui/bnm3_logo_utils.py
+../libs/gui/bnm3_validators.py
+../libs/gui/bnm3_command_builder.py
 
-clean
-all
-for i
-for
-"for"
-m in {1..1}; do for i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i";sleep 0.05; done;done
-clean
-
-clean
-
-i in {1..20}; do\
-i in {1..20}; do ./native-setwallpaper ../debian/src/lxqt/wallpapers/wallpaper_0000$((RANDOM%62+1)).jpg;sleep 0.05;done
-i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i";sleep 0.05;done
-../debian/src/lxqt/wallpapers/wallpaper_00001.jpg --sync-config
-i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i --sync-config";sleep 0.05;done
-i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i" --sync-config;sleep 0.05;done
-i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i" --sync-config;sleep 0.1;done
-i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i" --sync-config;sleep 0.2;done
-i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i" --sync-config;sleep 0.8;done
-i in ../debian/src/lxqt/wallpapers/*.jpg; do ./native-setwallpaper "$i" --sync-config;sleep 0.7;done
-
-native-setwallpaper-run.bash
-clean
-
-native-setwallpaper-run.bash
-clean
-
---slideshow 0.7 ../debian/src/lxqt/wallpapers/*.jpg --sync-config
-clean
-
---slideshow 0.7 ../debian/src/lxqt/wallpapers/*.jpg --sync-config
---desktop &
---slideshow 0.7 ../debian/src/lxqt/wallpapers/*.jpg --sync-config
---desktop &
---slideshow 0.7 ../debian/src/lxqt/wallpapers/*.jpg --sync-config
---desktop &
-i in ../debian/src/lxqt/wallpapers/*.jpg; do sed -i "s|^Wallpaper=.*|Wallpaper=$i|" ~/.config/pcmanfm-qt/lxqt/settings.conf; pcmanfm-qt --desktop --reconfigure; done
-i in ../debian/src/lxqt/wallpapers/*.jpg; do sed -i "s|^Wallpaper=.*|Wallpaper=$i|" ~/.config/pcmanfm-qt/lxqt/settings.conf; pkill pcmanfm-qt; pcmanfm-qt --desktop & done
-borednomore3/borednomore3
-set
-setwallpaper/
-i in ../debian/src/lxqt/wallpapers/*.jpg; do sed -i "s|^Wallpaper=.*|Wallpaper=$i|" ~/.config/pcmanfm-qt/lxqt/settings.conf; pkill pcmanfm-qt; pcmanfm-qt --desktop & done
---version
-i in ../debian/src/lxqt/wallpapers/*.jpg; do pcmanfm-qt --set-wallpaper "$i" --wallpaper-mode=stretch --desktop; done
-../ask-viejo/
-ask.py
-../debian/src/lxqt/backend/
-borednomore3.py
-/home/deb/Documents/bored/borednomore3-stable-16_01_2026_15_47-runs
-
-debian/src/lxqt/backend/
-borednomore3.py
+bnm3.py
+bnm3_main_window.py
+bnm3_sidebar.py
+bnm3_settings_tab.py
+bnm3_console_tab.py
+bnm3_advanced_tab.py
+bnm3_preview_tab.py
+bnm3_monitoring_tab.py
+apt install psutil
+apt install python3-psutil
+bnm3.py
+bnm3.py
+bnm3.py
+../libs/gui/__init__.py
+bnm3.py
+../libs/gui/__init__.py
+bnm3.py
+apt install python3-tk
+apt install python3-pil.imagetk
+bnm3.py
+bnm3.py
+..
+wallpapers/
+makewallpapers.py
+makewallpapers.py
+makewallpapers.py 10
+makewallpapers.py
+makewallpapers.py 10
+../frontend/
+bnm3.py
+../wallpapers/
+*.png
+*.jpg
+makewallpapers.py
+makewallpapers.py 40
+../frontend/
+bnm3.py
 ../wallpapers/
 
--h
--s n5 -f 5 -w -r -i 0.0001
--s 5 -f 5 -w -r -i 0.0001
--s 5 -f 5 -w -r
--s 5 -f 5 -w -r -i 0.0001
--s 5 -f 5 -w -r -i 0.001
--i -s 5 -f 5 -w -r
--i 1 -s 5 -f 5 -w -r
--i 5 -s 0.001 -f 5 -w -r
-/home/deb/borednomore3/borednomore3/debian/src/lxqt/backend
--i 5 -s 0.001 -f 5 -w -r
-i in ../wallpapers/*.jpg; do pcmanfm-qt --set-wallpaper "$i" --wallpaper-mode=stretch --desktop; done
---version
---version
---version
-| grep pacman
-i in ../debian/src/lxqt/wallpapers/*.jpg; do pcmanfm-qt --set-wallpaper "$i" --wallpaper-mode=stretch --desktop; done
-borednomore3.py
-borednomore3.py -s 0.0001 -t 5 -r -w
-borednomore3.py -h
-borednomore3.py -i 5 -s 0.0001 -t 5 -r -w
-borednomore3.py -i 5 -f 5 -s 0.0001 -t 5 -r -w
-..
-../../../
-../../../../
-../../../../subir_borednomore3.sh
-../../../../
-subir_borednomore3.sh
-borednomore3/borednomore3
-ask-viejo
-ask.py
-../debian/src/lxqt/frontend/
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+makewallpapers.py
+*.jpg
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+*.jpg
+makewallpapers.py
+makewallpapers.py 20
+../frontend/
 bnm3.py
-apt update
-apt upgrade
 
-borednomore3/borednomore3
-
-debian/
-
-src
-
-frontend/
+-al
+.gui_state.json
+/tmp
 bnm3.py
+-al
+bnm3.py
+
+-al
+
+-al
+-al ../backend/
+reboot
