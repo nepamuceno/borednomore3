@@ -1,0 +1,127 @@
+.TH BOREDNOMORE3 1 "January 2025" "0.7.0" "BoredNoMore3 Manual"
+.SH NAME
+borednomore3 \- dynamic wallpaper changer with smooth transitions
+.SH SYNOPSIS
+.B borednomore3
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B borednomore3
+is a sophisticated wallpaper management daemon for Debian-based distributions.
+It uses ImageMagick affine distortions to create smooth transitions between
+wallpapers across all major desktop environments.
+.PP
+The tool supports 1000+ transition effects based on 7 core transformation
+types (slides, rotations, zooms) and implements a true shuffle system where
+no wallpaper or transition repeats until the entire collection has cycled.
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Display help message and exit
+.TP
+.B \-v, \-\-version
+Display version information and exit
+.TP
+.B \-c, \-\-credits
+Display credits and exit
+.TP
+.B \-D, \-\-debug
+Enable detailed debug output with real-time logging
+.TP
+.BI \-\-config " FILE"
+Use custom configuration file (default: /etc/borednomore3/borednomore3.conf)
+.TP
+.BI \-i " SECONDS" "\fR, \fB\-\-interval " SECONDS
+Time between wallpaper changes in seconds (default: 300)
+.TP
+.BI \-d " PATH" "\fR, \fB\-\-directory " PATH
+Directory containing wallpapers (default: /usr/share/borednomore3/wallpapers)
+.TP
+.BI \-f " NUMBER" "\fR, \fB\-\-frames " NUMBER
+Number of transition frames, 5-100 (default: 10). Higher = smoother.
+.TP
+.BI \-s " SECONDS" "\fR, \fB\-\-speed " SECONDS
+Delay between frames, 0.0001-1.0 seconds (default: 0.001)
+.TP
+.BI \-t " LIST" "\fR, \fB\-\-transitions " LIST
+Comma-separated transition IDs or ranges (e.g., 1,5,10-20)
+.TP
+.B \-r, \-\-randomize
+Randomize transition order (shuffle transitions, no repeats until full cycle)
+.TP
+.B \-w, \-\-randomize-wallpapers
+Randomize wallpaper order (shuffle wallpapers, no repeats until full cycle)
+.TP
+.B \-k, \-\-keep-image
+Keep previous image visible during transition
+.TP
+.BI \-l " FILE" "\fR, \fB\-\-wallpaper-list " FILE
+Custom wallpaper pattern file (default: /etc/borednomore3/borednomore3.list)
+.SH CONFIGURATION PRIORITY
+Configuration is applied in this order (highest to lowest):
+.IP 1. 3
+Command-line arguments
+.IP 2.
+User config (~/.config/borednomore3/borednomore3.conf)
+.IP 3.
+System config (/etc/borednomore3/borednomore3.conf)
+.IP 4.
+Built-in defaults
+.SH TRANSITION SYSTEM
+The transition engine uses 7 core transformation types mapped to 1000 IDs:
+.IP \(bu 2
+slide-left/right/up/down (IDs: 0,7,14,21,...)
+.IP \(bu 2
+spin-clockwise/counter-clockwise (IDs: 4,11,18,...)
+.IP \(bu 2
+zoom-in-out (IDs: 6,13,20,...)
+.PP
+Each transition has two phases: exit (old image) and entry (new image).
+.SH SHUFFLE SYSTEM
+When randomization is enabled (-r or -w), the system creates a shuffled
+playlist and plays through it completely before reshuffling. This ensures
+true randomization with no repeats until the full cycle completes.
+.SH EXAMPLES
+.TP
+.B borednomore3
+Run with defaults (5-minute interval, sequential)
+.TP
+.B borednomore3 -D -i 60
+Debug mode, change every 60 seconds
+.TP
+.B borednomore3 -t 1-10 -r -w
+Use transitions 1-10, randomize both transitions and wallpapers
+.TP
+.B borednomore3 -d ~/Pictures -f 50 -s 0.01
+Custom directory, smooth slow transitions
+.SH FILES
+.TP
+.I /etc/borednomore3/borednomore3.conf
+System configuration file
+.TP
+.I /etc/borednomore3/borednomore3.list
+Wallpaper glob patterns (*.jpg, *.png, etc.)
+.TP
+.I ~/.config/borednomore3/borednomore3.conf
+User configuration (overrides system)
+.TP
+.I /usr/share/borednomore3/wallpapers/
+Default wallpaper directory
+.SH DESKTOP ENVIRONMENTS
+Auto-detects: GNOME, KDE, XFCE, LXQt, MATE, Cinnamon, Budgie, i3.
+Fallback: feh, nitrogen, xwallpaper.
+.SH DEPENDENCIES
+.B Required:
+python3 (>=3.8), python3-pil, python3-tk, python3-pynput, imagemagick, feh
+.br
+.B Recommended:
+python3-customtkinter, xrandr
+.SH AUTHOR
+Written by Nepamuceno Bartolo.
+.SH BUGS
+Report bugs at: <https://github.com/nepamuceno/borednomore3/issues>
+.SH COPYRIGHT
+Copyright \(co 2025 Nepamuceno Bartolo. License GPLv3+.
+.SH SEE ALSO
+.BR borednomore3-gui (1),
+.BR borednomore3-downloader (1),
+.BR convert (1)

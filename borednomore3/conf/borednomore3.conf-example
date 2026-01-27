@@ -1,149 +1,62 @@
 # BoredNoMore3 Configuration File
-# ===============================
-# 
-# PURPOSE:
-# This configuration file defines persistent settings for the BoredNoMore3
-# dynamic wallpaper changer application. Settings here are loaded on startup
-# and can be overridden by command-line arguments.
-#
-# USAGE:
-# 1. Copy this file to 'borednomore3.conf' in the same directory
-# 2. Modify the values below to suit your preferences
-# 3. Run borednomore3 without arguments to use these settings
-#
-# FILE LOCATION:
-# Default: ${CONF_DIR}/borednomore3.conf
-# When running from backend/: ../conf/borednomore3.conf
-#
-# PRECEDENCE:
-# 1. Command-line arguments (highest priority)
-# 2. This configuration file
-# 3. Application defaults (lowest priority)
+# Command-line arguments override these settings
+# User config (~/.config/borednomore3/borednomore3.conf) overrides system config
 
 [settings]
-# SECTION: Application Behavior Settings
-# ======================================
-
-# Change Interval (seconds)
-# -------------------------
-# DESCRIPTION: Time between automatic wallpaper changes
-# COMMAND-LINE: -i, --interval
-# TYPE: Integer
-# RANGE: 1 - 86400 (1 second to 24 hours)
-# DEFAULT: 300 (5 minutes)
-# EXAMPLE: 60 = change every minute
-# EXAMPLE: 1800 = change every 30 minutes
+# Time between wallpaper changes (seconds)
+# Default: 300 (5 minutes)
 interval = 300
 
-# Wallpaper Directory Path
-# ------------------------
-# DESCRIPTION: Location of wallpaper image files
-# COMMAND-LINE: -d, --directory
-# TYPE: String (file path)
-# FORMAT: Absolute path or path relative to this config file
-# DEFAULT: ../wallpapers/ (relative from config location)
-# EXAMPLE: /home/user/Pictures/Wallpapers
-# EXAMPLE: ../../wallpapers
-# REQUIREMENT: Directory must exist and contain image files
-directory = ../wallpapers
+# Wallpaper directory (absolute or relative to this config file)
+# Default: ../wallpapers (relative to /etc/borednomore3/)
+directory = /usr/share/borednomore3/wallpapers
 
-# Transition Frames Count
-# -----------------------
-# DESCRIPTION: Number of intermediate frames during transition animations
-# COMMAND-LINE: -f, --frames
-# TYPE: Integer
-# RANGE: 5 - 100
-# DEFAULT: 10
-# EFFECT: Higher values = smoother animations but slower transitions
-# EXAMPLE: 20 = very smooth but slower transition
-# EXAMPLE: 5 = fast but choppy transition
+# Number of transition frames (5-100)
+# Higher = smoother but slower transitions
+# Default: 10
 frames = 10
 
-# Transition Frame Duration (seconds)
-# -----------------------------------
-# DESCRIPTION: Display time for each transition frame
-# COMMAND-LINE: -s, --speed
-# TYPE: Float
-# RANGE: 0.0001 - 1.0
-# DEFAULT: 0.001
-# EFFECT: Lower values = faster transitions
-# EXAMPLE: 0.0005 = very fast transition
-# EXAMPLE: 0.01 = slow, visible transition steps
+# Delay between frames (seconds, 0.0001-1.0)
+# Lower = faster transitions
+# Default: 0.001
 speed = 0.001
 
-# SECTION: Transition Selection Settings
-# ======================================
-
-# Transition IDs to Use
-# ---------------------
-# DESCRIPTION: Specific transitions to include in rotation
-# COMMAND-LINE: -t, --transitions
-# TYPE: String (comma-separated list or ranges)
-# FORMAT: Numbers or ranges: "1,5,10-15,23"
-# DEFAULT: (empty = use all available transitions)
-# AVAILABLE: See TRANSITIONS dictionary in borednomore3_transitions.py
-# EXAMPLE: "1,3,5" = use only transitions 1, 3, and 5
-# EXAMPLE: "1-10,23" = use transitions 1 through 10 and 23
+# Transition IDs to use (comma-separated or ranges)
+# Examples: 1,5,10 or 1-20,50-60 or leave empty for all
+# Default: empty (uses all 1000 transitions)
 transitions = 
 
-# Randomize Transition Selection
-# ------------------------------
-# DESCRIPTION: Whether to select transitions randomly vs sequentially
-# COMMAND-LINE: -r, --randomize
-# TYPE: Boolean
-# VALUES: True, False
-# DEFAULT: False
-# BEHAVIOR: True = random selection, False = sequential in order
-# INTERACTION: When combined with 'transitions' above, randomizes only from specified IDs
-randomize = False
+# Randomize transition order (true/false)
+# When true, shuffles transitions with no repeats until full cycle
+# Default: false
+randomize = false
 
-# Keep Previous Image During Transition
-# -------------------------------------
-# DESCRIPTION: Display behavior during transitions
-# COMMAND-LINE: -k, --keep-image
-# TYPE: Boolean
-# VALUES: True, False
-# DEFAULT: False
-# EFFECT: True = crossfade (both images visible), False = fade (only new image)
-# VISUAL: Useful for comparing or previewing wallpapers
-keep_image = False
+# Keep previous image during transition (true/false)
+# Useful for movement-based transitions
+# Default: false
+keep_image = false
 
-# SECTION: Wallpaper Selection Settings
-# =====================================
+# Randomize wallpaper selection (true/false)
+# When true, shuffles wallpapers with no repeats until full cycle
+# Default: false
+randomize_wallpapers = false
 
-# Randomize Wallpaper Selection
-# -----------------------------
-# DESCRIPTION: Wallpaper selection method
-# COMMAND-LINE: -w, --randomize-wallpapers
-# TYPE: Boolean
-# VALUES: True, False
-# DEFAULT: False
-# BEHAVIOR: True = random selection, False = alphabetical sequential
-# NOTE: Independent of transition randomization setting
-randomize_wallpapers = False
-
-# SECTION: Integration Settings
-# =============================
-
-# GUI Binary Name
-# ---------------
-# DESCRIPTION: Executable name for GUI integration
-# COMMAND-LINE: (Not available - config only)
-# TYPE: String
-# DEFAULT: borednomore3-gui
-# PURPOSE: Used by GUI components to launch configuration interface
-# WARNING: Do not modify unless you understand the integration
-borednomore3_gui_binary = borednomore3-gui
-
-# FILE METADATA
-# =============
-# Configuration Format Version: 1.0
-# Compatible with: borednomore3 v0.6.0+
-# Last Updated: $(date)
-# Author: Nepamuceno
-# GitHub: https://github.com/nepamuceno/borednomore3
-
-# RELATED FILES:
-# - borednomore3.list: Wallpaper file patterns (separate file)
-# - borednomore3_transitions.py: Available transition effects
-# - documentation/: User guide and technical documentation
+# Examples of common configurations:
+#
+# Fast sequential transitions:
+#   interval = 60
+#   frames = 5
+#   speed = 0.0001
+#   randomize = false
+#   randomize_wallpapers = false
+#
+# Smooth random slideshow:
+#   interval = 300
+#   frames = 50
+#   speed = 0.01
+#   randomize = true
+#   randomize_wallpapers = true
+#
+# Specific transitions only:
+#   transitions = 1-10,20-30,50
+#   randomize = true

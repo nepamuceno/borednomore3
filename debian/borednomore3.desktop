@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=BoredNoMore3
+GenericName=Wallpaper Manager
+Comment=Dynamic wallpaper changer with smooth transitions
+Exec=borednomore3-gui
+Icon=preferences-desktop-wallpaper
+Terminal=false
+Categories=Graphics;DesktopSettings;Settings;Utility;
+Keywords=wallpaper;background;desktop;transition;slideshow;
+StartupNotify=true

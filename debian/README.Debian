@@ -1,0 +1,139 @@
+### Content for debian/README.Debian:
+```
+BoredNoMore3 for Debian
+=======================
+
+BoredNoMore3 provides dynamic wallpaper rotation with smooth ImageMagick-based
+transitions for all major Debian desktop environments.
+
+QUICK START
+-----------
+
+Backend (command-line):
+  $ borednomore3
+
+GUI interface:
+  $ bnm3
+
+Download wallpapers:
+  $ borednomore3-downloader -s "nature" -n 20
+
+CONFIGURATION
+-------------
+
+System config:
+  /etc/borednomore3/borednomore3.conf
+  /etc/borednomore3/borednomore3.list
+
+User config (overrides system):
+  ~/.config/borednomore3/borednomore3.conf
+  ~/.config/borednomore3/borednomore3.list
+
+Priority: CLI args > User config > System config > Defaults
+
+WALLPAPERS
+----------
+
+Default location:
+  /usr/share/borednomore3/wallpapers/
+
+Custom directory:
+  $ borednomore3 -d /path/to/wallpapers
+
+Or edit directory= in config file.
+
+DESKTOP ENVIRONMENTS
+--------------------
+
+Auto-detected:
+  GNOME (gsettings)
+  KDE Plasma (qdbus)
+  XFCE (xfconf-query)
+  LXQt (pcmanfm-qt)
+  MATE (gsettings)
+  Cinnamon (gsettings)
+  Budgie (gsettings)
+  i3 (feh)
+
+Fallback: feh, nitrogen, xwallpaper
+
+TRANSITION SYSTEM
+-----------------
+
+1000+ transitions based on 7 core types:
+  - Slide (left/right/up/down)
+  - Rotate (clockwise/counter-clockwise)
+  - Zoom (in/out)
+
+Each transition has exit and entry phases using ImageMagick distortions.
+
+SHUFFLE SYSTEM
+--------------
+
+True randomization with no repeats:
+  -r: Shuffle transitions (no repeat until full cycle)
+  -w: Shuffle wallpapers (no repeat until full cycle)
+
+Both create playlists that reshuffle only after complete cycles.
+
+EXAMPLES
+--------
+
+Debug mode, 60s interval:
+  $ borednomore3 -D -i 60
+
+Random everything:
+  $ borednomore3 -r -w
+
+Smooth slow transitions:
+  $ borednomore3 -f 50 -s 0.01
+
+Specific transitions:
+  $ borednomore3 -t 1-10,50-60
+
+DEPENDENCIES
+------------
+
+Required:
+  python3 (>=3.8)
+  python3-pil
+  python3-tk
+  python3-pynput
+  imagemagick
+  feh (or nitrogen/pcmanfm-qt)
+
+Recommended:
+  python3-customtkinter (for GUI)
+  xrandr (resolution detection)
+  python3-psutil (process monitoring)
+
+TROUBLESHOOTING
+---------------
+
+Wallpapers don't change:
+  1. Run with debug: borednomore3 -D
+  2. Check desktop environment is supported
+  3. Verify imagemagick: convert --version
+  4. Check wallpaper directory has images
+
+GUI won't start:
+  1. Install customtkinter: sudo apt install python3-customtkinter
+  2. Test tkinter: python3 -m tkinter
+
+Process won't stop:
+  1. Use FORCE KILL in GUI
+  2. Or: pkill -9 -f borednomore3.py
+  3. Use "Cleanup Processes" button in GUI
+
+REPORTING BUGS
+--------------
+
+GitHub: https://github.com/nepamuceno/borednomore3/issues
+
+Include:
+  - Output from: borednomore3 -D
+  - Desktop environment
+  - Debian/Ubuntu version
+  - Python version
+
+ -- Nepamuceno Bartolo, Tue 28 Jan 2025

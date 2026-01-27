@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Wallpaper Downloader
+GenericName=Image Downloader
+Comment=Download wallpapers from multiple sources
+Exec=borednomore3-downloader
+Icon=folder-download
+Terminal=true
+Categories=Network;FileTransfer;Graphics;Utility;
+Keywords=wallpaper;download;images;fetch;
+StartupNotify=false
