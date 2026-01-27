@@ -5,7 +5,7 @@ __pycache__/
 __pycache__
 *.deb
 nuitka-crash-report.xml
-
+*.jpg
 # binary
 
 *.pyc

@@ -4,16 +4,12 @@ BoredNoMore3 Downloader
 Advanced wallpaper downloader from multiple sources
 
 Downloads high-quality wallpapers from:
-- Unsplash (https://unsplash.com)
 - Pexels (https://pexels.com)
-- Pixabay (https://pixabay.com)
-- Wallhaven (https://wallhaven.cc)
 - Lorem Picsum (https://picsum.photos)
 
 Author: Nepamuceno Bartolo
-Email: (hidden)
 GitHub: https://github.com/nepamuceno/borednomore3
-Version: 0.5.0
+Version: 0.5.2 (Modified)
 """
 
 import os
@@ -23,23 +19,21 @@ import random
 import hashlib
 import argparse
 import requests
-from pathlib import Path
-from urllib.parse import quote, urlparse
 import re
+import glob
 
-VERSION = "0.5.0"
+VERSION = "0.5.2"
 AUTHOR = "Nepamuceno Bartolo"
-EMAIL = "(hidden)"
 GITHUB = "https://github.com/nepamuceno/borednomore3"
-
 
 class BoredNoMore3Downloader:
     """Advanced wallpaper downloader with smart numbering and duplicate detection"""
 
-    def __init__(self, directory=".", search="dark wallpaper", count=10, deep_search=False, sources=None, start_from=None, randomize_source=False):
+    def __init__(self, directory="./wallpapers", search="wallpaper", count=10,
+                 deep_search=False, sources=None, start_from=None, randomize_source=False):
         self.directory = os.path.abspath(os.path.expanduser(directory))
         self.search = search
-        self.count = count
+        self.total_target = count
         self.deep_search = deep_search
         self.randomize_source = randomize_source
         self.downloaded = []
@@ -49,26 +43,19 @@ class BoredNoMore3Downloader:
         
         # Available sources
         self.available_sources = {
-            'unsplash': self.download_from_unsplash,
             'pexels': self.download_from_pexels,
-            'pixabay': self.download_from_pixabay,
             'picsum': self.download_from_picsum,
-            'wallhaven': self.download_from_wallhaven,
         }
         
-        # Handle source selection with randomization
         if randomize_source:
-            # Pick a random source if random flag is set
             random_source = random.choice(list(self.available_sources.keys()))
             self.sources = [random_source]
             print(f"Random source selected: {random_source}")
         elif sources:
             self.sources = sources
         else:
-            # Default to all sources
             self.sources = ['all']
         
-        # Create directory if it doesn't exist
         if not os.path.isdir(self.directory):
             try:
                 os.makedirs(self.directory, exist_ok=True)
@@ -77,26 +64,17 @@ class BoredNoMore3Downloader:
                 print(f"Error: Cannot create directory '{self.directory}': {e}")
                 sys.exit(1)
         
-        # Scan existing files and determine next number
         self._scan_existing_files()
 
     def _scan_existing_files(self):
-        """Scan directory for existing wallpapers and find next number"""
         print(f"Scanning directory: {self.directory}")
-        
-        existing_files = []
-        pattern = os.path.join(self.directory, "*.jpg")
-        existing_files = glob.glob(pattern)
+        existing_files = glob.glob(os.path.join(self.directory, "*.jpg"))
         
         if not existing_files:
             print("No existing wallpapers found. Starting from 1.")
-            self.next_number = 1
-            if self.start_from is not None:
-                self.next_number = self.start_from
-                print(f"Override: Starting from specified number {self.start_number}")
+            self.next_number = self.start_from if self.start_from else 1
             return
         
-        # Extract numbers from filenames
         max_number = 0
         number_pattern = re.compile(r'(\d+)')
         
@@ -104,11 +82,8 @@ class BoredNoMore3Downloader:
             filename = os.path.basename(filepath)
             numbers = number_pattern.findall(filename)
             if numbers:
-                # Get the last number in the filename
                 num = int(numbers[-1])
                 max_number = max(max_number, num)
-            
-            # Calculate hash to avoid duplicates (only if not overwriting)
             if self.start_from is None:
                 try:
                     file_hash = self._get_file_hash(filepath)
@@ -116,19 +91,14 @@ class BoredNoMore3Downloader:
                 except:
                     pass
         
-        # Determine starting number
         if self.start_from is not None:
             self.next_number = self.start_from
-            print(f"Found {len(existing_files)} existing wallpapers.")
             print(f"Override mode: Starting from wallpaper number {self.next_number}")
-            print(f"WARNING: Existing wallpapers from {self.next_number} onwards will be overwritten!")
         else:
             self.next_number = max_number + 1
-            print(f"Found {len(existing_files)} existing wallpapers.")
             print(f"Next wallpaper will be numbered: {self.next_number}")
 
     def _get_file_hash(self, filepath):
-        """Calculate SHA256 hash of a file"""
         sha256_hash = hashlib.sha256()
         try:
             with open(filepath, "rb") as f:
@@ -139,43 +109,31 @@ class BoredNoMore3Downloader:
             return None
 
     def _is_duplicate(self, image_data):
-        """Check if image data is a duplicate"""
         sha256_hash = hashlib.sha256()
         sha256_hash.update(image_data)
         file_hash = sha256_hash.hexdigest()
-        
         if file_hash in self.downloaded_hashes:
             return True
-        
         self.downloaded_hashes.add(file_hash)
         return False
 
     def _save_image(self, image_data, source_name):
-        """Save image with smart numbering"""
-        # Skip duplicate check if in overwrite mode
         if self.start_from is None:
             if self._is_duplicate(image_data):
                 print(f"  Skipped duplicate from {source_name}")
                 return False
         else:
-            # In overwrite mode, still add hash to track new downloads
             sha256_hash = hashlib.sha256()
             sha256_hash.update(image_data)
-            file_hash = sha256_hash.hexdigest()
-            self.downloaded_hashes.add(file_hash)
+            self.downloaded_hashes.add(sha256_hash.hexdigest())
         
         filename = f"wallpaper_{self.next_number:05d}.jpg"
         save_path = os.path.join(self.directory, filename)
-        
-        # Check if we're overwriting
-        overwrite_msg = ""
-        if os.path.exists(save_path):
-            overwrite_msg = " (OVERWRITTEN)"
+        overwrite_msg = " (OVERWRITTEN)" if os.path.exists(save_path) else ""
         
         try:
             with open(save_path, "wb") as f:
                 f.write(image_data)
-            
             self.downloaded.append(save_path)
             print(f"  Downloaded: {filename} from {source_name}{overwrite_msg}")
             self.next_number += 1
@@ -184,596 +142,124 @@ class BoredNoMore3Downloader:
             print(f"  Error saving {filename}: {e}")
             return False
 
-    def download_from_unsplash(self):
-        """Download wallpapers from Unsplash"""
-        print(f"\n[Unsplash] Searching for '{self.search}'...")
+    def download_from_pexels(self, limit):
+        print(f"\n[Pexels] Searching for '{self.search}' (Limit: {limit})...")
+        downloaded_count = 0
+        pages = 5 if self.deep_search else 2
+        photo_ranges = [(1000000, 5000000), (100000, 999999), (10000, 99999)]
         
-        try:
-            pages = 3 if self.deep_search else 1
-            downloaded_count = 0
-            
-            for page in range(1, pages + 1):
-                if downloaded_count >= self.count:
+        for start, end in photo_ranges[:pages]:
+            if downloaded_count >= limit:
+                break
+            # Try a reasonable number of random IDs to hit the target
+            for _ in range(limit * 3):
+                if downloaded_count >= limit:
                     break
-                
-                # Use Unsplash API-like endpoint
-                search_encoded = quote(self.search)
-                url = f"https://source.unsplash.com/1920x1080/?{search_encoded}&sig={random.randint(1, 10000)}"
-                
-                for attempt in range(self.count // pages + 2):
-                    if downloaded_count >= self.count:
-                        break
-                    
-                    try:
-                        # Add random seed to get different images
-                        unique_url = f"{url}&t={time.time()}"
-                        response = requests.get(unique_url, timeout=15, allow_redirects=True)
-                        
-                        if response.status_code == 200:
-                            if self._save_image(response.content, "Unsplash"):
-                                downloaded_count += 1
-                        
-                        time.sleep(0.5)  # Rate limiting
-                    except Exception as e:
-                        print(f"  Error downloading from Unsplash: {e}")
-                        continue
-            
-            print(f"[Unsplash] Downloaded {downloaded_count} images")
-        except Exception as e:
-            print(f"[Unsplash] Error: {e}")
-
-    def download_from_pexels(self):
-        """Download wallpapers from Pexels"""
-        print(f"\n[Pexels] Searching for '{self.search}'...")
-        
-        try:
-            downloaded_count = 0
-            pages = 5 if self.deep_search else 2
-            
-            # Pexels has IDs, try random ranges
-            photo_ranges = [
-                (1000000, 5000000),    # Modern photos
-                (100000, 999999),      # Mid-range
-                (10000, 99999),        # Older photos
-            ]
-            
-            for start, end in photo_ranges[:pages]:
-                if downloaded_count >= self.count:
-                    break
-                
-                for _ in range(self.count // len(photo_ranges) + 2):
-                    if downloaded_count >= self.count:
-                        break
-                    
-                    photo_id = random.randint(start, end)
-                    url = f"https://images.pexels.com/photos/{photo_id}/pexels-photo-{photo_id}.jpeg?auto=compress&cs=tinysrgb&w=1920"
-                    
-                    try:
-                        response = requests.get(url, timeout=15)
-                        if response.status_code == 200 and len(response.content) > 50000:
-                            if self._save_image(response.content, "Pexels"):
-                                downloaded_count += 1
-                        time.sleep(0.3)
-                    except Exception as e:
-                        continue
-            
-            print(f"[Pexels] Downloaded {downloaded_count} images")
-        except Exception as e:
-            print(f"[Pexels] Error: {e}")
-
-    def download_from_pixabay(self):
-        """Download wallpapers from Pixabay"""
-        print(f"\n[Pixabay] Searching for '{self.search}'...")
-        
-        try:
-            downloaded_count = 0
-            
-            # Pixabay image IDs - try random ranges
-            for _ in range(self.count):
-                photo_id = random.randint(100000, 8000000)
-                
-                # Try different image sizes
-                sizes = ["1920", "1280"]
-                
-                for size in sizes:
-                    if downloaded_count >= self.count:
-                        break
-                    
-                    url = f"https://pixabay.com/get/g{photo_id[:2]}/{photo_id}_1920.jpg"
-                    
-                    try:
-                        response = requests.get(url, timeout=15)
-                        if response.status_code == 200 and len(response.content) > 50000:
-                            if self._save_image(response.content, "Pixabay"):
-                                downloaded_count += 1
-                                break
-                        time.sleep(0.3)
-                    except Exception as e:
-                        continue
-            
-            print(f"[Pixabay] Downloaded {downloaded_count} images")
-        except Exception as e:
-            print(f"[Pixabay] Error: {e}")
-
-    def download_from_picsum(self):
-        """Download wallpapers from Lorem Picsum"""
-        print(f"\n[Lorem Picsum] Downloading random wallpapers...")
-        
-        try:
-            downloaded_count = 0
-            
-            for i in range(self.count):
-                # Use random seed for variety
-                url = f"https://picsum.photos/1920/1080?random={random.randint(1, 100000)}"
-                
+                photo_id = random.randint(start, end)
+                url = f"https://images.pexels.com/photos/{photo_id}/pexels-photo-{photo_id}.jpeg?auto=compress&cs=tinysrgb&w=1920"
                 try:
-                    response = requests.get(url, timeout=15, allow_redirects=True)
-                    if response.status_code == 200:
-                        if self._save_image(response.content, "Picsum"):
+                    response = requests.get(url, timeout=10)
+                    if response.status_code == 200 and len(response.content) > 50000:
+                        if self._save_image(response.content, "Pexels"):
                             downloaded_count += 1
-                    time.sleep(0.3)
-                except Exception as e:
-                    print(f"  Error downloading from Picsum: {e}")
+                    time.sleep(0.2)
+                except:
                     continue
-            
-            print(f"[Picsum] Downloaded {downloaded_count} images")
-        except Exception as e:
-            print(f"[Picsum] Error: {e}")
+        print(f"[Pexels] Downloaded {downloaded_count} images")
+        return downloaded_count
 
-    def download_from_wallhaven(self):
-        """Download wallpapers from Wallhaven"""
-        print(f"\n[Wallhaven] Searching for '{self.search}'...")
-        
-        try:
-            downloaded_count = 0
-            pages = 3 if self.deep_search else 1
-            
-            for page in range(1, pages + 1):
-                if downloaded_count >= self.count:
-                    break
-                
-                # Wallhaven search URL
-                search_encoded = quote(self.search)
-                url = f"https://wallhaven.cc/api/v1/search?q={search_encoded}&page={page}"
-                
-                try:
-                    response = requests.get(url, timeout=15)
-                    if response.status_code == 200:
-                        data = response.json()
-                        
-                        if 'data' in data:
-                            for item in data['data']:
-                                if downloaded_count >= self.count:
-                                    break
-                                
-                                if 'path' in item:
-                                    img_url = item['path']
-                                    try:
-                                        img_response = requests.get(img_url, timeout=15)
-                                        if img_response.status_code == 200:
-                                            if self._save_image(img_response.content, "Wallhaven"):
-                                                downloaded_count += 1
-                                        time.sleep(0.5)
-                                    except:
-                                        continue
-                    
-                    time.sleep(1)  # Rate limiting between pages
-                except Exception as e:
-                    print(f"  Error with Wallhaven API: {e}")
-                    continue
-            
-            print(f"[Wallhaven] Downloaded {downloaded_count} images")
-        except Exception as e:
-            print(f"[Wallhaven] Error: {e}")
+    def download_from_picsum(self, limit):
+        print(f"\n[Lorem Picsum] Downloading random wallpapers (Limit: {limit})...")
+        downloaded_count = 0
+        for i in range(limit):
+            url = f"https://picsum.photos/1920/1080?random={random.randint(1, 100000)}"
+            try:
+                response = requests.get(url, timeout=10, allow_redirects=True)
+                if response.status_code == 200:
+                    if self._save_image(response.content, "Picsum"):
+                        downloaded_count += 1
+                time.sleep(0.2)
+            except Exception as e:
+                print(f"  Error downloading from Picsum: {e}")
+                continue
+        print(f"[Picsum] Downloaded {downloaded_count} images")
+        return downloaded_count
 
     def fetch_all_sources(self):
-        """Download wallpapers from selected sources"""
         print("\n" + "=" * 80)
         print("BoredNoMore3 Downloader - Starting Download Process")
         print("=" * 80)
         print(f"Search query: '{self.search}'")
-        print(f"Target count: {self.count} wallpapers")
-        print(f"Deep search: {'Enabled' if self.deep_search else 'Disabled'}")
+        print(f"Total target: {self.total_target} wallpapers")
         print(f"Save directory: {self.directory}")
         
-        # Determine which sources to use
-        if 'all' in self.sources:
-            active_sources = list(self.available_sources.keys())
-            print(f"Sources: All ({', '.join(active_sources)})")
-        else:
-            active_sources = self.sources
-            print(f"Sources: {', '.join(active_sources)}")
-        
-        if self.start_from is not None:
-            print(f"Mode: OVERWRITE from number {self.start_from}")
-        else:
-            print(f"Mode: APPEND (continue from last)")
-        
+        active_keys = list(self.available_sources.keys()) if 'all' in self.sources else self.sources
+        print(f"Sources: {', '.join(active_keys)}")
         print("=" * 80)
         
         initial_count = len(self.downloaded)
+        num_sources = len(active_keys)
         
-        # Download from selected sources
-        for source in active_sources:
-            if source in self.available_sources:
-                self.available_sources[source]()
-            else:
-                print(f"[Warning] Unknown source: {source}")
+        # Calculate distribution
+        count_per_source = self.total_target // num_sources
+        remainder = self.total_target % num_sources
+
+        for i, source_key in enumerate(active_keys):
+            # Add remainder to the last source
+            quota = count_per_source + (remainder if i == num_sources - 1 else 0)
+            if quota > 0:
+                self.available_sources[source_key](limit=quota)
         
         print("\n" + "=" * 80)
         print("Download Process Completed")
         print("=" * 80)
-        
-        total_downloaded = len(self.downloaded) - initial_count
-        print(f"Total new wallpapers downloaded: {total_downloaded}")
+        total_new = len(self.downloaded) - initial_count
+        print(f"Total new wallpapers downloaded: {total_new}")
         print(f"Total wallpapers in directory: {self.next_number - 1}")
         print(f"Saved to: {self.directory}")
         print("=" * 80)
 
-
 def print_help():
-    """Print comprehensive help information"""
     help_text = f"""
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                    BoredNoMore3 Downloader - Wallpaper Fetcher               ║
-║                                  Version {VERSION}                                  ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-
-DESCRIPTION:
-    BoredNoMore3 Downloader is an advanced wallpaper downloading tool that fetches
-    high-quality images from multiple sources with smart duplicate detection and
-    sequential numbering.
+BoredNoMore3 Downloader v{VERSION}
 
 USAGE:
     borednomore3_downloader.py [OPTIONS]
 
 OPTIONS:
-    -h, --help
-        Display this comprehensive help message and exit.
-
-    -v, --version
-        Display version information and exit.
-
-    -c, --credits
-        Display credits and author information.
-
-    -d, --directory <path>
-        Directory where wallpapers will be saved.
-        Default: current directory
-        The script will scan existing files and continue numbering from the last
-        wallpaper to avoid conflicts.
-        Example: -d ~/Pictures/Wallpapers
-
-    -s, --search <query>
-        Search query for finding wallpapers.
-        Default: "dark wallpaper"
-        The search query is used across multiple sources to find relevant images.
-        Example: -s "nature landscape"
-        Example: -s "abstract art"
-
-    -n, --number <count>
-        Number of wallpapers to download.
-        Default: 10
-        Range: 1-100
-        Example: -n 20
-
-    -D, --deep
-        Enable deep search mode.
-        When enabled, the downloader explores multiple pages and deeper into
-        each source to find more unique wallpapers. This increases download time
-        but provides more variety.
-
-    -w, --websites <sources>
-        Specify which websites/sources to use for downloading.
-        Default: all (unless -R is used, then random source)
-        Available sources: unsplash, pexels, pixabay, picsum, wallhaven, all
-        
-        Use comma-separated list for multiple sources:
-        Example: -w unsplash,pexels
-        Example: -w wallhaven
-        Example: -w all (uses all available sources)
-        
-        Source descriptions:
-        • unsplash  - High-quality curated photography
-        • pexels    - Professional stock photos
-        • pixabay   - Large variety of free images
-        • picsum    - Random quality photos
-        • wallhaven - Community wallpaper collection
-        • all       - Use all available sources (default)
-
-    -o, --overwrite <number>
-        Start overwriting wallpapers from the specified number.
-        Default: None (append mode - continue from last wallpaper)
-        
-        When specified, existing wallpapers from this number onwards will be
-        replaced with new downloads. Use with caution!
-        
-        Example: -o 50 (start overwriting from wallpaper_00050.jpg)
-        Example: -o 1 (replace all wallpapers starting from the first)
-        
-        Note: In overwrite mode, duplicate detection is disabled to allow
-        replacing existing files.
-
-    -R, --random-source
-        Randomly select one source/website to download from.
-        When this flag is set and -w is not specified, a random source will
-        be chosen automatically. Useful for variety.
-        
-        Example: -R (randomly picks one of: unsplash, pexels, pixabay, etc.)
-        
-        Note: If -w is explicitly specified, it takes precedence over -R.
-
-FEATURES:
-    ✓ Smart Sequential Numbering
-        Automatically scans existing wallpapers and continues numbering from the
-        last file (e.g., if you have wallpaper_00042.jpg, new downloads start at
-        wallpaper_00043.jpg).
-
-    ✓ Duplicate Detection
-        Uses SHA256 hashing to detect and skip duplicate images, even if they
-        have different filenames or come from different sources.
-
-    ✓ Multiple Sources
-        Downloads from 5 major sources:
-        • Unsplash - High-quality free stock photos
-        • Pexels - Professional stock photography
-        • Pixabay - Free images and videos
-        • Wallhaven - Community wallpaper collection
-        • Lorem Picsum - Random placeholder images
-
-    ✓ Deep Search Mode
-        Explores multiple pages and deeper results from each source to find
-        unique wallpapers not commonly downloaded.
-
-    ✓ Automatic Directory Creation
-        If the specified directory doesn't exist, it will be created automatically.
-
-WALLPAPER SOURCES:
-    1. Unsplash (https://unsplash.com)
-       - High-quality photography
-       - Search-based results
-       
-    2. Pexels (https://pexels.com)
-       - Professional stock photos
-       - Curated collections
-       
-    3. Pixabay (https://pixabay.com)
-       - Free images and videos
-       - Large variety
-       
-    4. Wallhaven (https://wallhaven.cc)
-       - Community wallpapers
-       - High resolution
-       
-    5. Lorem Picsum (https://picsum.photos)
-       - Random quality photos
-       - Good for variety
-
-EXAMPLES:
-    Download 10 wallpapers with default search:
-        ./borednomore3_downloader.py
-
-    Download 20 nature wallpapers to ~/Pictures:
-        ./borednomore3_downloader.py -d ~/Pictures -s "nature" -n 20
-
-    Deep search for abstract art wallpapers:
-        ./borednomore3_downloader.py -s "abstract art" -n 30 -D
-
-    Download only from Unsplash:
-        ./borednomore3_downloader.py -w unsplash -s "landscape" -n 15
-
-    Download from Unsplash and Pexels only:
-        ./borednomore3_downloader.py -w unsplash,pexels -n 20
-
-    Download from Wallhaven with deep search:
-        ./borednomore3_downloader.py -w wallhaven -D -s "minimal dark" -n 25
-
-    Randomly select a source:
-        ./borednomore3_downloader.py -R -s "nature" -n 10
-
-    Overwrite wallpapers starting from number 50:
-        ./borednomore3_downloader.py -o 50 -n 20 -s "space"
-
-    Replace all wallpapers from the beginning:
-        ./borednomore3_downloader.py -o 1 -n 100 -w all -D
-
-    Overwrite with random source:
-        ./borednomore3_downloader.py -o 25 -R -n 15
-
-    Download to specific directory with custom search:
-        ./borednomore3_downloader.py -d /home/user/Wallpapers -s "space galaxy"
-
-    Maximum download with deep search from all sources:
-        ./borednomore3_downloader.py -n 50 -D -s "minimal dark" -w all
-
-    Use only Picsum for random wallpapers:
-        ./borednomore3_downloader.py -w picsum -n 30
-
-TECHNICAL DETAILS:
-    • Downloaded images are saved as: wallpaper_XXXXX.jpg
-    • Numbering format: 5-digit zero-padded (00001, 00002, etc.)
-    • All images are downloaded at 1920x1080 or higher resolution
-    • Duplicate detection uses SHA256 file hashing
-    • Downloads are throttled to respect source rate limits
-    • Automatic retry on failed downloads
-
-WORKFLOW:
-    1. Scan destination directory for existing wallpapers
-    2. Determine next available number
-    3. Calculate hashes of existing files to prevent duplicates
-    4. Search each source using the search query
-    5. Download unique images with sequential numbering
-    6. Skip duplicates automatically
-    7. Report total downloads and final count
-
-TROUBLESHOOTING:
-    If downloads fail:
-    • Check your internet connection
-    • Some sources may be temporarily unavailable
-    • Try a different search query
-    • Enable deep search mode with -D
-
-    If getting duplicates:
-    • The hash-based system should prevent this
-    • If it occurs, images may be corrupted - delete and re-download
-
-    If numbering seems wrong:
-    • Ensure existing files follow the wallpaper_XXXXX.jpg format
-    • Files with different formats won't be counted
-
-AUTHOR:
-    {AUTHOR}
-    Email: {EMAIL}
-    GitHub: {GITHUB}
-
-LICENSE:
-    Open Source - Free to use and modify
-
-NOTES:
-    • Respects rate limits of all sources
-    • No API keys required
-    • All sources provide free images
-    • Some sources may have usage restrictions - check their terms
+    -h, --help      Show this help
+    -d <path>       Save directory (Default: ./wallpapers)
+    -s <query>      Search query (Default: "wallpaper")
+    -n <count>      TOTAL wallpapers to download (Default: 10)
+    -D, --deep      Enable deep search (Pexels)
+    -w <sources>    Sources (pexels, picsum, all)
+    -o <number>     Overwrite starting from specific number
+    -R              Randomly pick ONE source
 """
     print(help_text)
 
-
-def print_version():
-    """Print version information"""
-    print(f"BoredNoMore3 Downloader v{VERSION}")
-
-
-def print_credits():
-    """Print credits and author information"""
-    credits_text = f"""
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                    BoredNoMore3 Downloader - Wallpaper Fetcher               ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-
-Version:    {VERSION}
-Author:     {AUTHOR}
-Email:      {EMAIL}
-GitHub:     {GITHUB}
-
-Description:
-    Advanced wallpaper downloader with smart duplicate detection, sequential
-    numbering, and multi-source support.
-
-Features:
-    • Downloads from 5 major wallpaper sources
-    • Smart sequential numbering system
-    • SHA256-based duplicate detection
-    • Deep search mode for unique results
-    • Automatic directory management
-    • Search-based image discovery
-
-Image Sources:
-    • Unsplash - High-quality free photography
-    • Pexels - Professional stock photos
-    • Pixabay - Free images and videos
-    • Wallhaven - Community wallpapers
-    • Lorem Picsum - Random quality photos
-
-License:
-    Open Source - Free to use and modify
-
-Credits:
-    Developed to provide an easy way to keep your wallpaper collection fresh
-    and diverse with high-quality images from trusted sources.
-
-Thank you for using BoredNoMore3 Downloader!
-"""
-    print(credits_text)
-
-
-# Add missing import
-import glob
-
-
 def main():
-    """Main entry point"""
     try:
-        parser = argparse.ArgumentParser(
-            description='BoredNoMore3 Downloader - Wallpaper Fetcher',
-            add_help=False
-        )
-        
-        parser.add_argument('-h', '--help', action='store_true',
-                          help='Show help message')
-        parser.add_argument('-v', '--version', action='store_true',
-                          help='Show version information')
-        parser.add_argument('-c', '--credits', action='store_true',
-                          help='Show credits')
-        parser.add_argument('-d', '--directory', type=str, default='.',
-                          help='Directory to save wallpapers (default: current directory)')
-        parser.add_argument('-s', '--search', type=str, default='dark wallpaper',
-                          help='Search query (default: "dark wallpaper")')
-        parser.add_argument('-n', '--number', type=int, default=10,
-                          help='Number of wallpapers to download (default: 10)')
-        parser.add_argument('-D', '--deep', action='store_true',
-                          help='Enable deep search mode')
-        parser.add_argument('-w', '--websites', type=str, default=None,
-                          help='Websites to use: unsplash,pexels,pixabay,picsum,wallhaven,all (default: all)')
-        parser.add_argument('-o', '--overwrite', type=int, default=None,
-                          help='Start overwriting from this wallpaper number')
-        parser.add_argument('-R', '--random-source', action='store_true',
-                          help='Randomly select one source to download from')
-        
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument('-h', '--help', action='store_true')
+        parser.add_argument('-v', '--version', action='store_true')
+        parser.add_argument('-d', '--directory', type=str, default='./wallpapers')
+        parser.add_argument('-s', '--search', type=str, default='wallpaper')
+        parser.add_argument('-n', '--number', type=int, default=10)
+        parser.add_argument('-D', '--deep', action='store_true')
+        parser.add_argument('-w', '--websites', type=str, default=None)
+        parser.add_argument('-o', '--overwrite', type=int, default=None)
+        parser.add_argument('-R', '--random-source', action='store_true')
         args = parser.parse_args()
-        
+
         if args.help:
-            print_help()
-            sys.exit(0)
+            print_help(); sys.exit(0)
         
-        if args.version:
-            print_version()
-            sys.exit(0)
-        
-        if args.credits:
-            print_credits()
-            sys.exit(0)
-        
-        # Validate number
-        if args.number < 1 or args.number > 100:
-            print("Error: Number must be between 1 and 100")
-            sys.exit(1)
-        
-        # Validate overwrite number
-        if args.overwrite is not None and args.overwrite < 1:
-            print("Error: Overwrite number must be at least 1")
-            sys.exit(1)
-        
-        # Parse websites
-        available = ['unsplash', 'pexels', 'pixabay', 'picsum', 'wallhaven', 'all']
         sources = None
-        
         if args.websites:
-            # Explicit website specification takes precedence
-            if args.websites.lower() == 'all':
-                sources = ['all']
-            else:
+            if args.websites.lower() != 'all':
                 sources = [s.strip().lower() for s in args.websites.split(',')]
-                # Validate sources
-                invalid_sources = [s for s in sources if s not in available]
-                if invalid_sources:
-                    print(f"Error: Invalid source(s): {', '.join(invalid_sources)}")
-                    print(f"Available sources: {', '.join(available)}")
-                    sys.exit(1)
-        # If no website specified, check for random flag
-        # (sources will be None, handled by the class constructor)
-        
-        # Check for requests library
-        try:
-            import requests
-        except ImportError:
-            print("Error: requests library is required. Install it with:")
-            print("pip install requests")
-            sys.exit(1)
-        
-        # Create and run downloader
-        print(f"BoredNoMore3 Downloader v{VERSION}")
-        print("=" * 80)
-        
+
         downloader = BoredNoMore3Downloader(
             directory=args.directory,
             search=args.search,
@@ -783,17 +269,12 @@ def main():
             start_from=args.overwrite,
             randomize_source=args.random_source
         )
-        
         downloader.fetch_all_sources()
-        
+
     except KeyboardInterrupt:
-        print("\n\nDownload interrupted by user. Exiting gracefully...")
-        sys.exit(0)
+        print("\nDownload interrupted by user."); sys.exit(0)
     except Exception as e:
         print(f"\nAn error occurred: {str(e)}")
-        print("Use --help for usage information")
-        sys.exit(1)
-
 
 if __name__ == "__main__":
     main()
