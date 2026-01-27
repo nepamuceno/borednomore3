@@ -12,3 +12,65 @@ nuitka-crash-report.xml
 *.pyo
 *.pyd
 gist.txt
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Debian packaging
+debian/borednomore3/
+debian/.debhelper/
+debian/borednomore3.debhelper.log
+debian/borednomore3.substvars
+debian/files
+debian/debhelper-build-stamp
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# GUI state - DO NOT INCLUDE
+.bnm3_gui_state.json
+.gui_state.json
+
+# Config files - DO NOT INCLUDE
+borednomore3.conf
+borednomore3.list
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Wallpapers
+wallpapers/*.jpg
+wallpapers/*.png
+wallpapers/*.jpeg
+wallpapers/*.webp
+!wallpapers/.gitkeep
+
+# Temporary
+/tmp/
+*.tmp

@@ -24,7 +24,7 @@ case "$1" in
         echo ""
         echo "Quick Start:"
         echo "  borednomore3           - Run backend daemon"
-        echo "  borednomore3-gui       - Launch GUI interface"
+        echo "  bnm3		       - Launch GUI interface"
         echo "  borednomore3 -h        - Show help"
         echo "  man borednomore3       - Read manual"
         echo ""

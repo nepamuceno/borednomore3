@@ -6,11 +6,23 @@ Handles loading, saving, and merging configuration from files and CLI args
 import os
 import configparser
 
-# Paths
+# Paths - work both in development and when installed
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
-CONF_DIR = os.path.join(BASE_DIR, 'conf')
-WALLPAPERS_DIR = os.path.join(BASE_DIR, 'wallpapers')
+
+# Determine if we're installed or running from source
+if '/usr/' in SCRIPT_DIR or '/usr/local/' in SCRIPT_DIR:
+    # Installed system-wide
+    CONF_DIR = '/etc/borednomore3'
+    WALLPAPERS_DIR = os.path.join(os.path.expanduser('~'), 'Pictures', 'Wallpapers')
+    DEFAULT_CONF_FILE = os.path.join(CONF_DIR, 'borednomore3.conf')
+    DEFAULT_LIST_FILE = os.path.join(CONF_DIR, 'borednomore3.list')
+else:
+    # Running from source
+    BASE_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
+    CONF_DIR = os.path.join(BASE_DIR, 'conf')
+    WALLPAPERS_DIR = os.path.join(BASE_DIR, 'wallpapers')
+    DEFAULT_CONF_FILE = os.path.join(CONF_DIR, 'borednomore3.conf')
+    DEFAULT_LIST_FILE = os.path.join(CONF_DIR, 'borednomore3.list')
 
 DEFAULT_CONFIG = {
     'interval': 300,
@@ -24,9 +36,6 @@ DEFAULT_CONFIG = {
     'wallpaper_patterns': ['*.jpg', '*.png', '*.jpeg', '*.webp']
 }
 
-DEFAULT_CONF_FILE = os.path.join(CONF_DIR, 'borednomore3.conf')
-DEFAULT_LIST_FILE = os.path.join(CONF_DIR, 'borednomore3.list')
-
 
 class ConfigManager:
     """Manages configuration from files and command-line arguments"""
@@ -36,13 +45,17 @@ class ConfigManager:
         self.config_path = config_path or DEFAULT_CONF_FILE
         self.config = DEFAULT_CONFIG.copy()
         
-        # Ensure conf directory exists
-        os.makedirs(CONF_DIR, exist_ok=True)
+        # Ensure conf directory exists (only if running from source)
+        if '/usr/' not in SCRIPT_DIR and '/usr/local/' not in SCRIPT_DIR:
+            os.makedirs(CONF_DIR, exist_ok=True)
         
-        # Create default config if needed
+        # Create default config if needed and we have write permission
         if not os.path.exists(self.config_path):
-            self.logger.info(f"Creating default config: {self.config_path}")
-            self._create_default_config()
+            if os.access(os.path.dirname(self.config_path), os.W_OK):
+                self.logger.info(f"Creating default config: {self.config_path}")
+                self._create_default_config()
+            else:
+                self.logger.debug(f"Config file not found: {self.config_path} (will use defaults)")
         
         # Load config file
         self._load_config_file()
@@ -50,12 +63,17 @@ class ConfigManager:
     def _create_default_config(self):
         """Create default configuration file"""
         config_dir = os.path.dirname(self.config_path)
-        rel_wallpapers_path = os.path.relpath(WALLPAPERS_DIR, config_dir)
+        
+        # Use absolute path if installed, relative if running from source  
+        if '/usr/' in SCRIPT_DIR or '/usr/local/' in SCRIPT_DIR:
+            wallpapers_path = WALLPAPERS_DIR
+        else:
+            wallpapers_path = os.path.relpath(WALLPAPERS_DIR, config_dir)
         
         parser = configparser.ConfigParser()
         parser['settings'] = {
             'interval': str(DEFAULT_CONFIG['interval']),
-            'directory': rel_wallpapers_path,
+            'directory': wallpapers_path,
             'frames': str(DEFAULT_CONFIG['frames']),
             'speed': str(DEFAULT_CONFIG['speed']),
             'transitions': '',
@@ -74,7 +92,7 @@ class ConfigManager:
     def _load_config_file(self):
         """Load configuration from file"""
         if not os.path.exists(self.config_path):
-            self.logger.warning(f"Config file not found: {self.config_path}")
+            self.logger.debug(f"Config file not found: {self.config_path}, using defaults")
             return
         
         try:

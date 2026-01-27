@@ -39,20 +39,21 @@ install:
 	# Install backend
 	install -m 755 borednomore3/backend/borednomore3.py $(DESTDIR)$(LIBDIR)/
 	
-	# Install frontend
+	# Install frontend (GUI)
 	install -m 755 borednomore3/frontend/bnm3.py $(DESTDIR)$(LIBDIR)/
 	
 	# Install downloader
 	install -m 755 borednomore3_downloader.py $(DESTDIR)$(BINDIR)/borednomore3-downloader
 	
-	# Create wrapper scripts
+	# Create wrapper script for backend
 	@echo '#!/bin/bash' > $(DESTDIR)$(BINDIR)/borednomore3
-	@echo 'exec python3 $(LIBDIR)/borednomore3.py "$$@"' >> $(DESTDIR)$(BINDIR)/borednomore3
+	@echo 'exec python3 "$(LIBDIR)/borednomore3.py" "$$@"' >> $(DESTDIR)$(BINDIR)/borednomore3
 	@chmod 755 $(DESTDIR)$(BINDIR)/borednomore3
 	
-	@echo '#!/bin/bash' > $(DESTDIR)$(BINDIR)/borednomore3-gui
-	@echo 'exec python3 $(LIBDIR)/bnm3.py "$$@"' >> $(DESTDIR)$(BINDIR)/borednomore3-gui
-	@chmod 755 $(DESTDIR)$(BINDIR)/borednomore3-gui
+	# Create wrapper script for GUI (bnm3)
+	@echo '#!/bin/bash' > $(DESTDIR)$(BINDIR)/bnm3
+	@echo 'exec python3 "$(LIBDIR)/bnm3.py" "$$@"' >> $(DESTDIR)$(BINDIR)/bnm3
+	@chmod 755 $(DESTDIR)$(BINDIR)/bnm3
 	
 	# Install config examples
 	install -m 644 borednomore3/conf/borednomore3.conf-example $(DESTDIR)$(CONFDIR)/borednomore3.conf
@@ -60,14 +61,14 @@ install:
 	
 	# Install man pages
 	install -m 644 debian/borednomore3.1 $(DESTDIR)$(MANDIR)/
-	install -m 644 debian/borednomore3-gui.1 $(DESTDIR)$(MANDIR)/
+	install -m 644 debian/bnm3.1 $(DESTDIR)$(MANDIR)/
 	install -m 644 debian/borednomore3-downloader.1 $(DESTDIR)$(MANDIR)/
 	gzip -f $(DESTDIR)$(MANDIR)/borednomore3.1
-	gzip -f $(DESTDIR)$(MANDIR)/borednomore3-gui.1
+	gzip -f $(DESTDIR)$(MANDIR)/bnm3.1
 	gzip -f $(DESTDIR)$(MANDIR)/borednomore3-downloader.1
 	
 	# Install desktop files
-	install -m 644 debian/borednomore3.desktop $(DESTDIR)$(APPLICATIONSDIR)/
+	install -m 644 debian/bnm3.desktop $(DESTDIR)$(APPLICATIONSDIR)/
 	install -m 644 debian/borednomore3-downloader.desktop $(DESTDIR)$(APPLICATIONSDIR)/
 	
 	# Install documentation
@@ -76,20 +77,27 @@ install:
 	
 	@echo ""
 	@echo "Installation complete!"
-	@echo "Run: borednomore3 or borednomore3-gui"
+	@echo ""
+	@echo "Available commands:"
+	@echo "  borednomore3              - Backend daemon (CLI)"
+	@echo "  bnm3                      - GUI interface"
+	@echo "  borednomore3-downloader   - Wallpaper downloader"
+	@echo ""
+	@echo "Configuration: $(CONFDIR)/"
+	@echo "Wallpapers: $(WALLPAPERSDIR)/"
 
 uninstall:
 	@echo "Uninstalling BoredNoMore3..."
 	rm -f $(DESTDIR)$(BINDIR)/borednomore3
-	rm -f $(DESTDIR)$(BINDIR)/borednomore3-gui
+	rm -f $(DESTDIR)$(BINDIR)/bnm3
 	rm -f $(DESTDIR)$(BINDIR)/borednomore3-downloader
 	rm -rf $(DESTDIR)$(LIBDIR)
 	rm -rf $(DESTDIR)$(CONFDIR)
 	rm -rf $(DESTDIR)$(WALLPAPERSDIR)
 	rm -f $(DESTDIR)$(MANDIR)/borednomore3.1.gz
-	rm -f $(DESTDIR)$(MANDIR)/borednomore3-gui.1.gz
+	rm -f $(DESTDIR)$(MANDIR)/bnm3.1.gz
 	rm -f $(DESTDIR)$(MANDIR)/borednomore3-downloader.1.gz
-	rm -f $(DESTDIR)$(APPLICATIONSDIR)/borednomore3.desktop
+	rm -f $(DESTDIR)$(APPLICATIONSDIR)/bnm3.desktop
 	rm -f $(DESTDIR)$(APPLICATIONSDIR)/borednomore3-downloader.desktop
 	rm -rf $(DESTDIR)$(DOCDIR)
 	@echo "Uninstallation complete!"
@@ -105,11 +113,16 @@ help:
 	@echo "BoredNoMore3 Makefile"
 	@echo ""
 	@echo "Usage:"
-	@echo "  make install PREFIX=/usr     - System-wide install"
-	@echo "  make install PREFIX=~/.local - User install"
-	@echo "  make uninstall               - Remove installation"
-	@echo "  make clean                   - Clean build files"
+	@echo "  make install PREFIX=/usr        - System-wide install"
+	@echo "  make install PREFIX=~/.local    - User install"
+	@echo "  make uninstall                  - Remove installation"
+	@echo "  make clean                      - Clean build files"
 	@echo ""
 	@echo "Environment variables:"
 	@echo "  PREFIX      - Installation prefix (default: /usr/local)"
 	@echo "  DESTDIR     - Staging directory for packaging"
+	@echo ""
+	@echo "Installed binaries:"
+	@echo "  $(BINDIR)/borednomore3          - Backend daemon"
+	@echo "  $(BINDIR)/bnm3                  - GUI interface"
+	@echo "  $(BINDIR)/borednomore3-downloader - Downloader utility"

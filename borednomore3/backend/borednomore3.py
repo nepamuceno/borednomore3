@@ -2,32 +2,40 @@
 """
 Dynamic Wallpaper Changer - Universal Desktop Support
 Main entry point with debug capabilities
-
 Author: Nepamuceno
 Version: 0.7.0 - Modular refactor with debug mode
 """
-
 import os
 import sys
 import time
 import argparse
 
-# Path setup
+# Path setup - works both in development and when installed
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-LIBS_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'libs'))
-sys.path.insert(0, LIBS_DIR)
+
+# Determine correct library path
+if '/usr/' in SCRIPT_DIR or '/usr/local/' in SCRIPT_DIR:
+    # Installed: libs are in same directory as this script
+    LIBS_BASE = SCRIPT_DIR
+else:
+    # Development: libs are one level up from backend/
+    LIBS_BASE = os.path.abspath(os.path.join(SCRIPT_DIR, '..'))
+
+# Add to Python path
+sys.path.insert(0, LIBS_BASE)
 
 # Import libraries
 try:
-    from config.config_manager import ConfigManager, DEFAULT_CONFIG
-    from core.wallpaper_manager import WallpaperManager
-    from core.transition_engine import TransitionEngine
-    from desktop.desktop_detector import DesktopDetector
-    from utils.logger import Logger, DEBUG, INFO
-    from utils.validator import validate_args
+    from libs.config.config_manager import ConfigManager, DEFAULT_CONFIG
+    from libs.core.wallpaper_manager import WallpaperManager
+    from libs.core.transition_engine import TransitionEngine
+    from libs.desktop.desktop_detector import DesktopDetector
+    from libs.utils.logger import Logger, DEBUG, INFO
+    from libs.utils.validator import validate_args
 except ImportError as e:
     print(f"Error importing libraries: {e}")
-    print(f"Make sure all libraries are in: {LIBS_DIR}")
+    print(f"Script directory: {SCRIPT_DIR}")
+    print(f"sys.path: {sys.path}")
     sys.exit(1)
 
 VERSION = "0.7.0"

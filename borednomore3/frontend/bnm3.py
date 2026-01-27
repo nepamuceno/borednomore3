@@ -17,13 +17,26 @@ from datetime import datetime
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-STATE_FILE = os.path.join(SCRIPT_DIR, '.bnm3_gui_state.json')
-DEFAULT_SCRIPT = os.path.join(SCRIPT_DIR, '..', 'backend', 'borednomore3.py')
-CONF_DIR = os.path.join(SCRIPT_DIR, '..', 'conf')
-DEFAULT_CONF = os.path.join(CONF_DIR, 'borednomore3.conf')
-DEFAULT_LIST = os.path.join(CONF_DIR, 'borednomore3.list')
-WALLPAPERS_DIR = os.path.join(SCRIPT_DIR, '..', 'wallpapers')
+
+# Determine if we're installed or running from source
+if '/usr/' in SCRIPT_DIR or '/usr/local/' in SCRIPT_DIR:
+    # Installed system-wide
+    STATE_FILE = os.path.join(os.path.expanduser('~'), '.config', 'borednomore3', '.bnm3_gui_state.json')
+    DEFAULT_SCRIPT = os.path.join(SCRIPT_DIR, 'borednomore3.py')
+    CONF_DIR = '/etc/borednomore3'
+    DEFAULT_CONF = os.path.join(CONF_DIR, 'borednomore3.conf')
+    DEFAULT_LIST = os.path.join(CONF_DIR, 'borednomore3.list')
+    WALLPAPERS_DIR = os.path.join(os.path.expanduser('~'), 'Pictures', 'Wallpapers')
+else:
+    # Running from source
+    STATE_FILE = os.path.join(SCRIPT_DIR, '.bnm3_gui_state.json')
+    DEFAULT_SCRIPT = os.path.join(SCRIPT_DIR, '..', 'backend', 'borednomore3.py')
+    CONF_DIR = os.path.join(SCRIPT_DIR, '..', 'conf')
+    DEFAULT_CONF = os.path.join(CONF_DIR, 'borednomore3.conf')
+    DEFAULT_LIST = os.path.join(CONF_DIR, 'borednomore3.list')
+    WALLPAPERS_DIR = os.path.join(SCRIPT_DIR, '..', 'wallpapers')
 
 def create_logo():
     size = 128
@@ -140,6 +153,15 @@ class ProcessManager:
 class BNM3GUI(ctk.CTk):
     def __init__(self):
         super().__init__()
+        
+        # Ensure state file directory exists
+        state_dir = os.path.dirname(STATE_FILE)
+        if state_dir and not os.path.exists(state_dir):
+            try:
+                os.makedirs(state_dir, exist_ok=True)
+            except:
+                pass  # Fallback to current directory if can't create
+        
         sw, sh = self.winfo_screenwidth(), self.winfo_screenheight()
         ww, wh = min(int(sw * 0.9), 1600), min(int(sh * 0.9), 1000)
         x, y = (sw - ww) // 2, (sh - wh) // 2

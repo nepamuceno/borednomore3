@@ -1,10 +1,9 @@
 #!/usr/bin/make -f
 
-export PYBUILD_NAME=borednomore3
 export DH_VERBOSE=1
 
 %:
-	dh $@ --with python3 --buildsystem=pybuild
+	dh $@ --with=python3
 
 override_dh_auto_clean:
 	dh_auto_clean
@@ -13,11 +12,9 @@ override_dh_auto_clean:
 	rm -rf build/ dist/ *.egg-info/
 
 override_dh_auto_build:
-	# Python packages are already structured, no build needed
+	# No build needed
 
 override_dh_auto_install:
-	dh_auto_install
-	
 	# Create directories
 	install -d debian/borednomore3/usr/bin
 	install -d debian/borednomore3/usr/lib/borednomore3
@@ -42,11 +39,13 @@ override_dh_auto_install:
 	install -m 755 borednomore3_downloader.py debian/borednomore3/usr/bin/borednomore3-downloader
 	
 	# Create wrapper scripts
-	echo '#!/bin/bash\nexec python3 /usr/lib/borednomore3/borednomore3.py "$$@"' > debian/borednomore3/usr/bin/borednomore3
+	@echo '#!/bin/bash' > debian/borednomore3/usr/bin/borednomore3
+	@echo 'exec python3 /usr/lib/borednomore3/borednomore3.py "$$@"' >> debian/borednomore3/usr/bin/borednomore3
 	chmod 755 debian/borednomore3/usr/bin/borednomore3
 	
-	echo '#!/bin/bash\nexec python3 /usr/lib/borednomore3/bnm3.py "$$@"' > debian/borednomore3/usr/bin/borednomore3-gui
-	chmod 755 debian/borednomore3/usr/bin/borednomore3-gui
+	@echo '#!/bin/bash' > debian/borednomore3/usr/bin/bnm3
+	@echo 'exec python3 /usr/lib/borednomore3/bnm3.py "$$@"' >> debian/borednomore3/usr/bin/bnm3
+	chmod 755 debian/borednomore3/usr/bin/bnm3
 	
 	# Install config examples
 	install -m 644 borednomore3/conf/borednomore3.conf-example debian/borednomore3/etc/borednomore3/borednomore3.conf
@@ -58,7 +57,15 @@ override_dh_auto_install:
 
 override_dh_installman:
 	dh_installman
-	gzip -9 debian/borednomore3/usr/share/man/man1/*.1
+	install -m 644 debian/borednomore3.1 debian/borednomore3/usr/share/man/man1/
+	install -m 644 debian/bnm3.1 debian/borednomore3/usr/share/man/man1/
+	install -m 644 debian/borednomore3-downloader.1 debian/borednomore3/usr/share/man/man1/
+	gzip -9fn debian/borednomore3/usr/share/man/man1/*.1
+
+override_dh_installdeb:
+	dh_installdeb
+	install -m 644 debian/bnm3.desktop debian/borednomore3/usr/share/applications/
+	install -m 644 debian/borednomore3-downloader.desktop debian/borednomore3/usr/share/applications/
 
 override_dh_compress:
 	dh_compress -X.md

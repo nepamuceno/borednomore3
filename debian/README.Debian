@@ -1,3 +1,6 @@
+echo "" > debian/README.Debian; nano debian/README.Debian
+```
+
 ### Content for debian/README.Debian:
 ```
 BoredNoMore3 for Debian
@@ -9,7 +12,7 @@ transitions for all major Debian desktop environments.
 QUICK START
 -----------
 
-Backend (command-line):
+Backend (command-line daemon):
   $ borednomore3
 
 GUI interface:
@@ -18,122 +21,384 @@ GUI interface:
 Download wallpapers:
   $ borednomore3-downloader -s "nature" -n 20
 
+AVAILABLE COMMANDS
+------------------
+
+borednomore3
+  Backend daemon for wallpaper rotation with transitions.
+  Runs in terminal, supports all command-line options.
+  Example: borednomore3 -D -i 60 -r -w
+
+bnm3
+  GUI interface (CustomTkinter-based) for controlling the backend.
+  Provides real-time process control, console monitoring, and configuration.
+  Automatically spawns borednomore3 as subprocess.
+
+borednomore3-downloader
+  Utility to fetch wallpapers from Unsplash, Pexels, Pixabay, etc.
+  Supports smart numbering and SHA256 deduplication.
+
 CONFIGURATION
 -------------
 
-System config:
-  /etc/borednomore3/borednomore3.conf
-  /etc/borednomore3/borednomore3.list
+System configuration:
+  /etc/borednomore3/borednomore3.conf    - Main settings
+  /etc/borednomore3/borednomore3.list    - Wallpaper glob patterns
 
-User config (overrides system):
+User configuration (overrides system):
   ~/.config/borednomore3/borednomore3.conf
   ~/.config/borednomore3/borednomore3.list
 
-Priority: CLI args > User config > System config > Defaults
+GUI state persistence:
+  ~/.config/borednomore3/.bnm3_gui_state.json
+
+Configuration priority (highest to lowest):
+  1. Command-line arguments (CLI flags)
+  2. User config (~/.config/borednomore3/)
+  3. System config (/etc/borednomore3/)
+  4. Built-in defaults
 
 WALLPAPERS
 ----------
 
-Default location:
+Default system wallpaper directory:
   /usr/share/borednomore3/wallpapers/
 
-Custom directory:
+Custom directory via command-line:
   $ borednomore3 -d /path/to/wallpapers
 
-Or edit directory= in config file.
+Custom directory via config file:
+  Edit 'directory' parameter in borednomore3.conf
+
+Wallpaper pattern list:
+  /etc/borednomore3/borednomore3.list contains glob patterns
+  Default: *.jpg, *.jpeg, *.png, *.webp
 
 DESKTOP ENVIRONMENTS
 --------------------
 
-Auto-detected:
-  GNOME (gsettings)
-  KDE Plasma (qdbus)
-  XFCE (xfconf-query)
-  LXQt (pcmanfm-qt)
-  MATE (gsettings)
-  Cinnamon (gsettings)
-  Budgie (gsettings)
-  i3 (feh)
+BoredNoMore3 automatically detects your desktop environment:
 
-Fallback: feh, nitrogen, xwallpaper
+Supported (with native wallpaper setters):
+  - GNOME (gsettings)
+  - KDE Plasma (qdbus)
+  - XFCE (xfconf-query)
+  - LXQt (pcmanfm-qt)
+  - MATE (gsettings)
+  - Cinnamon (gsettings)
+  - Budgie (gsettings)
+  - i3 (feh)
+
+Fallback (generic):
+  - feh (recommended)
+  - nitrogen
+  - xwallpaper
+
+Detection is automatic based on environment variables:
+  DESKTOP_SESSION, XDG_CURRENT_DESKTOP, GDMSESSION
 
 TRANSITION SYSTEM
 -----------------
 
-1000+ transitions based on 7 core types:
-  - Slide (left/right/up/down)
-  - Rotate (clockwise/counter-clockwise)
+The transition engine supports 1000+ transition effects based on 7 core types:
+  - Slide (left, right, up, down)
+  - Rotate (clockwise, counter-clockwise)
   - Zoom (in/out)
 
-Each transition has exit and entry phases using ImageMagick distortions.
+Each transition has two phases:
+  - Exit phase: Old wallpaper leaving screen
+  - Entry phase: New wallpaper entering screen
+
+Transitions use ImageMagick affine distortions for smooth effects.
+
+Transition IDs:
+  - IDs 1-1000 available
+  - Pattern repeats every 7 IDs (ID % 7 determines transition type)
+  - Examples: 1,8,15 = slide-left; 4,11,18 = spin-cw; 6,13,20 = zoom-io
+
+Select specific transitions:
+  $ borednomore3 -t 1-10,50-60
+  $ bnm3  (then enter "1-10,50-60" in Transitions field)
 
 SHUFFLE SYSTEM
 --------------
 
-True randomization with no repeats:
-  -r: Shuffle transitions (no repeat until full cycle)
-  -w: Shuffle wallpapers (no repeat until full cycle)
+True randomization with no repeats until full cycle:
 
-Both create playlists that reshuffle only after complete cycles.
+Randomize transitions (-r flag):
+  - Shuffles transition list into playlist
+  - Plays through entire playlist before reshuffling
+  - No repeats until all transitions have been used
+
+Randomize wallpapers (-w flag):
+  - Shuffles wallpaper list into playlist
+  - Plays through entire playlist before reshuffling
+  - No repeats until all wallpapers have been shown
+
+Both can be used together:
+  $ borednomore3 -r -w
+
+Implementation:
+  - Uses Fisher-Yates shuffle algorithm
+  - Reseeds random with time.time_ns() on each script launch
+  - Maintains separate playlists for transitions and wallpapers
 
 EXAMPLES
 --------
 
-Debug mode, 60s interval:
+Basic usage (defaults):
+  $ borednomore3
+  (5-minute interval, sequential transitions and wallpapers)
+
+Debug mode with 60-second interval:
   $ borednomore3 -D -i 60
 
 Random everything:
   $ borednomore3 -r -w
+  (Shuffle both transitions and wallpapers)
 
 Smooth slow transitions:
   $ borednomore3 -f 50 -s 0.01
+  (50 frames, 0.01 second delay between frames)
 
-Specific transitions:
+Specific transitions only:
   $ borednomore3 -t 1-10,50-60
+  (Use only transitions 1-10 and 50-60)
+
+Fast transitions:
+  $ borednomore3 -f 5 -s 0.0001 -i 30
+  (5 frames, 0.0001s delay, 30 second interval)
+
+Custom wallpaper directory:
+  $ borednomore3 -d ~/Pictures/Wallpapers
+
+Use custom config file:
+  $ borednomore3 --config ~/my-config.conf
+
+GUI examples:
+  $ bnm3
+  (Launch GUI, configure via interface)
+
+  $ bnm3 &
+  (Launch GUI in background)
 
 DEPENDENCIES
 ------------
 
-Required:
-  python3 (>=3.8)
-  python3-pil
-  python3-tk
-  python3-pynput
-  imagemagick
-  feh (or nitrogen/pcmanfm-qt)
+Required packages:
+  python3 (>= 3.8)         - Python runtime
+  python3-pil              - Python Imaging Library (Pillow)
+  python3-tk               - Tkinter GUI library
+  python3-pynput           - Keyboard input handling
+  imagemagick              - Image processing (convert command)
+  feh                      - Wallpaper setter (or nitrogen/pcmanfm-qt)
 
-Recommended:
-  python3-customtkinter (for GUI)
-  xrandr (resolution detection)
-  python3-psutil (process monitoring)
+Recommended packages:
+  python3-customtkinter    - Modern GUI framework (required for bnm3)
+  xrandr                   - Screen resolution detection
+  gsettings-desktop-schemas - GNOME desktop settings
+  python3-psutil           - Process monitoring (enhanced GUI features)
+
+Optional packages:
+  nitrogen                 - Alternative wallpaper setter
+  pcmanfm-qt               - LXQt wallpaper setter
+  xwallpaper               - Minimal wallpaper setter
+
+Check dependencies:
+  $ dpkg -l | grep -E '(python3-pil|imagemagick|feh|customtkinter)'
+
+Install missing dependencies:
+  $ sudo apt install python3-pil python3-tk imagemagick feh
+  $ sudo apt install python3-customtkinter  # For GUI
 
 TROUBLESHOOTING
 ---------------
 
-Wallpapers don't change:
-  1. Run with debug: borednomore3 -D
+Problem: Wallpapers don't change
+Solution:
+  1. Run with debug mode: borednomore3 -D
   2. Check desktop environment is supported
-  3. Verify imagemagick: convert --version
-  4. Check wallpaper directory has images
+  3. Verify ImageMagick is installed: convert --version
+  4. Check wallpaper directory exists and has images
+  5. Verify permissions on wallpaper directory
 
-GUI won't start:
-  1. Install customtkinter: sudo apt install python3-customtkinter
-  2. Test tkinter: python3 -m tkinter
+Problem: GUI (bnm3) won't start
+Solution:
+  1. Install python3-customtkinter:
+     $ sudo apt install python3-customtkinter
+  2. Test tkinter installation:
+     $ python3 -m tkinter
+  3. Check Python version:
+     $ python3 --version  (must be >= 3.8)
 
-Process won't stop:
-  1. Use FORCE KILL in GUI
-  2. Or: pkill -9 -f borednomore3.py
-  3. Use "Cleanup Processes" button in GUI
+Problem: Backend process won't start from GUI
+Solution:
+  1. Check script path in Settings tab
+  2. Verify python3 is in PATH: which python3
+  3. Enable Debug Mode checkbox in GUI
+  4. Check console output for error messages
+
+Problem: Process won't stop
+Solution:
+  1. Use FORCE KILL button in GUI
+  2. Click "Cleanup Processes" button
+  3. Manual cleanup:
+     $ pkill -9 -f borednomore3.py
+     $ pkill -9 -f bnm3.py
+
+Problem: Transitions are choppy or slow
+Solution:
+  1. Reduce frames: -f 5
+  2. Increase speed: -s 0.01
+  3. Check CPU usage: top
+  4. Verify ImageMagick performance: time convert --version
+
+Problem: Desktop environment not detected
+Solution:
+  1. Run with debug: borednomore3 -D
+  2. Check environment variables:
+     $ echo $DESKTOP_SESSION
+     $ echo $XDG_CURRENT_DESKTOP
+  3. Install appropriate wallpaper setter (feh, nitrogen, etc.)
+
+Problem: Console shows no output in GUI
+Solution:
+  Enable Debug Mode checkbox for detailed logging
+
+Problem: State file corrupted (GUI)
+Solution:
+  $ rm ~/.config/borednomore3/.bnm3_gui_state.json
+  $ bnm3
+
+Problem: Duplicate wallpapers or transitions
+Solution:
+  This should not happen with shuffle enabled. If it does:
+  1. Restart the script (playlists reset on launch)
+  2. Report bug with debug output
+
+PERFORMANCE TUNING
+------------------
+
+For smooth performance:
+  - Frames: 5-20 (10 recommended)
+  - Speed: 0.001-0.01 (0.001 recommended)
+  - Interval: 60-600 seconds (300 recommended)
+
+For cinematic slow transitions:
+  - Frames: 30-50
+  - Speed: 0.01-0.05
+  - Interval: 300-900 seconds
+
+For fast slideshow:
+  - Frames: 5
+  - Speed: 0.0001
+  - Interval: 10-30 seconds
+
+Screen resolution impact:
+  - Higher resolution = slower transitions
+  - Use fewer frames for 4K displays
+  - Recommended frames for 4K: 5-10
+
+CPU usage:
+  - More frames = more CPU during transition
+  - Transitions use ImageMagick (CPU-intensive)
+  - Consider interval to balance CPU usage
+
+ADVANCED USAGE
+--------------
+
+Create custom config:
+  $ cp /etc/borednomore3/borednomore3.conf ~/.config/borednomore3/
+  $ nano ~/.config/borednomore3/borednomore3.conf
+
+Create custom pattern list:
+  $ cp /etc/borednomore3/borednomore3.list ~/.config/borednomore3/
+  $ nano ~/.config/borednomore3/borednomore3.list
+  (Add custom glob patterns like "vacation_*.jpg")
+
+Run as systemd user service:
+  $ mkdir -p ~/.config/systemd/user
+  $ nano ~/.config/systemd/user/borednomore3.service
+  
+  [Unit]
+  Description=BoredNoMore3 Wallpaper Changer
+  
+  [Service]
+  ExecStart=/usr/bin/borednomore3 -i 300 -r -w
+  Restart=always
+  
+  [Install]
+  WantedBy=default.target
+  
+  $ systemctl --user enable borednomore3.service
+  $ systemctl --user start borednomore3.service
+
+Autostart GUI on login:
+  $ mkdir -p ~/.config/autostart
+  $ cp /usr/share/applications/bnm3.desktop ~/.config/autostart/
+
+LOGGING
+-------
+
+Backend logging:
+  - Console output (stdout/stderr)
+  - Real-time timestamps
+  - Color-coded by level (DEBUG, INFO, WARNING, ERROR)
+  - Auto-rotation at 1000 lines
+
+GUI logging:
+  - Captures backend output in real-time
+  - Export to file via "Save Log" button
+  - State persistence in ~/.config/borednomore3/.bnm3_gui_state.json
+
+Enable debug logging:
+  $ borednomore3 -D
+  Or enable "Debug Mode" checkbox in bnm3 GUI
 
 REPORTING BUGS
 --------------
 
-GitHub: https://github.com/nepamuceno/borednomore3/issues
+GitHub Issues:
+  https://github.com/nepamuceno/borednomore3/issues
 
-Include:
-  - Output from: borednomore3 -D
-  - Desktop environment
-  - Debian/Ubuntu version
-  - Python version
+When reporting bugs, include:
+  1. Debug output: borednomore3 -D
+  2. Desktop environment: echo $XDG_CURRENT_DESKTOP
+  3. Debian/Ubuntu version: lsb_release -a
+  4. Python version: python3 --version
+  5. ImageMagick version: convert --version
+  6. Complete error messages from console
+
+For GUI bugs, also include:
+  1. Export log from GUI (Save Log button)
+  2. State file: cat ~/.config/borednomore3/.bnm3_gui_state.json
+  3. CustomTkinter version: pip3 show customtkinter
+
+DOCUMENTATION
+-------------
+
+Man pages:
+  $ man borednomore3
+  $ man bnm3
+  $ man borednomore3-downloader
+
+README files:
+  /usr/share/doc/borednomore3/README.md
+  /usr/share/doc/borednomore3/DOWNLOADER.md
+
+Online documentation:
+  https://github.com/nepamuceno/borednomore3
+
+AUTHOR
+------
+
+Nepamuceno Bartolo
+https://github.com/nepamuceno/borednomore3
+
+LICENSE
+-------
+
+GPL-3.0+ (GNU General Public License version 3 or later)
+See /usr/share/common-licenses/GPL-3 for full license text.
 
  -- Nepamuceno Bartolo, Tue 28 Jan 2025
