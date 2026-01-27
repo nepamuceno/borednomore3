@@ -1,5 +1,3 @@
----
-
 # borednomore3
 
 **Universal Dynamic Wallpaper Changer for Debian, Ubuntu, and related distributions**
