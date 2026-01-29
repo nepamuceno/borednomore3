@@ -48,12 +48,12 @@ install:
 
 	# Create wrapper script for backend
 	@echo '#!/bin/bash' > $(DESTDIR)$(BINDIR)/borednomore3
-	@echo 'exec python3 "$(LIBDIR)/borednomore3.py" "$$@"' >> $(DESTDIR)$(BINDIR)/borednomore3
+	@echo 'exec python3 $(LIBDIR)/borednomore3.py "$$@"' >> $(DESTDIR)$(BINDIR)/borednomore3
 	@chmod 755 $(DESTDIR)$(BINDIR)/borednomore3
 
 	# Create wrapper script for GUI (bnm3)
 	@echo '#!/bin/bash' > $(DESTDIR)$(BINDIR)/bnm3
-	@echo 'exec python3 "$(LIBDIR)/bnm3.py" "$$@"' >> $(DESTDIR)$(BINDIR)/bnm3
+	@echo 'exec python3 $(LIBDIR)/bnm3.py "$$@"' >> $(DESTDIR)$(BINDIR)/bnm3
 	@chmod 755 $(DESTDIR)$(BINDIR)/bnm3
 
 	# Install config examples
@@ -137,4 +137,3 @@ help:
 	@echo "  $(BINDIR)/borednomore3          - Backend daemon"
 	@echo "  $(BINDIR)/bnm3                  - GUI interface"
 	@echo "  $(BINDIR)/borednomore3-downloader - Downloader utility"
-

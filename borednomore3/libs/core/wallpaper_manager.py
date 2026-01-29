@@ -1,105 +1,83 @@
 """
-Wallpaper manager - handles wallpaper loading and selection
+Wallpaper manager - handles wallpaper selection and shuffling
 """
 
 import os
 import glob
 import random
-import time
 
 
 class WallpaperManager:
-    """Manages wallpaper collection and selection"""
+    """Manages wallpaper loading and randomization"""
     
     def __init__(self, directory, patterns, randomize, logger):
-        # Initialize random seed to ensure different results on script restart
-        random.seed(time.time_ns())
-        
-        self.directory = os.path.abspath(os.path.expanduser(directory))
+        self.logger = logger
+        self.directory = directory
         self.patterns = patterns
         self.randomize = randomize
-        self.logger = logger
         self.wallpapers = []
-        self.playlist = []  # The actual playback queue
-        self.current_index = -1
+        self.current_index = 0
+        self.shuffle_playlist = []
+        
+        # Seed random with high-resolution time
+        random.seed()
         
         self._load_wallpapers()
-        self._prepare_playlist()
+        
+        if self.randomize:
+            self._create_shuffle_playlist()
     
     def _load_wallpapers(self):
-        """Load wallpapers from directory using patterns"""
-        if not os.path.isdir(self.directory):
+        """Load wallpapers matching patterns from directory"""
+        if not os.path.exists(self.directory):
             self.logger.error(f"Directory not found: {self.directory}")
             raise FileNotFoundError(f"Wallpaper directory not found: {self.directory}")
         
         self.logger.debug(f"Loading wallpapers from: {self.directory}")
         self.logger.debug(f"Using patterns: {self.patterns}")
         
-        self.wallpapers = []
+        all_files = []
         for pattern in self.patterns:
             full_pattern = os.path.join(self.directory, pattern)
-            matched = sorted(glob.glob(full_pattern))
-            self.wallpapers.extend(matched)
-            self.logger.debug(f"Pattern '{pattern}' matched {len(matched)} files")
+            files = glob.glob(full_pattern)
+            all_files.extend(files)
+            self.logger.debug(f"Pattern '{pattern}' matched {len(files)} files")
         
-        # Remove duplicates
-        self.wallpapers = sorted(list(set(self.wallpapers)))
+        self.wallpapers = sorted(set(all_files))
         
         if not self.wallpapers:
             self.logger.error(f"No wallpapers found in {self.directory}")
-            self.logger.error(f"Patterns used: {self.patterns}")
-            raise FileNotFoundError("No wallpapers matched the patterns")
+            raise FileNotFoundError(f"No wallpapers found matching patterns: {self.patterns}")
         
         self.logger.info(f"Loaded {len(self.wallpapers)} wallpapers")
         
-        # Log first few wallpapers in debug mode
-        if self.logger.level == 0:  # DEBUG
-            for i, wp in enumerate(self.wallpapers[:5]):
-                self.logger.debug(f"  [{i}] {os.path.basename(wp)}")
-            if len(self.wallpapers) > 5:
-                self.logger.debug(f"  ... and {len(self.wallpapers) - 5} more")
-
-    def _prepare_playlist(self):
-        """Initializes the playlist and shuffles if randomize is enabled"""
-        self.playlist = list(self.wallpapers)
-        if self.randomize:
-            self.logger.debug("Shuffling wallpaper playlist for true randomization...")
-            random.shuffle(self.playlist)
-        self.current_index = -1
+        for i, wp in enumerate(self.wallpapers[:5]):
+            self.logger.debug(f"  {i+1}. {os.path.basename(wp)}")
+        if len(self.wallpapers) > 5:
+            self.logger.debug(f"  ... and {len(self.wallpapers)-5} more")
+    
+    def _create_shuffle_playlist(self):
+        """Create a new shuffled playlist"""
+        self.shuffle_playlist = self.wallpapers.copy()
+        random.shuffle(self.shuffle_playlist)
+        self.current_index = 0
+        self.logger.debug(f"Created new shuffle playlist with {len(self.shuffle_playlist)} wallpapers")
     
     def get_next(self):
-        """Get next wallpaper based on selection mode"""
-        # Increment index
-        self.current_index += 1
-
-        # If we reached the end of the playlist, reshuffle and restart
-        if self.current_index >= len(self.playlist):
-            self.logger.info("Playlist cycle complete. Reshuffling...")
-            self._prepare_playlist()
-            self.current_index = 0
-
-        wallpaper = self.playlist[self.current_index]
-        
-        # Log debug info based on mode
+        """Get next wallpaper based on randomization setting"""
         if self.randomize:
-            self.logger.debug(f"Random selection (shuffled): {self.current_index + 1}/{len(self.playlist)}")
+            # True shuffle: go through entire playlist before reshuffling
+            if self.current_index >= len(self.shuffle_playlist):
+                self.logger.debug("Shuffle playlist exhausted, creating new playlist")
+                self._create_shuffle_playlist()
+            
+            wallpaper = self.shuffle_playlist[self.current_index]
+            self.current_index += 1
+            self.logger.debug(f"Shuffle mode: {self.current_index}/{len(self.shuffle_playlist)}")
+            return wallpaper
         else:
-            self.logger.debug(f"Sequential selection: index {self.current_index}/{len(self.playlist) - 1}")
-        
-        self.logger.debug(f"Selected: {wallpaper}")
-        return wallpaper
-    
-    def get_current(self):
-        """Get current wallpaper"""
-        if 0 <= self.current_index < len(self.playlist):
-            return self.playlist[self.current_index]
-        return None
-    
-    def reload(self):
-        """Reload wallpaper list"""
-        self.logger.info("Reloading wallpapers...")
-        old_count = len(self.wallpapers)
-        self._load_wallpapers()
-        self._prepare_playlist() # Also re-prepare the playlist on reload
-        new_count = len(self.wallpapers)
-        self.logger.info(f"Wallpapers: {old_count} -> {new_count}")
+            # Sequential mode
+            wallpaper = self.wallpapers[self.current_index]
+            self.current_index = (self.current_index + 1) % len(self.wallpapers)
+            self.logger.debug(f"Sequential mode: {self.current_index}/{len(self.wallpapers)}")
+            return wallpaper

@@ -20,7 +20,7 @@ find "$BASE_DIR" -type f \
     
     # Additional check to exclude binary/compiled files
     if [[ "$file" != *.pyc ]] && [[ "$file" != *.so ]] && [[ "$file" != *.o ]]; then
-        echo "=== $file ===" >> "$OUTPUT"
+        echo "[$file]" >> "$OUTPUT"
         echo "" >> "$OUTPUT"
         
         # Add file content

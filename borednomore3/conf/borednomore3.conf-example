@@ -1,62 +1,40 @@
-# BoredNoMore3 Configuration File
-# Command-line arguments override these settings
-# User config (~/.config/borednomore3/borednomore3.conf) overrides system config
-
 [settings]
 # Time between wallpaper changes (seconds)
-# Default: 300 (5 minutes)
 interval = 300
 
-# Wallpaper directory (absolute or relative to this config file)
-# Default: ../wallpapers (relative to /etc/borednomore3/)
-directory = /usr/share/borednomore3/wallpapers
+# Wallpaper directory (absolute or relative to config file)
+directory = ~/Pictures/Wallpapers
 
-# Number of transition frames (5-100)
-# Higher = smoother but slower transitions
-# Default: 10
+# Number of transition frames (5-100, higher = smoother)
 frames = 10
 
 # Delay between frames (seconds, 0.0001-1.0)
-# Lower = faster transitions
-# Default: 0.001
 speed = 0.001
 
-# Transition IDs to use (comma-separated or ranges)
-# Examples: 1,5,10 or 1-20,50-60 or leave empty for all
-# Default: empty (uses all 1000 transitions)
+# Transition IDs (comma-separated or ranges, e.g., 1,5,10-20)
+# Leave empty for all transitions
 transitions = 
 
-# Randomize transition order (true/false)
-# When true, shuffles transitions with no repeats until full cycle
-# Default: false
-randomize = false
+# Randomize transition order (True/False)
+randomize = False
 
-# Keep previous image during transition (true/false)
-# Useful for movement-based transitions
-# Default: false
-keep_image = false
+# Randomize wallpaper order (True/False)
+randomize_wallpapers = False
 
-# Randomize wallpaper selection (true/false)
-# When true, shuffles wallpapers with no repeats until full cycle
-# Default: false
-randomize_wallpapers = false
+# Keep previous image during transition (True/False)
+keep_image = False
+```
 
-# Examples of common configurations:
-#
-# Fast sequential transitions:
-#   interval = 60
-#   frames = 5
-#   speed = 0.0001
-#   randomize = false
-#   randomize_wallpapers = false
-#
-# Smooth random slideshow:
-#   interval = 300
-#   frames = 50
-#   speed = 0.01
-#   randomize = true
-#   randomize_wallpapers = true
-#
-# Specific transitions only:
-#   transitions = 1-10,20-30,50
-#   randomize = true
+---
+
+## 4. `/home/deb/borednomore3/borednomore3/conf/borednomore3.list-example`
+```
+# Wallpaper patterns (one per line)
+# Glob patterns supported
+
+*.jpg
+*.jpeg
+*.png
+*.webp
+
+# Add more patterns below
