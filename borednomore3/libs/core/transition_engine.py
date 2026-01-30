@@ -9,23 +9,21 @@ import time
 
 
 LOGIC_MAP = {
-    1: ["slide-left", "slide-out-l", "slide-in-l"],
-    2: ["slide-right", "slide-out-r", "slide-in-r"],
-    3: ["slide-up", "slide-out-u", "slide-in-u"],
-    4: ["slide-down", "slide-out-d", "slide-in-d"],
-    7: ["spin-cw", "rot-out-cw", "rot-in-cw"],
-    8: ["spin-ccw", "rot-out-ccw", "rot-in-ccw"],
+    1: ["slide-left", "slide-out-r", "slide-in-l"],
+    2: ["slide-right", "slide-out-l", "slide-in-r"],
+    3: ["slide-up", "slide-out-d", "slide-in-u"],
+    4: ["slide-down", "slide-out-u", "slide-in-d"],
+    7: ["spin-cw", "rot-out-ccw", "rot-in-cw"],
+    8: ["spin-ccw", "rot-out-cw", "rot-in-ccw"],
     14: ["zoom-in-out", "zoom-out", "zoom-in"],
-    21: ["swirl-cw", "swirl-out-cw", "swirl-in-cw"],
-    22: ["swirl-ccw", "swirl-out-ccw", "swirl-in-ccw"],
+    21: ["swirl-cw", "swirl-out-ccw", "swirl-in-cw"],
+    22: ["swirl-ccw", "swirl-out-cw", "swirl-in-ccw"],
     23: ["barrel-distort", "barrel-out", "barrel-in"],
     24: ["pinch", "pinch-out", "pinch-in"],
     25: ["wave-h", "wave-out-h", "wave-in-h"],
     28: ["fade", "fade-out", "fade-in"],
     32: ["pixelate", "pixel-out", "pixel-in"],
     33: ["blur-fade", "blur-out", "blur-in"],
-
-    # New categories
     34: ["flip-h", "flip-out-h", "flip-in-h"],
     35: ["flip-v", "flip-out-v", "flip-in-v"],
     36: ["shear-x", "shear-out-x", "shear-in-x"],
@@ -34,8 +32,6 @@ LOGIC_MAP = {
     39: ["checker", "checker-out", "checker-in"],
     40: ["glitch", "glitch-out", "glitch-in"],
     41: ["color-shift", "color-out", "color-in"],
-
-    # Extra chaos
     42: ["shatter", "shatter-out", "shatter-in"],
     43: ["mosaic", "mosaic-out", "mosaic-in"],
     44: ["gradient", "gradient-out", "gradient-in"],
@@ -89,10 +85,7 @@ class TransitionEngine:
 
         self.randomize = randomize
         self.current_index = 0
-
-        self.exit_frames_ready = False
-        self.stop_background = False
-        self.current_wallpaper_exit_dir = None
+        self.previous_exit_mode = None
 
     def _parse_transitions(self, transition_str):
         parts = [t.strip() for t in transition_str.split(',')]
@@ -106,12 +99,9 @@ class TransitionEngine:
         return sorted(set([t for t in transitions if t in TRANSITIONS]))
 
     def get_next_transition(self):
-        # Pick a category with equal probability
         category = random.choice(list(CATEGORY_MAP.keys()))
         tid = random.choice(CATEGORY_MAP[category])
-
         self.logger.debug(f"Chosen category: {category}, Transition ID: {tid}")
-
         transition_data = TRANSITIONS[tid]
         return {
             'id': tid,
@@ -123,146 +113,216 @@ class TransitionEngine:
     def _build_command(self, img, mode, progress, width, height):
         """Build command for a single frame with progress 0.0–1.0"""
 
-        # --- SLIDE ---
-        if mode == "slide-out-l" or mode == "slide-in-l":
-            offset = -int(progress * width)
-            return ["convert", img, "-roll", f"{offset},0"]
-        elif mode == "slide-out-r" or mode == "slide-in-r":
+        # SLIDE - Clean implementation
+        if mode == "slide-in-l":
+            offset = int((1 - progress) * width)
+            return ["convert", img, "-roll", f"-{offset}+0"]
+        elif mode == "slide-out-r":
             offset = int(progress * width)
-            return ["convert", img, "-roll", f"{offset},0"]
-        elif mode == "slide-out-u" or mode == "slide-in-u":
-            offset = -int(progress * height)
-            return ["convert", img, "-roll", f"0,{offset}"]
-        elif mode == "slide-out-d" or mode == "slide-in-d":
+            return ["convert", img, "-roll", f"+{offset}+0"]
+        elif mode == "slide-in-r":
+            offset = int((1 - progress) * width)
+            return ["convert", img, "-roll", f"+{offset}+0"]
+        elif mode == "slide-out-l":
+            offset = int(progress * width)
+            return ["convert", img, "-roll", f"-{offset}+0"]
+        elif mode == "slide-in-u":
+            offset = int((1 - progress) * height)
+            return ["convert", img, "-roll", f"+0-{offset}"]
+        elif mode == "slide-out-d":
             offset = int(progress * height)
-            return ["convert", img, "-roll", f"0,{offset}"]
+            return ["convert", img, "-roll", f"+0+{offset}"]
+        elif mode == "slide-in-d":
+            offset = int((1 - progress) * height)
+            return ["convert", img, "-roll", f"+0+{offset}"]
+        elif mode == "slide-out-u":
+            offset = int(progress * height)
+            return ["convert", img, "-roll", f"+0-{offset}"]
 
-        # --- SPIN ---
-        elif mode == "rot-out-cw" or mode == "rot-in-cw":
-            angle = progress * 360
-            return ["convert", img, "-distort", "SRT", str(angle)]
-        elif mode == "rot-out-ccw" or mode == "rot-in-ccw":
-            angle = -progress * 360
-            return ["convert", img, "-distort", "SRT", str(angle)]
+        # SPIN - Reduced to 90 degrees
+        elif mode == "rot-in-cw":
+            angle = progress * 90
+            return ["convert", img, "-background", "none", "-virtual-pixel", "transparent", "-distort", "SRT", str(angle)]
+        elif mode == "rot-out-ccw":
+            angle = -progress * 90
+            return ["convert", img, "-background", "none", "-virtual-pixel", "transparent", "-distort", "SRT", str(angle)]
+        elif mode == "rot-in-ccw":
+            angle = -progress * 90
+            return ["convert", img, "-background", "none", "-virtual-pixel", "transparent", "-distort", "SRT", str(angle)]
+        elif mode == "rot-out-cw":
+            angle = progress * 90
+            return ["convert", img, "-background", "none", "-virtual-pixel", "transparent", "-distort", "SRT", str(angle)]
 
-        # --- ZOOM ---
-        elif mode == "zoom-out":
-            scale = max(0.05, 1 - progress)
-            return ["convert", img, "-resize", f"{int(width*scale)}x{int(height*scale)}!"]
+        # ZOOM - Fixed scale calculation
         elif mode == "zoom-in":
-            scale = max(0.05, progress * 2)
-            return ["convert", img, "-resize", f"{int(width*scale)}x{int(height*scale)}!"]
+            scale = 0.1 + (progress * 0.9)
+            return ["convert", img, "-resize", f"{int(width*scale)}x{int(height*scale)}!", "-gravity", "center", "-background", "black", "-extent", f"{width}x{height}"]
+        elif mode == "zoom-out":
+            scale = 0.1 + ((1 - progress) * 0.9)
+            return ["convert", img, "-resize", f"{int(width*scale)}x{int(height*scale)}!", "-gravity", "center", "-background", "black", "-extent", f"{width}x{height}"]
 
-        # --- SWIRL ---
-        elif mode == "swirl-out-cw" or mode == "swirl-in-cw":
-            angle = progress * 360
+        # SWIRL - Reduced to 120 degrees
+        elif mode == "swirl-in-cw":
+            angle = progress * 120
             return ["convert", img, "-swirl", str(angle)]
-        elif mode == "swirl-out-ccw" or mode == "swirl-in-ccw":
-            angle = -progress * 360
+        elif mode == "swirl-out-ccw":
+            angle = -progress * 120
+            return ["convert", img, "-swirl", str(angle)]
+        elif mode == "swirl-in-ccw":
+            angle = -progress * 120
+            return ["convert", img, "-swirl", str(angle)]
+        elif mode == "swirl-out-cw":
+            angle = progress * 120
             return ["convert", img, "-swirl", str(angle)]
 
-        # --- BARREL ---
-        elif mode == "barrel-out" or mode == "barrel-in":
-            factor = progress * 0.8
-            return ["convert", img, "-distort", "Barrel", f"0.0 {factor} 0.0 1.0"]
+        # BARREL - Fixed progression
+        elif mode == "barrel-in":
+            factor = (1 - progress) * 0.3
+            return ["convert", img, "-distort", "Barrel", f"0.0 0.0 {factor}"]
+        elif mode == "barrel-out":
+            factor = progress * 0.3
+            return ["convert", img, "-distort", "Barrel", f"0.0 0.0 {factor}"]
 
-        # --- PINCH ---
-        elif mode == "pinch-out":
-            factor = progress * 1.5
-            return ["convert", img, "-implode", str(factor)]
+        # PINCH - Fixed progression
         elif mode == "pinch-in":
-            factor = -progress * 1.5
+            factor = (1 - progress) * 0.8
+            return ["convert", img, "-implode", str(factor)]
+        elif mode == "pinch-out":
+            factor = progress * 0.8
             return ["convert", img, "-implode", str(factor)]
 
-        # --- WAVE ---
-        elif mode == "wave-out-h":
-            amp = int(progress * 50)
-            return ["convert", img, "-wave", f"{amp}x10"]
+        # WAVE - Different wavelengths
         elif mode == "wave-in-h":
-            amp = int((1-progress) * 50)
-            return ["convert", img, "-wave", f"{amp}x10"]
+            amp = int((1 - progress) * 30)
+            return ["convert", img, "-wave", f"{amp}x{width//15}"]
+        elif mode == "wave-out-h":
+            amp = int(progress * 30)
+            return ["convert", img, "-wave", f"{amp}x{width//15}"]
 
-        # --- FADE ---
-        elif mode == "fade-out":
-            opacity = max(0.01, 1 - progress)
-            return ["convert", img, "-alpha", "set", "-channel", "A", "-evaluate", "multiply", str(opacity), "+channel"]
+        # FADE
         elif mode == "fade-in":
             opacity = max(0.01, progress)
             return ["convert", img, "-alpha", "set", "-channel", "A", "-evaluate", "multiply", str(opacity), "+channel"]
+        elif mode == "fade-out":
+            opacity = max(0.01, 1 - progress)
+            return ["convert", img, "-alpha", "set", "-channel", "A", "-evaluate", "multiply", str(opacity), "+channel"]
 
-        # --- PIXELATE ---
-        elif mode == "pixel-out":
-            coarse = max(1, int(width * (1 - progress)))
-            return ["convert", img, "-scale", f"{coarse}x{coarse}!", "-scale", f"{width}x{height}!"]
+        # PIXELATE - Fixed progression
         elif mode == "pixel-in":
-            coarse = max(1, int(width * progress))
+            coarse = max(2, int(width * (1 - progress) * 0.05))
+            return ["convert", img, "-scale", f"{coarse}x{coarse}!", "-scale", f"{width}x{height}!"]
+        elif mode == "pixel-out":
+            coarse = max(2, int(width * progress * 0.05))
             return ["convert", img, "-scale", f"{coarse}x{coarse}!", "-scale", f"{width}x{height}!"]
 
-        # --- BLUR ---
-        elif mode == "blur-out":
-            radius = progress * 15
-            return ["convert", img, "-blur", f"0x{radius}"]
+        # BLUR
         elif mode == "blur-in":
-            radius = (1-progress) * 15
+            radius = (1 - progress) * 10
+            return ["convert", img, "-blur", f"0x{radius}"]
+        elif mode == "blur-out":
+            radius = progress * 10
             return ["convert", img, "-blur", f"0x{radius}"]
 
-        # --- FLIP ---
-        elif mode == "flip-out-h" or mode == "flip-in-h":
-            return ["convert", img, "-flop"]
-        elif mode == "flip-out-v" or mode == "flip-in-v":
-            return ["convert", img, "-flip"]
+        # FLIP - Gradual using scale
+        elif mode == "flip-in-h":
+            scale_x = abs(progress - 0.5) * 2
+            return ["convert", img, "-scale", f"{int(width*scale_x)}x{height}!", "-scale", f"{width}x{height}!"]
+        elif mode == "flip-out-h":
+            scale_x = abs((1-progress) - 0.5) * 2
+            return ["convert", img, "-scale", f"{int(width*scale_x)}x{height}!", "-scale", f"{width}x{height}!"]
+        elif mode == "flip-in-v":
+            scale_y = abs(progress - 0.5) * 2
+            return ["convert", img, "-scale", f"{width}x{int(height*scale_y)}!", "-scale", f"{width}x{height}!"]
+        elif mode == "flip-out-v":
+            scale_y = abs((1-progress) - 0.5) * 2
+            return ["convert", img, "-scale", f"{width}x{int(height*scale_y)}!", "-scale", f"{width}x{height}!"]
 
-        # --- SHEAR ---
-        elif mode == "shear-out-x" or mode == "shear-in-x":
-            shear = int(progress * 45)
-            return ["convert", img, "-shear", f"{shear}x0"]
-        elif mode == "shear-out-y" or mode == "shear-in-y":
-            shear = int(progress * 45)
-            return ["convert", img, "-shear", f"0x{shear}"]
+        # SHEAR - Reduced angle, transparent background
+        elif mode == "shear-in-x":
+            shear = int((1 - progress) * 15)
+            return ["convert", img, "-background", "none", "-virtual-pixel", "transparent", "-shear", f"{shear}x0"]
+        elif mode == "shear-out-x":
+            shear = int(progress * 15)
+            return ["convert", img, "-background", "none", "-virtual-pixel", "transparent", "-shear", f"{shear}x0"]
+        elif mode == "shear-in-y":
+            shear = int((1 - progress) * 15)
+            return ["convert", img, "-background", "none", "-virtual-pixel", "transparent", "-shear", f"0x{shear}"]
+        elif mode == "shear-out-y":
+            shear = int(progress * 15)
+            return ["convert", img, "-background", "none", "-virtual-pixel", "transparent", "-shear", f"0x{shear}"]
 
-        # --- RIPPLE ---
-        elif mode == "ripple-out" or mode == "ripple-in":
-            amp = int(progress * 80)
-            return ["convert", img, "-wave", f"{amp}x20"]
+        # RIPPLE - Different wavelength from wave
+        elif mode == "ripple-in":
+            amp = int((1 - progress) * 40)
+            return ["convert", img, "-wave", f"{amp}x{width//8}"]
+        elif mode == "ripple-out":
+            amp = int(progress * 40)
+            return ["convert", img, "-wave", f"{amp}x{width//8}"]
 
-        # --- CHECKER ---
-        elif mode == "checker-out" or mode == "checker-in":
-            size = int(20 + progress * 80)
-            return ["convert", img, "pattern:checkerboard", "-compose", "Dst_In", "-composite"]
+        # CHECKER - Fixed progression
+        elif mode == "checker-in":
+            size = max(10, int((1 - progress) * 50))
+            return ["convert", img, "-scale", f"{size}x{size}!", "-scale", f"{width}x{height}!"]
+        elif mode == "checker-out":
+            size = max(10, int(progress * 50))
+            return ["convert", img, "-scale", f"{size}x{size}!", "-scale", f"{width}x{height}!"]
 
-        # --- GLITCH ---
-        elif mode == "glitch-out" or mode == "glitch-in":
-            spread = int(progress * 30)
-            return ["convert", img, "-spread", str(spread)]
+        # GLITCH
+        elif mode == "glitch-in":
+            spread = int((1 - progress) * 20)
+            return ["convert", img, "-spread", str(max(1, spread))]
+        elif mode == "glitch-out":
+            spread = int(progress * 20)
+            return ["convert", img, "-spread", str(max(1, spread))]
 
-        # --- COLOR SHIFT ---
-        elif mode == "color-out" or mode == "color-in":
-            hue = int(progress * 200)
-            return ["convert", img, "-modulate", f"100,100,{hue}"]
+        # COLOR SHIFT
+        elif mode == "color-in":
+            hue = int((1 - progress) * 100)
+            return ["convert", img, "-modulate", f"100,{100 + int(progress * 50)},{100 + hue}"]
+        elif mode == "color-out":
+            hue = int(progress * 100)
+            return ["convert", img, "-modulate", f"100,{150 - int(progress * 50)},{100 + hue}"]
 
-        # --- SHATTER ---
-        elif mode == "shatter-out" or mode == "shatter-in":
-            return ["convert", img, "-implode", str(progress * -2.0)]
+        # SHATTER
+        elif mode == "shatter-in":
+            factor = (1 - progress) * 1.2
+            return ["convert", img, "-implode", str(-factor)]
+        elif mode == "shatter-out":
+            factor = progress * 1.2
+            return ["convert", img, "-implode", str(-factor)]
 
-        # --- MOSAIC ---
-        elif mode == "mosaic-out" or mode == "mosaic-in":
-            tile = max(1, int(progress * 100))
+        # MOSAIC
+        elif mode == "mosaic-in":
+            tile = max(10, int((1 - progress) * 60))
+            return ["convert", img, "-scale", f"{tile}x{tile}!", "-scale", f"{width}x{height}!"]
+        elif mode == "mosaic-out":
+            tile = max(10, int(progress * 60))
             return ["convert", img, "-scale", f"{tile}x{tile}!", "-scale", f"{width}x{height}!"]
 
-        # --- GRADIENT ---
-        elif mode == "gradient-out" or mode == "gradient-in":
-            return ["convert", img, "-fill", "gradient:red-blue", "-colorize", str(int(progress * 100))]
+        # GRADIENT - Using evaluate for better control
+        elif mode == "gradient-in":
+            pct = int((1 - progress) * 100)
+            return ["convert", img, "(", "+clone", "-fill", "gray", "-colorize", "100", ")", "-compose", "blend", "-define", f"compose:args={pct}", "-composite"]
+        elif mode == "gradient-out":
+            pct = int(progress * 100)
+            return ["convert", img, "(", "+clone", "-fill", "gray", "-colorize", "100", ")", "-compose", "blend", "-define", f"compose:args={pct}", "-composite"]
 
-        # --- NOISE ---
-        elif mode == "noise-out" or mode == "noise-in":
-            return ["convert", img, "-attenuate", str(progress), "+noise", "Gaussian"]
+        # NOISE
+        elif mode == "noise-in":
+            atten = max(0.1, (1 - progress) * 3)
+            return ["convert", img, "-attenuate", str(atten), "+noise", "Gaussian"]
+        elif mode == "noise-out":
+            atten = max(0.1, progress * 3)
+            return ["convert", img, "-attenuate", str(atten), "+noise", "Gaussian"]
 
-        # --- TWIST ---
-        elif mode == "twist-out" or mode == "twist-in":
-            angle = int(progress * 270)
+        # TWIST - Reduced to 150 degrees
+        elif mode == "twist-in":
+            angle = int((1 - progress) * 150)
+            return ["convert", img, "-swirl", str(angle)]
+        elif mode == "twist-out":
+            angle = int(progress * 150)
             return ["convert", img, "-swirl", str(angle)]
 
-        # --- FALLBACK ---
         else:
             return ["convert", img]
 
@@ -292,15 +352,16 @@ class TransitionEngine:
     def apply(self, current_img, future_img, transition, set_wallpaper_func):
         """
         Dual transition:
-        - Current wallpaper exits 100% → 0% using its exit mode
-        - Future wallpaper enters 0% → 100% using its entry mode
-        - Both are blended together per frame
-        - Future becomes the new current at the end
+        - Current wallpaper exits 100% → 0% using exit mode (reversed from how it came in)
+        - Future wallpaper enters 0% → 100% using entry mode
+        - Both blended together per frame
         """
 
         tid = transition['id']
         entry_mode = transition['entry_mode']
-        exit_mode = transition['exit_mode']
+        
+        exit_mode = self.previous_exit_mode if self.previous_exit_mode else transition['exit_mode']
+        self.previous_exit_mode = transition['exit_mode']
 
         self.logger.transition_start(transition['name'], tid)
 
@@ -308,7 +369,6 @@ class TransitionEngine:
         subprocess.run(["rm", "-rf", tmp_dir], check=False)
         os.makedirs(tmp_dir, exist_ok=True)
 
-        # Resize once
         resized_current = os.path.join(tmp_dir, "cur_resized.jpg")
         resized_future = os.path.join(tmp_dir, "fut_resized.jpg")
         subprocess.run(["convert", current_img, "-resize", f"{self.width}x{self.height}!", resized_current], check=True)
@@ -320,36 +380,24 @@ class TransitionEngine:
             blend = int(progress * 100)
             out = os.path.join(tmp_dir, f"frame_{t:03d}.jpg")
 
-            # Current wallpaper exit frame (100 → 0)
             out_exit = os.path.join(tmp_dir, f"exit_{t:03d}.jpg")
             exit_progress = 1 - progress
             cmd_exit = self._build_command(resized_current, exit_mode, exit_progress, self.width, self.height)
 
-            # Future wallpaper entry frame (0 → 100)
             out_entry = os.path.join(tmp_dir, f"entry_{t:03d}.jpg")
             entry_progress = progress
             cmd_entry = self._build_command(resized_future, entry_mode, entry_progress, self.width, self.height)
 
-            # Run exit and entry transforms in parallel
-            p_exit = subprocess.Popen(cmd_exit + [out_exit])
-            p_entry = subprocess.Popen(cmd_entry + [out_entry])
-            p_exit.wait()
-            p_entry.wait()
+            subprocess.run(cmd_exit + [out_exit], check=True, capture_output=True)
+            subprocess.run(cmd_entry + [out_entry], check=True, capture_output=True)
 
-            # Blend exit + entry together
-            subprocess.run(["composite", "-blend", str(blend), out_entry, out_exit, out], check=True)
+            subprocess.run(["composite", "-blend", str(blend), out_entry, out_exit, out], check=True, capture_output=True)
 
-        # Play frames
         self._play_frames(tmp_dir, set_wallpaper_func)
-
-        # Final: set full-resolution future wallpaper
         set_wallpaper_func(future_img)
 
         self._cleanup_frames(tmp_dir)
         self.logger.transition_complete()
 
     def cleanup(self):
-        """Clean up resources"""
-        self.stop_background = True
-        if self.current_wallpaper_exit_dir:
-            self._cleanup_frames(self.current_wallpaper_exit_dir)
+        pass
