@@ -1,0 +1,9 @@
+# API leys
+# cp api-example .api
+# nano .env
+# fill your API values
+#
+NEPA_TOKEN="github-API-HERE"
+PEXELS_API=API-HERE
+UNSPLASH_API=API-HERE
+PIXABAY_API=API-HERE

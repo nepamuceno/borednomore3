@@ -4,7 +4,7 @@
   "config_path": "/home/deb/borednomore3/borednomore3/conf/borednomore3.conf",
   "list_path": "/home/deb/borednomore3/borednomore3/conf/borednomore3.list",
   "interval": 1,
-  "directory": "/home/deb/borednomore3/wallpapers",
+  "directory": "/home/deb/borednomore3/dark_wallpapers",
   "frames": 6,
   "speed": 0.0001,
   "transitions": "",
@@ -17,6 +17,6 @@
   "debug": true,
   "python_path": "/usr/bin/python3",
   "extra_args": "",
-  "running_pid": 3332893,
+  "running_pid": 903756,
   "window_geometry": "1600x972+160+54"
 }
