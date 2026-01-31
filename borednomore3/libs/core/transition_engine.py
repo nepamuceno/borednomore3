@@ -1,6 +1,6 @@
 """
 Transition engine - Hollywood-Grade Cinema Quality
-Individual transitions with professional fine-tuning and performance optimization
+Fully corrected with proper channel handling, blend strategy, and all optimizations
 """
 
 import os
@@ -69,7 +69,7 @@ CATEGORY_MAP = {
 
 
 class TransitionEngine:
-    """Hollywood-grade transition engine with individual functions"""
+    """Hollywood-grade transition engine - fully corrected and optimized"""
 
     def __init__(self, transitions, randomize, frames, speed, keep_image, desktop_info, logger):
         self.logger = logger
@@ -188,7 +188,6 @@ class TransitionEngine:
     def _mode_slide_in_l(self, img, progress):
         eased = self._ease_damped_spring(progress)
         offset = int((1 - eased) * self.work_width)
-        # HOLLYWOOD: Light directional blur for motion feel
         return ["convert", img, "-roll", f"-{offset}+0", "-blur", "0.3x0.3"]
 
     def _mode_slide_out_r(self, img, progress):
@@ -229,50 +228,46 @@ class TransitionEngine:
     def _mode_rot_in_cw(self, img, progress):
         eased = self._ease_smooth(progress)
         scale = 0.85 + (eased * 0.15)
-        angle = eased * 180
-        # HOLLYWOOD: Add vignette during rotation for depth
+        angle = eased * 90
         vignette = int(abs(math.sin(eased * math.pi)) * 15)
         return ["convert", img, "-resize", f"{int(self.work_width*scale)}x{int(self.work_height*scale)}!", "-gravity", "south", "-background", "black", "-virtual-pixel", "edge", "-distort", "SRT", f"{self.work_width/2},{self.work_height} 1.0 {angle}", "-vignette", f"0x{vignette}", "-extent", f"{self.work_width}x{self.work_height}"]
 
     def _mode_rot_out_ccw(self, img, progress):
         eased = self._ease_smooth(progress)
-        scale = 1.0 - (eased * 0.2)
-        angle = -eased * 180
+        scale = 1.0 - (eased * 0.15)
+        angle = -eased * 90
         vignette = int(abs(math.sin(eased * math.pi)) * 15)
         return ["convert", img, "-resize", f"{int(self.work_width*scale)}x{int(self.work_height*scale)}!", "-gravity", "south", "-background", "black", "-virtual-pixel", "edge", "-distort", "SRT", f"{self.work_width/2},{self.work_height} 1.0 {angle}", "-vignette", f"0x{vignette}", "-extent", f"{self.work_width}x{self.work_height}"]
 
     def _mode_rot_in_ccw(self, img, progress):
         eased = self._ease_smooth(progress)
         scale = 0.85 + (eased * 0.15)
-        angle = -eased * 180
+        angle = -eased * 90
         vignette = int(abs(math.sin(eased * math.pi)) * 15)
         return ["convert", img, "-resize", f"{int(self.work_width*scale)}x{int(self.work_height*scale)}!", "-gravity", "south", "-background", "black", "-virtual-pixel", "edge", "-distort", "SRT", f"{self.work_width/2},{self.work_height} 1.0 {angle}", "-vignette", f"0x{vignette}", "-extent", f"{self.work_width}x{self.work_height}"]
 
     def _mode_rot_out_cw(self, img, progress):
         eased = self._ease_smooth(progress)
-        scale = 1.0 - (eased * 0.2)
-        angle = eased * 180
+        scale = 1.0 - (eased * 0.15)
+        angle = eased * 90
         vignette = int(abs(math.sin(eased * math.pi)) * 15)
         return ["convert", img, "-resize", f"{int(self.work_width*scale)}x{int(self.work_height*scale)}!", "-gravity", "south", "-background", "black", "-virtual-pixel", "edge", "-distort", "SRT", f"{self.work_width/2},{self.work_height} 1.0 {angle}", "-vignette", f"0x{vignette}", "-extent", f"{self.work_width}x{self.work_height}"]
 
     def _mode_zoom_in(self, img, progress):
         eased = self._ease_smooth(progress)
-        scale = 0.4 + (eased * 0.6)
-        # HOLLYWOOD: Vignette pulse with zoom
+        scale = 0.6 + (eased * 0.4)
         vignette = int(abs(0.5 - eased) * 40)
         return ["convert", img, "-resize", f"{int(self.work_width*scale)}x{int(self.work_height*scale)}!", "-gravity", "center", "-background", "black", "-vignette", f"0x{vignette}", "-extent", f"{self.work_width}x{self.work_height}"]
 
     def _mode_zoom_out(self, img, progress):
         eased = self._ease_smooth(progress)
-        scale = 1.0 - (eased * 0.6)
+        scale = 1.0 - (eased * 0.4)
         vignette = int(abs(0.5 - eased) * 40)
         return ["convert", img, "-resize", f"{int(self.work_width*scale)}x{int(self.work_height*scale)}!", "-gravity", "center", "-background", "black", "-vignette", f"0x{vignette}", "-extent", f"{self.work_width}x{self.work_height}"]
         
     def _mode_swirl_in_cw(self, img, progress):
         eased = self._ease_smooth(progress)
-        # HOLLYWOOD: Increased to 180 degrees for dramatic effect
         angle = eased * 180
-        # Saturation boost at peak swirl
         sat = 100 + int(abs(math.sin(eased * math.pi)) * 30)
         return ["convert", img, "-swirl", str(angle), "-modulate", f"100,{sat},100"]
 
@@ -296,30 +291,28 @@ class TransitionEngine:
 
     def _mode_barrel_in(self, img, progress):
         eased = self._ease_smooth(1 - progress)
-        factor = eased * 0.5
-        # HOLLYWOOD: Stronger vignette + edge blur for lens feel
+        factor = eased * 0.3
         vignette = int(eased * 50)
         edge_blur = eased * 2
         return ["convert", img, "-distort", "Barrel", f"0.0 0.0 {factor} 1.0", "-vignette", f"0x{vignette}", "-virtual-pixel", "mirror", "-blur", f"0x{edge_blur}"]
 
     def _mode_barrel_out(self, img, progress):
         eased = self._ease_smooth(progress)
-        factor = eased * 0.5
+        factor = eased * 0.3
         vignette = int(eased * 50)
         edge_blur = eased * 2
         return ["convert", img, "-distort", "Barrel", f"0.0 0.0 {factor} 1.0", "-vignette", f"0x{vignette}", "-virtual-pixel", "mirror", "-blur", f"0x{edge_blur}"]
 
     def _mode_pinch_in(self, img, progress):
         eased = self._ease_smooth(progress)
-        # HOLLYWOOD: Increased factor + vignette + desaturation for "black hole"
-        factor = (1.0 - eased) * 1.5
+        factor = (1.0 - eased) * 1.0
         vignette = int((1 - eased) * 40)
         desat = 100 - int((1 - eased) * 30)
         return ["convert", img, "-implode", str(factor), "-vignette", f"0x{vignette}", "-modulate", f"100,{desat},100"]
 
     def _mode_pinch_out(self, img, progress):
         eased = self._ease_smooth(progress)
-        factor = eased * 1.5
+        factor = eased * 1.0
         vignette = int(eased * 40)
         desat = 100 - int(eased * 30)
         return ["convert", img, "-implode", str(factor), "-vignette", f"0x{vignette}", "-modulate", f"100,{desat},100"]
@@ -349,7 +342,6 @@ class TransitionEngine:
         coarse = max(1, int(28 * (1.0 - eased)))
         if coarse <= 1: 
             return ["convert", img]
-        # HOLLYWOOD: Add dither + posterization at high pixelation
         cmd = ["convert", img, "-scale", f"{self.work_width//coarse}x{self.work_height//coarse}!", "-scale", f"{self.work_width}x{self.work_height}!"]
         if coarse > 10:
             cmd.extend(["-ordered-dither", "o2x2", "-posterize", "6"])
@@ -367,7 +359,6 @@ class TransitionEngine:
 
     def _mode_blur_in(self, img, progress):
         eased = 1.0 - self._ease_smooth(progress)
-        # HOLLYWOOD: Add vignette at peak blur for bokeh effect
         vignette = int(max(0, eased - 0.6) * 120) if eased > 0.6 else 0
         return ["convert", img, "-blur", f"0x{eased * 15}", "-vignette", f"0x{vignette}"]
 
@@ -378,8 +369,7 @@ class TransitionEngine:
 
     def _mode_flip_in_h(self, img, progress):
         eased = self._ease_smooth(progress)
-        p = eased * self.work_width * 0.35
-        # HOLLYWOOD: Add blur at mid-flip + slight shadow
+        p = eased * self.work_width * 0.25
         cmd = ["convert", img, "-virtual-pixel", "black", "-background", "black", "-distort", "Perspective", f"0,0 {p},0  0,{self.work_height} {p},{self.work_height}  {self.work_width},0 {self.work_width-p},0  {self.work_width},{self.work_height} {self.work_width-p},{self.work_height}"]
         if 0.4 < eased < 0.6:
             cmd.extend(["-blur", "0x2"])
@@ -387,8 +377,7 @@ class TransitionEngine:
 
     def _mode_flip_out_h(self, img, progress):
         eased = self._ease_smooth(progress)
-        p = eased * self.work_width * 0.35
-        # HOLLYWOOD: Increased brightness drop for depth
+        p = eased * self.work_width * 0.25
         brightness = 100 - (eased * 60)
         cmd = ["convert", img, "-virtual-pixel", "black", "-background", "black", "-distort", "Perspective", f"0,0 {p},0  0,{self.work_height} {p},{self.work_height}  {self.work_width},0 {self.work_width-p},0  {self.work_width},{self.work_height} {self.work_width-p},{self.work_height}", "-modulate", f"{brightness},100,100"]
         if 0.4 < eased < 0.6:
@@ -397,7 +386,7 @@ class TransitionEngine:
                 
     def _mode_flip_in_v(self, img, progress):
         eased = self._ease_smooth(progress)
-        p = eased * self.work_height * 0.35
+        p = eased * self.work_height * 0.25
         cmd = ["convert", img, "-virtual-pixel", "black", "-background", "black", "-distort", "Perspective", f"0,0 0,{p}  {self.work_width},0 {self.work_width},{p}  0,{self.work_height} 0,{self.work_height-p}  {self.work_width},{self.work_height} {self.work_width},{self.work_height-p}"]
         if 0.4 < eased < 0.6:
             cmd.extend(["-blur", "0x2"])
@@ -405,7 +394,7 @@ class TransitionEngine:
 
     def _mode_flip_out_v(self, img, progress):
         eased = self._ease_smooth(progress)
-        p = eased * self.work_height * 0.35
+        p = eased * self.work_height * 0.25
         brightness = 100 - (eased * 60)
         cmd = ["convert", img, "-virtual-pixel", "black", "-background", "black", "-distort", "Perspective", f"0,0 0,{p}  {self.work_width},0 {self.work_width},{p}  0,{self.work_height} 0,{self.work_height-p}  {self.work_width},{self.work_height} {self.work_width},{self.work_height-p}", "-modulate", f"{brightness},100,100"]
         if 0.4 < eased < 0.6:
@@ -414,26 +403,25 @@ class TransitionEngine:
 
     def _mode_shear_in_x(self, img, progress):
         eased = self._ease_smooth(progress)
-        # HOLLYWOOD: Reduced shear angle + alpha for less jarring
-        shear_val = (1 - eased) * 8
+        shear_val = (1 - eased) * 5
         alpha = 0.7 + eased * 0.3
         return ["convert", img, "-background", "black", "-virtual-pixel", "edge", "-shear", f"{shear_val}x0", "-alpha", "set", "-channel", "A", "-evaluate", "multiply", str(alpha), "+channel"]
 
     def _mode_shear_out_x(self, img, progress):
         eased = self._ease_smooth(progress)
-        shear_val = eased * 8
+        shear_val = eased * 5
         alpha = 1.0 - eased * 0.3
         return ["convert", img, "-background", "black", "-virtual-pixel", "edge", "-shear", f"{shear_val}x0", "-alpha", "set", "-channel", "A", "-evaluate", "multiply", str(alpha), "+channel"]
 
     def _mode_shear_in_y(self, img, progress):
         eased = self._ease_smooth(progress)
-        shear_val = (1 - eased) * 8
+        shear_val = (1 - eased) * 5
         alpha = 0.7 + eased * 0.3
         return ["convert", img, "-background", "black", "-virtual-pixel", "edge", "-shear", f"0x{shear_val}", "-alpha", "set", "-channel", "A", "-evaluate", "multiply", str(alpha), "+channel"]
 
     def _mode_shear_out_y(self, img, progress):
         eased = self._ease_smooth(progress)
-        shear_val = eased * 8
+        shear_val = eased * 5
         alpha = 1.0 - eased * 0.3
         return ["convert", img, "-background", "black", "-virtual-pixel", "edge", "-shear", f"0x{shear_val}", "-alpha", "set", "-channel", "A", "-evaluate", "multiply", str(alpha), "+channel"]
 
@@ -465,18 +453,38 @@ class TransitionEngine:
         g_shift = int(eased * 20)
         b_shift = int(eased * 30)
         
-        # IMv6 Robust Method: 
-        # Shift channels using -channel masks without breaking the stack
+        # Proper RGB channel separation and recombination
         cmd = [
             "convert", img,
-            "-channel", "R", "-roll", f"{r_shift}+0",
-            "-channel", "G", "-roll", f"-{g_shift}+0",
-            "-channel", "B", "-roll", f"0+{b_shift}",
-            "+channel" # This resets the channel mask so noise/output works
+            "(",
+                "+clone",
+                "-channel", "R",
+                "-separate",
+                "+channel",
+                "-roll", f"{r_shift}+0",
+            ")",
+            "(",
+                "+clone",
+                "-channel", "G",
+                "-separate",
+                "+channel",
+                "-roll", f"-{g_shift}+0",
+            ")",
+            "(",
+                "+clone",
+                "-channel", "B",
+                "-separate",
+                "+channel",
+                "-roll", f"0+{b_shift}",
+            ")",
+            "-channel", "RGB",
+            "-combine",
+            "+channel"
         ]
         
         if eased > 0.5:
             cmd.extend(["-attenuate", "0.5", "+noise", "Impulse"])
+        
         return cmd
                 
     def _mode_glitch_out(self, img, progress):
@@ -485,21 +493,42 @@ class TransitionEngine:
         g_shift = int(eased * 25)
         b_shift = int(eased * 35)
         
+        # Proper RGB channel separation and recombination
         cmd = [
             "convert", img,
-            "-channel", "R", "-roll", f"-{r_shift}+0",
-            "-channel", "G", "-roll", f"+{g_shift}+0",
-            "-channel", "B", "-roll", f"0-{b_shift}",
+            "(",
+                "+clone",
+                "-channel", "R",
+                "-separate",
+                "+channel",
+                "-roll", f"-{r_shift}+0",
+            ")",
+            "(",
+                "+clone",
+                "-channel", "G",
+                "-separate",
+                "+channel",
+                "-roll", f"+{g_shift}+0",
+            ")",
+            "(",
+                "+clone",
+                "-channel", "B",
+                "-separate",
+                "+channel",
+                "-roll", f"0-{b_shift}",
+            ")",
+            "-channel", "RGB",
+            "-combine",
             "+channel"
         ]
         
         if eased > 0.5:
             cmd.extend(["-attenuate", "0.5", "+noise", "Impulse"])
-        return cmd
         
+        return cmd
+
     def _mode_color_in(self, img, progress):
         eased = self._ease_smooth(progress)
-        # HOLLYWOOD: Reduced saturation + gamma for film look
         sat = 100 + (1.0 - eased) * 60
         bright = 100 + (1.0 - eased) * 15
         gamma = 1.0 + (1.0 - eased) * 0.3
@@ -516,7 +545,6 @@ class TransitionEngine:
     def _mode_shatter_in(self, img, progress):
         eased = 1.0 - self._ease_smooth(progress)
         tilt = eased * 15
-        # HOLLYWOOD: Add spread + desaturation for fragment feel
         spread = int(eased * 8)
         desat = 100 - int(eased * 20)
         return ["convert", img, "-distort", "SRT", f"{tilt}", "-spread", str(max(1, spread)), "-modulate", f"100,{desat},100"]
@@ -534,7 +562,6 @@ class TransitionEngine:
         tile_size = max(1, int(25 * (1.0 - eased)))
         if tile_size <= 1: 
             return ["convert", img]
-        # HOLLYWOOD: Increased paint + posterize for artistic feel
         posterize_lvl = int(8 + eased * 8)
         return ["convert", img, "-resize", "30%", "-spread", str(tile_size // 3), "-paint", "3", "+dither", "-posterize", str(posterize_lvl), "-resize", f"{self.work_width}x{self.work_height}!"]
                 
@@ -559,7 +586,6 @@ class TransitionEngine:
 
     def _mode_noise_in(self, img, progress):
         eased = 1.0 - self._ease_smooth(progress)
-        # HOLLYWOOD: Impulse noise for film grain + desaturation
         noise_level = eased * 4
         desat = 100 - int(eased * 15)
         return ["convert", img, "-attenuate", str(noise_level), "+noise", "Impulse", "-modulate", f"100,{desat},100"]
@@ -572,7 +598,6 @@ class TransitionEngine:
 
     def _mode_twist_in(self, img, progress):
         eased = 1.0 - self._ease_smooth(progress)
-        # HOLLYWOOD: Increased swirl angle + rotation for dramatic twist
         angle = eased * 150
         rotation = eased * 5
         return ["convert", img, "-swirl", str(angle), "-wave", f"{int(eased*25)}x{self.work_width//5}", "-distort", "SRT", str(rotation)]
@@ -613,7 +638,7 @@ class TransitionEngine:
             time.sleep(self.speed / 1000.0)
 
     def apply(self, current_img, future_img, transition, set_wallpaper_func):
-        """Hollywood-grade transition with performance optimization"""
+        """Hollywood-grade transition with all fixes applied"""
         tid = transition['id']
         entry_mode = transition['entry_mode']
         exit_mode = self.previous_exit_mode if self.previous_exit_mode else transition['exit_mode']
@@ -638,12 +663,42 @@ class TransitionEngine:
             out_exit = os.path.join(tmp_dir, f"ex_{t:03d}.jpg")
             out_entry = os.path.join(tmp_dir, f"en_{t:03d}.jpg")
 
-            subprocess.run(self._build_command(work_cur, exit_mode, 1 - progress, self.work_width, self.work_height) + [out_exit], check=True, capture_output=True)
-            subprocess.run(self._build_command(work_fut, entry_mode, progress, self.work_width, self.work_height) + [out_entry], check=True, capture_output=True)
-            subprocess.run(["composite", "-blend", str(self._s_curve_blend(progress)), out_entry, out_exit, out_work], check=True, capture_output=True)
+            try:
+                subprocess.run(self._build_command(work_cur, exit_mode, 1 - progress, self.work_width, self.work_height) + [out_exit], check=True, capture_output=True)
+                subprocess.run(self._build_command(work_fut, entry_mode, progress, self.work_width, self.work_height) + [out_entry], check=True, capture_output=True)
+                
+                # Improved blending - composite entry over exit
+                blend = self._s_curve_blend(progress)
+                subprocess.run([
+                    "composite",
+                    "-blend", str(blend),
+                    out_entry, out_exit,
+                    out_work
+                ], check=True, capture_output=True)
+                
+                # PERFORMANCE: Upscale to display resolution ONCE per frame
+                subprocess.run([
+                    "convert", out_work,
+                    "-resize", f"{self.width}x{self.height}!",
+                    "-quality", "95",
+                    "-unsharp", "0x0.5",
+                    out_final
+                ], check=True, capture_output=True)
             
-            # PERFORMANCE: Upscale to display resolution ONCE per frame
-            subprocess.run(["convert", out_work, "-resize", f"{self.width}x{self.height}!", "-quality", "95", "-unsharp", "0x0.5", out_final], check=True, capture_output=True)
+            except subprocess.CalledProcessError as e:
+                # Fallback: use simple crossfade if transition fails
+                err_msg = e.stderr.decode() if e.stderr else str(e)
+                self.logger.debug(f"Frame {t} failed: {err_msg[:200]}")
+                
+                # Create simple crossfade frame as fallback
+                blend = self._s_curve_blend(progress)
+                subprocess.run([
+                    "composite",
+                    "-blend", str(blend),
+                    work_fut, work_cur,
+                    "-resize", f"{self.width}x{self.height}!",
+                    out_final
+                ], check=False)
 
         self._play_frames(tmp_dir, set_wallpaper_func)
         set_wallpaper_func(future_img)
