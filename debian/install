@@ -1,8 +1,5 @@
+borednomore3/libs/* usr/lib/borednomore3/libs/
+borednomore3/backend/*.py usr/lib/borednomore3/
+borednomore3/frontend/*.py usr/lib/borednomore3/
+borednomore3/conf/*-example etc/borednomore3/
 README.md usr/share/doc/borednomore3/
-DOWNLOADER.md usr/share/doc/borednomore3/
-debian/borednomore3.1 usr/share/man/man1/
-debian/bnm3.1 usr/share/man/man1/
-debian/borednomore3-downloader.1 usr/share/man/man1/
-debian/bnm3.desktop usr/share/applications/
-debian/borednomore3-downloader.desktop usr/share/applications/
-

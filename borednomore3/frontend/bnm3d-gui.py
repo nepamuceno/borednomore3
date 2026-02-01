@@ -2,7 +2,7 @@
 """
 Borednomore3 Downloader GUI - Professional Edition
 Frontend v0.1.7 - "Curating Your Digital Horizon"
-Features: Dynamic Icon Generation, Persistent Console, Standard Favicon
+Features: Dynamic Icon Generation, Persistent Console, Path Resolver for DEB/DEV
 """
 
 import customtkinter as ctk
@@ -70,16 +70,26 @@ class BNM3DownloaderGUI(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        # --- Path Logic ---
+        # --- SMART PATH RESOLVER ---
         self.frontend_dir = Path(__file__).parent.resolve()
-        self.project_root = self.frontend_dir.parent
-        self.backend_dir = self.project_root / "backend"
-        self.downloader_script = self.backend_dir / "bnm3d.py"
-        self.config_dir = self.project_root / "conf"
+        
+        # Check if we are running from the system library (/usr/lib/borednomore3)
+        if "/usr/lib/borednomore3" in str(self.frontend_dir):
+            self.is_deb_install = True
+            # In DEB, we call the wrapper script in /usr/bin directly
+            self.downloader_script = Path("/usr/bin/bnm3d")
+            self.config_dir = Path("/etc/borednomore3")
+        else:
+            self.is_deb_install = False
+            self.project_root = self.frontend_dir.parent
+            self.backend_dir = self.project_root / "backend"
+            self.downloader_script = self.backend_dir / "bnm3d.py"
+            self.config_dir = self.project_root / "conf"
+
         self.gui_state_file = self.config_dir / "gui_state.conf"
 
         # --- Window Setup ---
-        self.title("BNM3D Pro")
+        self.title(f"BNM3D Pro {'[SYSTEM]' if self.is_deb_install else '[DEV]'}")
         self.geometry("1200x850")
         
         # Apply the Dynamic Logo to the Window Icon
@@ -225,6 +235,8 @@ class BNM3DownloaderGUI(ctk.CTk):
 
     def save_gui_state(self):
         try:
+            if not self.config_dir.exists():
+                self.config_dir.mkdir(parents=True, exist_ok=True)
             with open(self.gui_state_file, "w") as f:
                 f.write(f"mode={self.mode_var.get()}\n")
                 f.write(f"search={self.search_var.get()}\n")
@@ -269,22 +281,30 @@ class BNM3DownloaderGUI(ctk.CTk):
     def start_task(self):
         if self.is_running: return
         self.save_gui_state()
-        cmd = [sys.executable, "-u", str(self.downloader_script)]
+        
+        # Build command list
+        if self.is_deb_install:
+            cmd = [str(self.downloader_script)] # Call /usr/bin/bnm3d directly
+        else:
+            cmd = [sys.executable, "-u", str(self.downloader_script)] # Call python3 backend/bnm3d.py
+            
         cmd += ["-m", self.mode_var.get()]
         cmd += ["-s", self.search_var.get()]
         cmd += ["-n", self.number_var.get()]
         cmd += ["-w", self.website_var.get()]
+        
         if self.mode_var.get() == "conf": cmd += ["-c", self.config_path_var.get()]
         elif self.mode_var.get() == "keys":
             if self.pex_var.get().strip(): cmd += ["--pexels", self.pex_var.get().strip()]
             if self.uns_var.get().strip(): cmd += ["--unsplash", self.uns_var.get().strip()]
             if self.pix_var.get().strip(): cmd += ["--pixabay", self.pix_var.get().strip()]
+            
         if self.deep_var.get(): cmd.append("-D")
         if self.rand_var.get(): cmd.append("-r")
         if self.verb_var.get(): cmd.append("-v")
         if self.debug_var.get(): cmd.append("-d")
 
-        self.console.write(f"\n--- SESSION START: {' '.join(cmd)} ---\n\n")
+        self.console.write(f"\n--- SESSION START ({'SYSTEM' if self.is_deb_install else 'DEV'}): {' '.join(cmd)} ---\n\n")
         self.is_running = True
         self.toggle_ui(True)
         threading.Thread(target=self.execute_subprocess, args=(cmd,), daemon=True).start()
