@@ -3,3 +3,9 @@ borednomore3/backend/*.py usr/lib/borednomore3/
 borednomore3/frontend/*.py usr/lib/borednomore3/
 borednomore3/conf/*-example etc/borednomore3/
 README.md usr/share/doc/borednomore3/
+debian/bnm3.1 usr/share/man/man1/
+debian/bnm3d-gui.1 usr/share/man/man1/
+debian/bnm3d.1 usr/share/man/man1/
+debian/borednomore3.1 usr/share/man/man1/
+borednomore3/frontend/README.md usr/share/doc/borednomore3/frontend/
+borednomore3/backend/README.md usr/share/doc/borednomore3/backend/
