@@ -1,0 +1,36 @@
+# =================================================================
+# BOREDNOMORE3 GLOBAL CONFIGURATION
+# =================================================================
+
+[SETTINGS]
+# What are we looking for? (e.g., cyberpunk, nature, 4k)
+SEARCH=wallpaper
+
+# How many images do you want to download in this run?
+NUMBER=5
+
+# Where should the files be saved?
+OUTPUT=./wallpapers
+
+# Deep Search: If true, picks a random page from the API results
+# rather than just the first page (better variety).
+DEEP=false
+
+# Verbose: If true, logs every single file save and skip.
+VERBOSE=true
+
+# Debug: If true, shows raw API URLs and technical system info.
+DEBUG=true
+
+[API_KEYS]
+# API Keys - ONLY USED IF RUN WITH: -m conf
+# Get these from pexels.com, unsplash.com, and pixabay.com
+PEXELS_API=
+UNSPLASH_API=
+PIXABAY_API=
+
+[URLS]
+# Standard API Endpoints (Don't change unless the APIs update)
+PEXELS_URL=https://api.pexels.com/v1/search
+UNSPLASH_URL=https://api.unsplash.com/search/photos
+PIXABAY_URL=https://pixabay.com/api/

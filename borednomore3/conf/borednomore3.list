@@ -1,168 +1,36 @@
-# BoredNoMore3 Wallpaper Pattern Configuration File
-# =================================================
-#
-# PURPOSE:
-# Defines file patterns for automatic wallpaper discovery. Each pattern
-# matches wallpaper files in the directory specified in borednomore3.conf
-# or via the --directory command-line argument.
-#
-# USAGE:
-# 1. Copy this file to 'borednomore3.list' in ${CONF_DIR}/
-# 2. Uncomment or add patterns below to match your wallpaper collection
-# 3. Save the file and run borednomore3 with --wallpaper-list option
-#
-# FILE LOCATION:
-# Default: ${CONF_DIR}/borednomore3.list
-# When running from backend/: ../conf/borednomore3.list
-#
-# PATTERN SYNTAX:
-# - One pattern per line
-# - Lines starting with # are comments
-# - Empty lines are ignored
-# - Standard glob pattern matching (*, ?, [])
-# - Patterns are relative to wallpaper directory
-# - Order matters: earlier matches appear first in rotation
-#
-# FALLBACK BEHAVIOR:
-# If this file is missing, empty, or contains no valid patterns,
-# the following defaults are used:
-#   *.jpg, *.png, *.jpeg, *.webp
-#
-# COMMAND-LINE INTEGRATION:
-# Use with: borednomore3 --wallpaper-list borednomore3.list
-# Or specify custom file: borednomore3 --wallpaper-list custom.list
+echo "" > borednomore3/conf/borednomore3.list-example; nano borednomore3/conf/borednomore3.list-example
+```
 
-# SECTION 1: Standard Image Formats
-# ==================================
+### Content for borednomore3/conf/borednomore3.list-example:
+```
+# BoredNoMore3 Wallpaper Pattern List
+# One glob pattern per line
+# Lines starting with # are comments
+# Patterns are matched against files in the wallpaper directory
 
-# JPEG Images (Most Common Format)
+# Standard image formats (recommended)
 *.jpg
 *.jpeg
-
-# PNG Images (Supports Transparency)
 *.png
-
-# WebP Images (Modern Compression)
 *.webp
 
-# SECTION 2: Extended Format Support
-# ===================================
-# Uncomment lines below to enable additional formats
-
-# BMP Images (Uncompressed)
+# Additional formats (uncomment if needed)
 # *.bmp
-
-# TIFF Images (High Quality/Print)
 # *.tiff
-# *.tif
-
-# GIF Images (Animated/Static)
 # *.gif
 
-# SECTION 3: Thematic Pattern Examples
-# =====================================
-# Use these as templates for organizing wallpaper collections
+# Example: specific naming patterns
+# wallpaper_*.jpg
+# IMG_*.png
+# photo*.webp
 
-# Nature Themes
-# nature_*.jpg
-# landscape_*.png
-# forest-*.jpg
-# mountain_*.*
-
-# Abstract/Art Themes  
-# abstract_*.jpg
-# art_*.png
-# pattern_*.*
-
-# Technology/Cyberpunk
-# cyberpunk_*.jpg
-# tech_*.png
-# neon_*.*
-
-# Minimalist Themes
-# minimal_*.jpg
-# simple_*.png
-# white_*.*
-
-# SECTION 4: Structured Naming Conventions
-# =========================================
-# For organized collections with numbered sequences
-
-# Numbered Sequences (5 digits)
-# wallpaper_[0-9][0-9][0-9][0-9][0-9].jpg
-# bg_[0-9][0-9][0-9][0-9].png
-
-# Categorized Sequences
-# nature_[0-9][0-9].jpg
-# abstract_[0-9][0-9][0-9].png
-# city_[A-Z][0-9][0-9].jpg
-
-# SECTION 5: Quality/Resolution Indicators
-# =========================================
-
-# Resolution Tags
-# *_4k.*
-# *_1080p.*
-# *_HD.*
-# *_UHD.*
-
-# Quality Indicators
-# *_highres.*
-# *_hq.*
-# *_premium.*
-
-# SECTION 6: Subdirectory Patterns
-# =================================
-# For wallpapers organized in folder structures
-# Requires wallpaper directory to contain these subfolders
-
-# Single Level Subdirectories
+# Example: subdirectories
 # nature/*.jpg
 # abstract/*.png
-# cities/*.*
+# cityscapes/*.webp
 
-# Recursive Matching (All Subdirectories)
-# **/*.jpg
-# **/*.png
-
-# SECTION 7: Advanced Pattern Examples
-# =====================================
-
-# Time-Based Selection
-# morning_*.jpg
-# day_*.png
-# night_*.jpg
-# sunset_*.*
-
-# Mood-Based Selection
-# calm_*.jpg
-# energetic_*.png
-# dark_*.*
-# bright_*.*
-
-# EXCLUSION PATTERNS (Note: Requires negative logic in separate system)
-# To exclude specific patterns, consider organizing files in separate
-# directories or using a more advanced file management system.
-
-# FILE METADATA
-# =============
-# Pattern Specification Version: 1.0
-# Compatible with: borednomore3 v0.6.0+
-# Last Updated: $(date)
-# Author: Nepamuceno
-# GitHub: https://github.com/nepamuceno/borednomore3
-
-# TECHNICAL NOTES:
-# ================
-# 1. Pattern matching uses Python's glob module
-# 2. Patterns are case-sensitive on Linux, case-insensitive on Windows
-# 3. For recursive patterns (**) Python 3.5+ is required
-# 4. Character classes: [abc], [a-z], [0-9], [!abc] (negation)
-# 5. Wildcards: * (any characters), ? (single character)
-# 6. Pattern order determines file display order in sequential mode
-# 7. Duplicate files matching multiple patterns are deduplicated
-#
-# RELATED FILES:
-# - borednomore3.conf: Main configuration settings
-# - borednomore3.py: Main application logic
-# - documentation/: User guide and API reference
+# Notes:
+# - Patterns use Python glob syntax
+# - Order doesn't matter (sorted automatically)
+# - Duplicates are removed
+# - Empty lines and comments are ignored
