@@ -2,7 +2,6 @@
 
 # 1. Load the secret from the .env file
 if [ -f .env ]; then
-    # Export variables (this will load DESAR_TOKEN)
     export $(grep -v '^#' .env | xargs)
 else
     echo "❌ Error: .env file not found"
@@ -30,9 +29,8 @@ if [ -f "$HOME/.bash_history" ]; then
 fi
 
 # 4. Prepare commit messages and tags
-echo "--- Uploading changes to GitHub (borednomore3 - Safe Mode) ---"
+echo "--- Uploading changes to GitHub (primer backup) ---"
 read -p "Enter commit message: " COMMIT_MSG
-
 if [ -z "$COMMIT_MSG" ]; then
     COMMIT_MSG="Update: $(date +'%Y-%m-%d %H:%M')"
 fi
@@ -50,7 +48,6 @@ fi
 # 5. Git operations
 git add -A
 
-# Only commit if changes are detected
 if ! git diff-index --quiet HEAD --; then
     git commit -m "$COMMIT_MSG"
 else
@@ -59,35 +56,9 @@ fi
 
 git tag "$TAG_MSG"
 
-# 6. Safe synchronization and push
-echo "📥 Checking remote state..."
-if ! git fetch "$REPO_URL" main; then
-    echo "❌ Error: Could not contact remote."
-    git tag -d "$TAG_MSG"
-    exit 1
-fi
-
-LOCAL=$(git rev-parse main)
-REMOTE=$(git rev-parse FETCH_HEAD)
-
-if [ "$LOCAL" != "$REMOTE" ]; then
-    echo "⚠ Your local branch and the remote branch are out of sync."
-    read -p "Do you want to run 'git pull --rebase' to synchronize? (y/n): " CONFIRM
-    if [ "$CONFIRM" = "y" ]; then
-        if ! git pull --rebase "$REPO_URL" main; then
-            echo "❌ Error: Conflicts occurred during rebase. Please resolve manually."
-            git tag -d "$TAG_MSG"
-            exit 1
-        fi
-    else
-        echo "ℹ Operation cancelled by user. Nothing was uploaded."
-        git tag -d "$TAG_MSG"
-        exit 0
-    fi
-fi
-
-echo "🚀 Uploading changes..."
-if git push "$REPO_URL" main --tags; then
+# 6. Force push to overwrite remote history
+echo "🚀 Uploading changes (force push)..."
+if git push --force "$REPO_URL" main --tags; then
     echo "✅ Upload completed successfully with tag: $TAG_MSG"
 else
     echo "❌ Error: Upload failed."
