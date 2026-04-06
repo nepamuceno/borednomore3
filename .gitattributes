@@ -1,1 +1,6 @@
 *.ckpt filter=lfs diff=lfs merge=lfs -text
+*.data-00000-of-00001 filter=lfs diff=lfs merge=lfs -text
+*.git/objects/1d/b06838710445223bb0b277bdeb83758fe329d5 filter=lfs diff=lfs merge=lfs -text
+*.pack filter=lfs diff=lfs merge=lfs -text
+*.apk filter=lfs diff=lfs merge=lfs -text
+*.so filter=lfs diff=lfs merge=lfs -text

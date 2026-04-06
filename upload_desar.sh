@@ -14,7 +14,7 @@ if [ -z "$DESAR_TOKEN" ]; then
     exit 1
 fi
 
-# Define the URL using your username and the loaded token
+# Define the URL using your username and the loaded token (HTTPS con token)
 GITHUB_USER="nepamuceno"
 REPO_URL="https://${GITHUB_USER}:${DESAR_TOKEN}@github.com/${GITHUB_USER}/borednomore3.git"
 
@@ -29,7 +29,7 @@ if [ -f "$HOME/.bash_history" ]; then
 fi
 
 # 4. Prepare commit messages and tags
-echo "--- Uploading changes to GitHub (primer backup) ---"
+echo "--- Uploading changes to GitHub (primer backup con LFS) ---"
 read -p "Enter commit message: " COMMIT_MSG
 if [ -z "$COMMIT_MSG" ]; then
     COMMIT_MSG="Update: $(date +'%Y-%m-%d %H:%M')"
@@ -45,7 +45,21 @@ else
     TAG_MSG="$BASE_TAG"
 fi
 
-# 5. Git operations
+# 5. Detect large files and configure Git LFS
+echo "🔍 Checking for large files (>50MB)..."
+LARGE_FILES=$(find . -type f -size +50M)
+if [ -n "$LARGE_FILES" ]; then
+    echo "⚠ Large files detected, enabling Git LFS..."
+    git lfs install
+    for f in $LARGE_FILES; do
+        EXT="${f##*.}"
+        git lfs track "*.${EXT}"
+    done
+    git add .gitattributes
+    echo "✅ Git LFS configured for: $LARGE_FILES"
+fi
+
+# 6. Git operations
 git add -A
 
 if ! git diff-index --quiet HEAD --; then
@@ -56,7 +70,7 @@ fi
 
 git tag "$TAG_MSG"
 
-# 6. Force push to overwrite remote history
+# 7. Force push to overwrite remote history
 echo "🚀 Uploading changes (force push)..."
 if git push --force "$REPO_URL" main --tags; then
     echo "✅ Upload completed successfully with tag: $TAG_MSG"
