@@ -8,3 +8,4 @@
 *.apk filter=lfs diff=lfs merge=lfs
 *.bin filter=lfs diff=lfs merge=lfs
 *.so filter=lfs diff=lfs merge=lfs
+*.git/lfs/objects/73/15/73151d401b6acab712ec973dcbfa4c4f870494ea38344d6ee0020c5406f3ff22 filter=lfs diff=lfs merge=lfs -text
