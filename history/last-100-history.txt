@@ -1,100 +1,100 @@
-/etc/borednomore3/borednomore3.conf
 
-/usr/bin/borednomore3
--al /usr/bin/borednomore3
--al /etc/borednomore3
--s 5 -t 5 -r -w -D
--i 1 -s 0.0001 -t 5 -r -w -D
+apt install tillix
+apt install tilix
 
-Pictures/
-Public/
-borednomore3/wallpapers/
--i 1 -s 0.0001 -t 5 -d borednomore3/wallpapers/ -r -w -D
-dpkg delete borednomore3
-dpkg purge borednomore3
-apt purge borednomore3
-borednomore3
-
-gist.sh
-
-gist.sh
-gist.sh
-/home/deb/borednomore3/borednomore3/libs/core/wallpaper_manager.py
-/home/deb/borednomore3/borednomore3/libs/core/transition_engine.py
-/home/deb/borednomore3/borednomore3/conf/borednomore3.conf-example
-/home/deb/borednomore3/Makefile
-/home/deb/borednomore3/debian/rules
-Makefile
-apt purge borednomore3
-apt install ../debs/borednomore3_0.7.0-1_a
-apt install ../debs/borednomore3_0.7.0-1_all.deb
-apt purge borednomore3
-clean
-deb
-apt install ../debs/borednomore3_0.7.0-1_all.deb
-apt purge borednomore3
-clean
-deb
-apt install ../debs/borednomore3_0.7.0-1_all.deb
-/usr/bin/borednomore3
-apt purge borednomore3
-clean
-deb
-apt install ../debs/borednomore3_0.7.0-1_all.deb
-/usr/bin/borednomore3/
-/usr/bin/bnm3
-
-
-apt purge borednomore3
-clean
-deb
-apt install ../debs/borednomore3_0.7.0-1_all.deb
-/home/deb/borednomore3/wallpapers
-
--i 's/^ /\t/' borednomore3/frontend/bnm3.py
-
--i 's/^ /\t/' borednomore3/backend/borednomore3.py
-
-borednomore3/backend/borednomore3.py -h
-borednomore3/backend/borednomore3.py
--i 's/^ /\t/' borednomore3/libs/core/transition_engine.py
-borednomore3/backend/borednomore3.py -h
--i 's/\t/ /g' borednomore3/libs/core/transition_engine.py
--m py_compile borednomore3/libs/core/transition_engine.py
-borednomore3/backend/borednomore3.py -h
-
+apt upgrade
 firefox
+download_playlist
+download_playlist
+dplay.py
+apt update && sudo apt install -y yt-dlp ffmpeg
+
+dplay.py RDw6Q3mHyzn78 -o 90s
+dplay.py
+dplay.py RDw6Q3mHyzn78 -o 90s
+dplay.py
+dplay.py RDw6Q3mHyzn78 -o 90s
+dplay.py
+dplay.py RDw6Q3mHyzn78 -o 90s
+dplay.py
+dplay.py RDw6Q3mHyzn78 -o 90s
+90s
+dplay.py
+dplay.py RDw6Q3mHyzn78 -o 90s
+dplay.py
+dplay.py RDw6Q3mHyzn78 -o 90s
+90s
+dplay.py
+dplay.py RDw6Q3mHyzn78 -o 90s
+curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+chmod a+rx /usr/local/bin/yt-dlp
+--version
+dplay.py RDw6Q3mHyzn78 -o 90s
+dplay.py
+dplay.py RDw6Q3mHyzn78 -o 90s
+/etc/issue
+~/.mozilla -name "cookies.sqlite" 2>/dev/null
+~/ -name "cookies.sqlite" 2>/dev/null
+~/.mozilla/firefox/
+dplay.py
+dplay.py RDw6Q3mHyzn78 -o 90s
+dplay.py
+dplay.py RDw6Q3mHyzn78 -o 90s
+dplay.py
+dplay.py RDw6Q3mHyzn78 -o 90s
+d.mp3playlist.py
+d.mp3playlist.py RDw6Q3mHyzn78 -o 80s
+-al 90s
+-al 80s
+d.mp3playlist.py
+dplay.py
+
+dplay.py
+dplay.py RDw6Q3mHyzn78 -o 80s
+d.mp3playlist.py RDw6Q3mHyzn78 -o 80s.mp3
+d.mp3playlist.py
+d.mp3playlist.py RDw6Q3mHyzn78 -o 80s.mp3
+d.mp3playlist.py
+d.mp3playlist.py RDw6Q3mHyzn78 -o 80s.mp3
+-al 80s
+80s.mp3
+d.mp3playlist.py RD0AvuweztG4Q -o 80s.mp3
+80s.mp3
+firefox
+d.mp3playlist.py PLD58ECddxRngHs9gZPQWOCAKwV1hTtYe4 -o 80s.mp3
 firefox
 
-| grep sed
--i 's/\t/ /g' borednomore3/libs/core/transition_engine.py
+d.mp3playlist.py
+80s
+80s.mp3
+80s.mp3
 
--i 's/\t/ /g' borednomore3/libs/core/transition_engine.py
+rename.bash
 
--i 's/\t/ /g' borednomore3/libs/core/transition_engine.py
+rename.bash
 
--i 's/\t/ /g' borednomore3/libs/core/transition_engine.py
 
--i 's/\t/ /g' borednomore3/libs/core/transition_engine.py
+..
 
--i 's/\t/ /g' borednomore3/libs/core/transition_engine.py
-
--i 's/\t/ /g' borednomore3/libs/core/transition_engine.py
-
--i 's/\t/ /g' borednomore3/libs/core/transition_engine.py
-
+-h 80s.mp3/
+-ah 80s.mp3/
+~/download_playlist/80s.mp3 | wc -l
 firefox
+desar2
+release
+-fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+-fsSL https://claude.ai/install.sh | bash
+-r backup_$(date +%Y%m%d_%H%M%S).zip . --exclude "*.zip" --exclude "*.apk" --exclude ".dart_tool/*" --exclude "build/*" --exclude ".gradle/*" --exclude ".idea/*" --exclude "*.class" --exclude "*.dex" --exclude ".pub-cache/*" --exclude ".flutter-plugins-dependencies" --exclude "*.lock" --exclude "android/.gradle/*" --exclude "android/app/build/*" --exclude "ios/Pods/*" --exclude "ios/.symlinks/*" --exclude "linux/flutter/ephemeral/*" --exclude "windows/flutter/ephemeral/*" --exclude "macos/Flutter/ephemeral/*"
+*.zip
+*.zip
 
-firefox
+desar.zip
+release
 
-wallpapers/*.jpg
-wallpapers/*.jpg
+*.zip
 
--s "universe+dark+wallpaper" -s 100
--s "universe+dark+wallpaper" -n 50
-wallpapers/*.jpg
-wallpapers/
--h wallpapers/
--alh wallpapers/
--al wallpapers/
+-al
+release
+-r backup_$(date +%Y%m%d_%H%M%S).zip . --exclude "*.zip" --exclude "*.apk" --exclude ".dart_tool/*" --exclude "build/*" --exclude ".gradle/*" --exclude ".idea/*" --exclude "*.class" --exclude "*.dex" --exclude ".pub-cache/*" --exclude ".flutter-plugins-dependencies" --exclude "*.lock" --exclude "android/.gradle/*" --exclude "android/app/build/*" --exclude "ios/Pods/*" --exclude "ios/.symlinks/*" --exclude "linux/flutter/ephemeral/*" --exclude "windows/flutter/ephemeral/*" --exclude "macos/Flutter/ephemeral/*"
 
+-r desar_$(date +%Y%m%d_%H%M%S).zip . --exclude "*.zip" --exclude "*.apk" --exclude ".dart_tool/*" --exclude "build/*" --exclude ".gradle/*" --exclude ".idea/*" --exclude "*.class" --exclude "*.dex" --exclude ".pub-cache/*" --exclude ".flutter-plugins-dependencies" --exclude "*.lock" --exclude "android/.gradle/*" --exclude "android/app/build/*" --exclude "ios/Pods/*" --exclude "ios/.symlinks/*" --exclude "linux/flutter/ephemeral/*" --exclude "windows/flutter/ephemeral/*" --exclude "macos/Flutter/ephemeral/*"
