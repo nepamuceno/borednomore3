@@ -1,0 +1,130 @@
+El programa compila totalmente pero tengo errors:
+Al tratar de adicionar empleados:
+"Error: No location permissions are defined in manifet. Make 
+sure at least ACCESS_FINE_LOCATION or ACCESS_FILE_LOCATION 
+are defined in the manifest."
+
+
+Cuando trato de agregar o modificar datos:
+"Error: DatabaseException(NOT NULL constraint failed.
+Empleados.numero_identificacion(code 1299 SQLLITE_CONSTRAIN_NOTNULL)) 
+sql "INSERT OR ABOURT INTO empleados (codigo_empleado, nombre ....etc)
+
+Cuando se crea un nuevo empleado tambien se debera crear el gafete
+el qr contendra el numero de empleado.
+el gafete consta de 2 caras tipo credencial, mismo tamaño ambos lados.
+cara 1:
+todo centrado
+el logo de la compañia
+datos de la compañia
+divide en dos partes:
+lado izquierdo
+Foto de Frente del empleado
+Lado Derecho
+Datos del empleado
+sigue la otra parte, ahora centrado
+los demas datos del empleado
+
+Cara 2
+Centrado
+el QR del empleado
+Las notas del empleado 
+
+El QR devera ser autocreado basado con la informacion del empleado
+el codigo de empleado y nombre
+
+Agregar Sonido de Entrada, Salida y Baja cuando se checa asistencia
+un sonido corto para cada accion que sea apropiado, estos sonidos
+de notificacion deveran poder ser modificados por el usuarioo a su antojo.
+
+Faltan Crear reportes, como catalogo de qr, catalogo de gafetes, empleados,
+sitios en formatos, listas de asistencias, lista de bajas (inactivos), etc
+todos en formato pdf, excel, en pantalla
+
+Falta inpmementar:
+Datos Compañia: 
+1.- Posibilidad de subir un logo que sera usado tando como favicon
+    y logo del apk para reportes, etc, rdimencionar el logo para
+    que sea usado como favicon.
+
+Bot/Chat
+1.- Definir campo el cual se usara para invocar al bot, por ejemplo:
+    /bot <comandos>, @fortuna <comandos> &thisbot <comandos>, etc
+    en lugar de '/' estatico, permite al usuario definir como se 
+    llamara al bot. (ya lo hace)
+2.- Adicionar los siguentes comandos (donde [invocar-bot-cadena] 
+    se refiiere al metodo o forma de invocar que el usuario
+    definio en paso 1. (ya lo hace)
+
+    [invocar-bot-cadena] empleado <empleado-codigo> <habilitar/deshabilitar>
+        donde habilitar habilita el empleado o hace activo
+        y deshabilita hace el usuario desactivo o deshabilitado 
+        para registrar asistencia.
+          
+    [invocar-bot-cadena] empleado <empleado-codigo> qr <pdf/jpg>
+        Envia el QR code del empleado en formato pdf o jpg, si no
+        se especifica el modo se asume que sera en pdf y el nombre
+        de archivo seria <empleado-codigo>.<pdf/jpg> para su descarga.
+        
+    [invocar-bot-cadena] empleado <numero-empleado> gafete <pdf/jpg>
+        Envia parasu descarga el gafete del <numero-empleado> en el 
+        formato pdf/jpg (si no se estipula se asume pdf), el gafete
+        consta de 2 caras, la Cara frontal que contiene:
+        1 Linea: Logo de la Compañia Centrado
+        2 Linea: La direccion (Centrado)
+        3 Linea: ciudad, Estado, Pais (Centrado)
+        4 Linea: Telefono, email (centrado)
+        5 Linea: RFC (Centrado)
+        7 Foto del Empleado de frente (izquierda)
+          Nombre del empleado, Puesto, Numero de Seguro Social (Derecha)
+        8.- Centrado lo siguiente: No. de Identificacion, F. de Nacimiento
+          Tipo de Sangre, Sitio, Tel. Emergencia
+          
+        La cara de Reversa donde estara impreso el codigo Qr Centrado
+        Solamente y asegurarse que las dos caras sean del mismo tamaño.
+        
+    [invocar-bot-cadena] usuario <telefono> <administrador/monitorista>
+        <telefono> es el usuario dentro del chat de whatsup o telegram
+        donde se le da poderes de administrador o monitorista
+        el administrador podra modificar el bot del apk mediante
+        comandos, mientras el monitoris sera ignorado de comandos
+        y solo podra mirar lo que pasa en el canal.
+        
+    [invocar-bot-cadena] privado <mensage/comando>
+        Abre una chat privado con ese usuario y contesta en privado
+        
+    [invocar-bot-cadena] sacar <usuario> <motivo>
+        Saca del chat al <usuario> y si se especifica <motivo>
+        se le manda <motivo>, osea se banea el <usuario> del chat
+        ya no podra entrar al chat (Banned)
+    [invocar-bot-cadena] permitir <usuario> <motivo>
+        Lo Contrario de sacar, ahora ese <usuario> podra ingrezar
+        al chat y mandar mensages, si se especifica <mensaje> se 
+        le manda ese <mensaje>
+        
+    [invocar-bot-cadena] invitar <usuario> <mensaje>
+        Se le manda al <usuario> una invitacion para unirse 
+        al canal, si <mensage> se especifica se manda ese <mensage>
+        
+    [invocar-bot-cadena] cancela <usuario>
+        Se cancela la invitacion de unirse al chat.
+        
+    [invocar-bot-cadena] ayuda <comando> ahora muestra la ayuda
+        de ese comando en particular, si solo es ayuda se muestra 
+        ayuda de todos los comandos.
+    
+    [invocar-bot-cadena] empleado <empledo id> <entrada/salida> <hora> 
+    <mensaje-opcional> Se hace hace el chequeo del empleado, si no
+    se especifica <entrada o salida> se ve el ultimo registro del
+    empleado y si fue salida se registra la entrada, si fue entrada se 
+    registra la salida, si no se especifica la hora se asume la hora 
+    actual, si no se especifica <mensaje> se asume "via <administrador 
+    que mando el registro nombre>"
+    [invocar-bot-cadena] empleado modificar <numero empleado> campo 
+    "nuevo valos" donde campo puede ser cualquier campo del empleado menos 
+    el <numero de empleado>, cidigo qr o gafete. esos se autogeneran solos
+
+Se me Entrega un .zip file llamado fix-desar.zip que se unzip en este
+mismo directorio y sobre escriba los subfolders con los archivos
+nuevos, no crear otra caropeta desar.
+    
