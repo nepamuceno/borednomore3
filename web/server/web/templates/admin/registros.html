@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Registros — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+    <li><a href="/desar/usuarios">🔑 Usuarios</a></li>
+    <li><a href="/desar/config">⚙️ Config</a></li>
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header">
+    <h1>Registros de Asistencia</h1>
+  </header>
+
+  <div class="card">
+    <form method="GET" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+      <div class="form-group" style="margin:0">
+        <label>Desde</label>
+        <input type="date" name="desde" value="{{.Desde}}">
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Hasta</label>
+        <input type="date" name="hasta" value="{{.Hasta}}">
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Código empleado</label>
+        <input type="text" name="emp" value="{{.EmpFiltro}}" placeholder="Todos">
+      </div>
+      <button type="submit" class="btn btn-primary">Filtrar</button>
+      <a href="/desar/registros" class="btn btn-secondary">Limpiar</a>
+    </form>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead><tr>
+        <th>Timestamp</th><th>Empleado</th><th>Código</th>
+        <th>Tipo</th><th>Método</th><th>Sitio</th><th>GPS</th>
+      </tr></thead>
+      <tbody>
+        {{range .Registros}}
+        <tr class="fila-{{.Tipo}}">
+          <td class="mono">{{.Timestamp}}</td>
+          <td>{{.NombreEmpleado}}</td>
+          <td class="mono">{{.CodigoEmpleado}}</td>
+          <td><span class="badge-tipo badge-{{.Tipo}}">{{.Tipo}}</span></td>
+          <td>{{.Metodo}}</td>
+          <td>{{.SitioTrabajo}}</td>
+          <td class="mono" style="font-size:10px">
+            {{if .GPSLat}}{{printf "%.4f" .GPSLat}},{{printf "%.4f" .GPSLon}}{{else}}—{{end}}
+          </td>
+        </tr>
+        {{else}}<tr><td colspan="7" class="empty">Sin registros en el período</td></tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-top:8px;color:#9E9E9E;font-size:12px">{{len .Registros}} registros (máx 500)</div>
+</main>
+</body></html>

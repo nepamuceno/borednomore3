@@ -1,0 +1,100 @@
+name: desar
+description: "DESAR - Sistema de Control de Asistencias v0.0.1-beta"
+publish_to: 'none'
+version: 0.0.1+1
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ── Base de datos local SQLite ──────────────────────────────
+  sqflite: ^2.4.1
+  path: ^1.9.0
+
+  # ── Camara ──────────────────────────────────────────────────
+  camera: ^0.12.0+1
+
+  # ── TensorFlow Lite - reconocimiento facial offline ─────────
+  tflite_flutter: ^0.12.1
+
+  # ── ML Kit - detector de cara (requiere cara real antes de FaceNet) ──
+  google_mlkit_face_detection: ^0.11.0
+
+  # ── Scanner QR offline ──────────────────────────────────────
+  mobile_scanner: ^7.2.0
+
+  # ── Generador QR ────────────────────────────────────────────
+  qr_flutter: ^4.1.0
+
+  # ── GPS local ───────────────────────────────────────────────
+  geolocator: ^14.0.2
+
+  # ── Permisos Android 15 ─────────────────────────────────────
+  permission_handler: ^12.0.1
+
+  # ── Excel ───────────────────────────────────────────────────
+  excel: ^4.0.6
+
+  # ── PDF ─────────────────────────────────────────────────────
+  pdf: ^3.11.1
+  printing: ^5.13.2
+
+  # ── Rutas y almacenamiento ──────────────────────────────────
+  path_provider: ^2.1.5
+
+  # ── Compartir archivos ──────────────────────────────────────
+  share_plus: ^12.0.1
+
+  # ── Imagenes ────────────────────────────────────────────────
+  image_picker: ^1.1.2
+  image: ^4.3.0
+
+  # ── Fechas ──────────────────────────────────────────────────
+  intl: ^0.20.2
+
+  # ── HTTP para WhatsApp/Telegram ─────────────────────────────
+  http: ^1.2.2
+  dio: ^5.7.0
+
+  # ── Preferencias / configuracion ────────────────────────────
+  shared_preferences: ^2.3.5
+
+  # ── UUID ────────────────────────────────────────────────────
+  uuid: ^4.5.1
+
+  # ── Iconos ──────────────────────────────────────────────────
+  cupertino_icons: ^1.0.8
+
+  # ── Notificaciones locales ──────────────────────────────────
+  flutter_local_notifications: ^21.0.0
+
+  # ── Open file ───────────────────────────────────────────────
+  open_filex: ^4.6.0
+
+  # ── File picker (importar BD) ───────────────────────────────
+  file_picker: ^8.1.2
+
+  # ── Connectivity ────────────────────────────────────────────
+  connectivity_plus: ^7.0.0
+
+  # ── Audio playback ──────────────────────────────────────────
+  audioplayers: ^6.1.0
+
+  # ── Vibration ───────────────────────────────────────────────
+  vibration: ^2.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/modelos_ia/
+    - assets/fonts/
+    - assets/sonidos/

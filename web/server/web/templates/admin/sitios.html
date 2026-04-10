@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sitios — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+    <li><a href="/desar/usuarios">🔑 Usuarios</a></li>
+    <li><a href="/desar/config">⚙️ Config</a></li>
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header"><h1>Sitios de Trabajo</h1></header>
+  <div class="table-container">
+    <table class="data-table">
+      <thead><tr><th>Nombre</th><th>Tipo</th><th>GPS</th><th>Geofence</th><th>Advertencias</th></tr></thead>
+      <tbody>
+        {{range .Sitios}}
+        <tr>
+          <td><strong>{{.Nombre}}</strong><br><small style="color:#9E9E9E">{{.Descripcion}}</small></td>
+          <td><span class="badge">{{.TipoSitio}}</span></td>
+          <td class="mono" style="font-size:11px">
+            {{if .GPSLat}}{{printf "%.5f" .GPSLat}}, {{printf "%.5f" .GPSLon}}{{else}}—{{end}}
+          </td>
+          <td>{{if .GeofenceActivo}}✅ {{printf "%.0f" .GeofenceRadioMetros}}m{{else}}—{{end}}</td>
+          <td>{{if .RecibirAdvertencias}}🔔 Sí{{else}}No{{end}}</td>
+        </tr>
+        {{else}}<tr><td colspan="5" class="empty">Sin sitios</td></tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+</main>
+</body></html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Configuración — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+    <li><a href="/desar/usuarios">🔑 Usuarios</a></li>
+    <li><a href="/desar/config">⚙️ Config</a></li>
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header"><h1>Configuración</h1></header>
+  {{if .Ok}}<div class="alert alert-success">Configuración guardada</div>{{end}}
+
+  <div class="card" style="max-width:600px">
+    <div class="card-title">Datos de la Compañía</div>
+    <form method="POST" action="/desar/config">
+      <div class="form-group"><label>Nombre</label>
+        <input type="text" name="nombre" value="{{.Compania.Nombre}}" required></div>
+      <div class="form-group"><label>RFC</label>
+        <input type="text" name="rfc" value="{{.Compania.RFC}}"></div>
+      <div class="form-group"><label>Email</label>
+        <input type="email" name="email" value="{{.Compania.Email}}"></div>
+      <div class="form-group"><label>Teléfono</label>
+        <input type="text" name="telefono" value="{{.Compania.Telefono}}"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label>Ciudad</label>
+          <input type="text" name="ciudad" value="{{.Compania.Ciudad}}"></div>
+        <div class="form-group"><label>Estado</label>
+          <input type="text" name="estado" value="{{.Compania.Estado}}"></div>
+      </div>
+      <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+  </div>
+
+  <div class="card" style="max-width:600px">
+    <div class="card-title">Plan y Licencia</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div><div style="font-size:11px;color:#9E9E9E">PLAN</div>
+        <div style="font-size:18px;font-weight:700;color:#1565C0;text-transform:uppercase">{{.Compania.Plan}}</div></div>
+      <div><div style="font-size:11px;color:#9E9E9E">MÁX. EMPLEADOS</div>
+        <div style="font-size:18px;font-weight:700">{{.Compania.MaxEmpleados}}</div></div>
+    </div>
+  </div>
+</main>
+</body></html>

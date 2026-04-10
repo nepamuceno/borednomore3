@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{.Compania.Nombre}} — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+    <li><a href="/desar/usuarios">🔑 Usuarios</a></li>
+    <li><a href="/desar/config">⚙️ Config</a></li>
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header">
+    <h1>{{.Compania.Nombre}}</h1>
+    <a href="/desar/sa/companias" class="btn btn-secondary">← Volver</a>
+  </header>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div class="card">
+      <div class="card-title">Datos</div>
+      <table style="width:100%;border-collapse:collapse">
+        <tr><td style="padding:6px 0;color:#9E9E9E;font-size:12px;width:40%">ID</td><td><strong>{{.Compania.ID}}</strong></td></tr>
+        <tr><td style="padding:6px 0;color:#9E9E9E;font-size:12px">Email</td><td>{{.Compania.Email}}</td></tr>
+        <tr><td style="padding:6px 0;color:#9E9E9E;font-size:12px">Plan</td><td><span class="badge">{{.Compania.Plan}}</span></td></tr>
+        <tr><td style="padding:6px 0;color:#9E9E9E;font-size:12px">Máx. empleados</td><td>{{.Compania.MaxEmpleados}}</td></tr>
+        <tr><td style="padding:6px 0;color:#9E9E9E;font-size:12px">Vence</td><td class="mono">{{.Compania.FechaVence}}</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">API Key (APK)</div>
+      <code style="display:block;background:#F5F7FA;padding:12px;border-radius:8px;font-size:12px;word-break:break-all;line-height:1.6">
+        {{.Compania.APIKey}}
+      </code>
+      <p style="font-size:11px;color:#9E9E9E;margin-top:8px">
+        Configura este API Key en el APK DESAR → Admin → Sync → API Key
+      </p>
+    </div>
+  </div>
+</main>
+</body></html>

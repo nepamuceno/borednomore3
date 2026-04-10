@@ -1,100 +1,100 @@
-
-apt install tillix
-apt install tilix
-
-apt upgrade
-firefox
-download_playlist
-download_playlist
-dplay.py
-apt update && sudo apt install -y yt-dlp ffmpeg
-
-dplay.py RDw6Q3mHyzn78 -o 90s
-dplay.py
-dplay.py RDw6Q3mHyzn78 -o 90s
-dplay.py
-dplay.py RDw6Q3mHyzn78 -o 90s
-dplay.py
-dplay.py RDw6Q3mHyzn78 -o 90s
-dplay.py
-dplay.py RDw6Q3mHyzn78 -o 90s
-90s
-dplay.py
-dplay.py RDw6Q3mHyzn78 -o 90s
-dplay.py
-dplay.py RDw6Q3mHyzn78 -o 90s
-90s
-dplay.py
-dplay.py RDw6Q3mHyzn78 -o 90s
-curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
-chmod a+rx /usr/local/bin/yt-dlp
---version
-dplay.py RDw6Q3mHyzn78 -o 90s
-dplay.py
-dplay.py RDw6Q3mHyzn78 -o 90s
-/etc/issue
-~/.mozilla -name "cookies.sqlite" 2>/dev/null
-~/ -name "cookies.sqlite" 2>/dev/null
-~/.mozilla/firefox/
-dplay.py
-dplay.py RDw6Q3mHyzn78 -o 90s
-dplay.py
-dplay.py RDw6Q3mHyzn78 -o 90s
-dplay.py
-dplay.py RDw6Q3mHyzn78 -o 90s
-d.mp3playlist.py
-d.mp3playlist.py RDw6Q3mHyzn78 -o 80s
--al 90s
--al 80s
-d.mp3playlist.py
-dplay.py
-
-dplay.py
-dplay.py RDw6Q3mHyzn78 -o 80s
-d.mp3playlist.py RDw6Q3mHyzn78 -o 80s.mp3
-d.mp3playlist.py
-d.mp3playlist.py RDw6Q3mHyzn78 -o 80s.mp3
-d.mp3playlist.py
-d.mp3playlist.py RDw6Q3mHyzn78 -o 80s.mp3
--al 80s
-80s.mp3
-d.mp3playlist.py RD0AvuweztG4Q -o 80s.mp3
-80s.mp3
-firefox
-d.mp3playlist.py PLD58ECddxRngHs9gZPQWOCAKwV1hTtYe4 -o 80s.mp3
-firefox
-
-d.mp3playlist.py
-80s
-80s.mp3
-80s.mp3
-
-rename.bash
-
-rename.bash
+"*.bin filter=lfs diff=lfs merge=lfs" >> .gitattributes
+"*.so filter=lfs diff=lfs merge=lfs" >> .gitattributes
+add .gitattributes
+commit -m "Configurar Git LFS para binarios comunes"
+push origin main
+remote set-url origin https://nepamuceno:${DESAR_TOKEN}@github.com/nepamuceno/borednomore3.git
+remote -v
+add .gitattributes
+commit -m "Configurar Git LFS para binarios comunes"
+./upload_desar.sh
+rebase --abort 2>/dev/null || true
+-rf .git/rebase-merge
 
 
-..
-
--h 80s.mp3/
--ah 80s.mp3/
-~/download_playlist/80s.mp3 | wc -l
-firefox
-desar2
 release
--fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
--fsSL https://claude.ai/install.sh | bash
--r backup_$(date +%Y%m%d_%H%M%S).zip . --exclude "*.zip" --exclude "*.apk" --exclude ".dart_tool/*" --exclude "build/*" --exclude ".gradle/*" --exclude ".idea/*" --exclude "*.class" --exclude "*.dex" --exclude ".pub-cache/*" --exclude ".flutter-plugins-dependencies" --exclude "*.lock" --exclude "android/.gradle/*" --exclude "android/app/build/*" --exclude "ios/Pods/*" --exclude "ios/.symlinks/*" --exclude "linux/flutter/ephemeral/*" --exclude "windows/flutter/ephemeral/*" --exclude "macos/Flutter/ephemeral/*"
+
+-o desar-full.zip
+release
+
+~/desar2
+-o desar_src.zip
+release
 *.zip
 *.zip
 
-desar.zip
+lib/helpers/base_datos_helper.dart
+
+
+/home/deb/desar2/lib/helpers/base_datos_helper.dart
+lib | grep helper
+-R "class BaseDatosHelper" lib/
+/home/deb/desar2/lib/base_datos/base_datos_helper.dart
+/home/deb/desar2/lib/base_datos/base_datos_helper.dart | xclip -selection clipboard
+/home/deb/desar2/lib/base_datos/base_datos_helper.dart
+/home/deb/desar2/lib/base_datos/base_datos_helper.dart | xclip -selection clipboard
+clean
+pub get
+release
+/home/deb/desar2/lib/base_datos/base_datos_helper.dart
+/home/deb/desar2/lib/base_datos/base_datos_helper.dart | xclip -selection clipboard
+/home/deb/desar2/lib/base_datos/base_datos_helper.dart
 release
 
-*.zip
 
--al
+~/desar2
+-o desar-full.zip
+Si tienes una desar.db vieja en el dispositivo, desinstala la app primero
+para que Android cree la BD nueva limpia al instalar
 release
--r backup_$(date +%Y%m%d_%H%M%S).zip . --exclude "*.zip" --exclude "*.apk" --exclude ".dart_tool/*" --exclude "build/*" --exclude ".gradle/*" --exclude ".idea/*" --exclude "*.class" --exclude "*.dex" --exclude ".pub-cache/*" --exclude ".flutter-plugins-dependencies" --exclude "*.lock" --exclude "android/.gradle/*" --exclude "android/app/build/*" --exclude "ios/Pods/*" --exclude "ios/.symlinks/*" --exclude "linux/flutter/ephemeral/*" --exclude "windows/flutter/ephemeral/*" --exclude "macos/Flutter/ephemeral/*"
 
--r desar_$(date +%Y%m%d_%H%M%S).zip . --exclude "*.zip" --exclude "*.apk" --exclude ".dart_tool/*" --exclude "build/*" --exclude ".gradle/*" --exclude ".idea/*" --exclude "*.class" --exclude "*.dex" --exclude ".pub-cache/*" --exclude ".flutter-plugins-dependencies" --exclude "*.lock" --exclude "android/.gradle/*" --exclude "android/app/build/*" --exclude "ios/Pods/*" --exclude "ios/.symlinks/*" --exclude "linux/flutter/ephemeral/*" --exclude "windows/flutter/ephemeral/*" --exclude "macos/Flutter/ephemeral/*"
+-o desar-full.zip
+
+release
+-o desar-full.zip
+release
+unzip -o desar-full.zip
+desar-full.zip
+./scripts/compilar.sh release
+release - 14:00:41
+dependencies... (8.8s)
+packages... (4.5s)
+dependencies!
+packages have newer versions incompatible with dependency constraints.
+`flutter pub outdated` for more information.
+Gradle task 'assembleRelease'...
+Error: The argument type 'int' can't be assigned to the parameter type 'String'.
+Error: The argument type 'int' can't be assigned to the parameter type 'String'.
+Error: Too few positional arguments: 3 required, 1 given.
+Error: Too few positional arguments: 3 required, 1 given.
+Gradle task 'assembleRelease'... 435.3s
+task assembleRelease failed with exit code 1
+kernel_snapshot_program failed: Exception
+Build failed with an exception.
+failed for task ':app:compileFlutterBuildRelease'.
+FAILED in 7m 5s
+task assembleRelease faildeb@deb-hp205g3aio:~/desar2$ unzip -o desar-full.zip
+desar-full.zip
+./scripts/compilar.sh release
+release - 14:00:41
+dependencies... (8.8s)
+packages... (4.5s)
+dependencies!
+packages have newer versions incompatible with dependency constraints.
+`flutter pub outdated` for more information.
+Gradle task 'assembleRelease'...
+Error: The argument type 'int' can't be assigned to the parameter type 'String'.
+Error: The argument type 'int' can't be assigned to the parameter type 'String'.
+Error: Too few positional arguments: 3 required, 1 given.
+Error: Too few positional arguments: 3 required, 1 given.
+Gradle task 'assembleRelease'... 435.3s
+task assembleRelease failed with exit code 1
+kernel_snapshot_program failed: Exception
+Build failed with an exception.
+failed for task ':app:compileFlutterBuildRelease'.
+FAILED in 7m 5s
+task assembleRelease fail
+~/desar2 && cp -r desar_fixed/* . && flutter build apk --release
+scripts/
+scripts/compilar.sh
+build/app/outputs/flutter-apk/; python3 -m http.server 8080

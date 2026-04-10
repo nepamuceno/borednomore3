@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compañías — DESAR Superadmin</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+    <li><a href="/desar/usuarios">🔑 Usuarios</a></li>
+    <li><a href="/desar/config">⚙️ Config</a></li>
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header">
+    <h1>🏢 Compañías</h1>
+    <button class="btn btn-primary" onclick="document.getElementById('modal-nueva').style.display='flex'">
+      + Nueva compañía
+    </button>
+  </header>
+  {{if .Ok}}<div class="alert alert-success">Compañía "{{.Ok}}" creada exitosamente</div>{{end}}
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead><tr>
+        <th>Nombre</th><th>Email</th><th>Plan</th>
+        <th>Max emp.</th><th>Vence</th><th>Estado</th><th>API Key</th><th></th>
+      </tr></thead>
+      <tbody>
+        {{range .Companias}}
+        <tr>
+          <td><strong>{{.Nombre}}</strong></td>
+          <td>{{.Email}}</td>
+          <td><span class="badge">{{.Plan}}</span></td>
+          <td>{{.MaxEmpleados}}</td>
+          <td class="mono" style="font-size:11px">{{.FechaVence}}</td>
+          <td>
+            <span class="badge {{if .Activo}}badge-entrada{{else}}badge-salida{{end}}">
+              {{if .Activo}}Activa{{else}}Inactiva{{end}}
+            </span>
+          </td>
+          <td><code style="font-size:10px;background:#F5F7FA;padding:2px 6px;border-radius:4px">
+            {{.APIKey}}</code></td>
+          <td>
+            <a href="/desar/sa/companias/{{.ID}}" class="btn btn-secondary" style="padding:4px 10px;font-size:11px">Ver</a>
+            <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px"
+              data-toggle-url="/desar/sa/companias/{{.ID}}/toggle">
+              {{if .Activo}}Pausar{{else}}Activar{{end}}
+            </button>
+          </td>
+        </tr>
+        {{else}}<tr><td colspan="8" class="empty">Sin compañías</td></tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<!-- Modal nueva compañía -->
+<div id="modal-nueva" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:white;border-radius:16px;padding:32px;width:500px;max-width:95vw;max-height:90vh;overflow-y:auto">
+    <h2 style="margin-bottom:20px;color:#1565C0">Nueva Compañía</h2>
+    <form method="POST" action="/desar/sa/companias">
+      <div class="form-group"><label>Nombre de la compañía *</label><input type="text" name="nombre" required></div>
+      <div class="form-group"><label>RFC</label><input type="text" name="rfc"></div>
+      <div class="form-group"><label>Email de contacto</label><input type="email" name="email"></div>
+      <div class="form-group"><label>Plan</label>
+        <select name="plan">
+          <option value="basico">Básico (25 empleados)</option>
+          <option value="estandar">Estándar (100 empleados)</option>
+          <option value="enterprise">Enterprise (ilimitado)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Fecha de vencimiento</label><input type="date" name="fecha_vence"></div>
+      <hr style="margin:16px 0;border:none;border-top:1px solid #E0E0E0">
+      <p style="font-size:12px;color:#757575;margin-bottom:12px">Admin inicial de la compañía:</p>
+      <div class="form-group"><label>Nombre del admin</label><input type="text" name="admin_nombre" required></div>
+      <div class="form-group"><label>Email del admin</label><input type="email" name="admin_email" required></div>
+      <div class="form-group"><label>Contraseña inicial</label><input type="password" name="admin_password" placeholder="admin123"></div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button type="submit" class="btn btn-primary">Crear compañía</button>
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('modal-nueva').style.display='none'">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="/desar/static/js/main.js"></script>
+</body></html>
