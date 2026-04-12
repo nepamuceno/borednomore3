@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Usuarios — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+    {{if puede .Claims.Rol "usuarios.ver"}}<li class="active"><a href="/desar/usuarios">🔑 Usuarios</a></li>{{end}}
+    {{if puede .Claims.Rol "config.ver"}}<li><a href="/desar/config">⚙️ Config</a></li>{{end}}
+    {{if eq .Claims.Rol "superadmin"}}<li><a href="/desar/sa/companias">🏢 Compañías</a></li>{{end}}
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header"><h1>🔑 Usuarios del Panel</h1>
+    <span class="header-meta">Rol: <strong>{{.Claims.Rol}}</strong></span>
+  </header>
+  {{if .Ok}}<div class="alert alert-success">✅ Cambios guardados correctamente.</div>{{end}}
+
+  <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start">
+    <div class="table-container">
+      <table class="data-table">
+        <thead><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Último acceso</th><th></th></tr></thead>
+        <tbody>
+          {{range .Usuarios}}
+          <tr>
+            <td><strong>{{.Nombre}}</strong></td>
+            <td>{{.Email}}</td>
+            <td><span class="badge-rol badge-rol-{{.Rol}}">{{.Rol}}</span></td>
+            <td class="mono" style="font-size:11px">{{.UltimoLogin}}</td>
+            <td style="display:flex;gap:6px">
+              <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px"
+                onclick="abrirModalEditar({{.ID}},'{{.Nombre}}','{{.Rol}}')">✏️ Editar</button>
+              <button class="btn btn-danger" style="padding:4px 10px;font-size:11px"
+                data-delete-url="/desar/usuarios/{{.ID}}"
+                data-confirm="¿Desactivar usuario {{.Email}}?">Desactivar</button>
+            </td>
+          </tr>
+          {{else}}<tr><td colspan="5" class="empty">Sin usuarios</td></tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      {{if puede .Claims.Rol "usuarios.crear"}}
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">➕ Nuevo Usuario</div>
+        <form method="POST" action="/desar/usuarios">
+          <div class="form-group"><label>Nombre</label><input type="text" name="nombre" required></div>
+          <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
+          <div class="form-group"><label>Contraseña (mín. 8)</label><input type="password" name="password" required minlength="8"></div>
+          <div class="form-group"><label>Rol</label>
+            <select name="rol">
+              {{range .Roles}}<option value="{{.}}">{{.}}</option>{{end}}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Crear usuario</button>
+        </form>
+      </div>
+      {{end}}
+
+      <div class="card">
+        <div class="card-title">📋 Roles disponibles</div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse">
+          <tr style="background:#f5f7fa"><th style="padding:6px;text-align:left">Rol</th><th style="padding:6px;text-align:left">Permisos</th></tr>
+          <tr><td style="padding:5px"><span class="badge-rol badge-rol-superadmin">superadmin</span></td><td style="padding:5px;color:#666">Todo el sistema</td></tr>
+          <tr><td style="padding:5px"><span class="badge-rol badge-rol-admin">admin</span></td><td style="padding:5px;color:#666">Todo en su compañía</td></tr>
+          <tr><td style="padding:5px"><span class="badge-rol badge-rol-gerente">gerente</span></td><td style="padding:5px;color:#666">Ver empleados, registros, reportes</td></tr>
+          <tr><td style="padding:5px"><span class="badge-rol badge-rol-rrhh">rrhh</span></td><td style="padding:5px;color:#666">CRUD empleados, ver sitios</td></tr>
+          <tr><td style="padding:5px"><span class="badge-rol badge-rol-supervisor">supervisor</span></td><td style="padding:5px;color:#666">Solo ver registros y empleados</td></tr>
+          <tr><td style="padding:5px"><span class="badge-rol badge-rol-readonly">readonly</span></td><td style="padding:5px;color:#666">Solo lectura</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal editar usuario -->
+<div id="modal-editar" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
+  <div class="card" style="width:360px;max-width:95vw">
+    <div class="card-title">✏️ Editar Usuario</div>
+    <form id="form-editar" method="POST">
+      <div class="form-group"><label>Nombre</label><input type="text" name="nombre" id="edit-nombre" required></div>
+      <div class="form-group"><label>Rol</label>
+        <select name="rol" id="edit-rol">
+          {{range .Roles}}<option value="{{.}}">{{.}}</option>{{end}}
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button type="submit" class="btn btn-primary" style="flex:1">Guardar</button>
+        <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/desar/static/js/main.js"></script>
+<script>
+function abrirModalEditar(id, nombre, rol) {
+  document.getElementById('form-editar').action = '/desar/usuarios/'+id+'/editar';
+  document.getElementById('edit-nombre').value = nombre;
+  document.getElementById('edit-rol').value = rol;
+  document.getElementById('modal-editar').style.display = 'flex';
+}
+function cerrarModal() {
+  document.getElementById('modal-editar').style.display = 'none';
+}
+</script>
+</body></html>

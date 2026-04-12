@@ -34,10 +34,10 @@ Makefile                           → build, run, deploy
 
 ### Pendiente 🔲
 ```
-internal/notify/notify.go          → email SMTP + webhooks
-internal/scheduler/scheduler.go    → backup automático noche
-internal/sync/sync.go              → sync bidireccional APK↔Server
-web/templates/admin/base.html      → sidebar como partial template
+internal/notify/notify.go          ✅ email SMTP + webhooks + templates HTML
+internal/scheduler/scheduler.go    ✅ backup 3am + alertas vencimiento 8am + reporte lunes 7am
+internal/sync/sync.go              ✅ sync bidireccional + notificaciones por sitio
+web/handlers.go                    ✅ GET /reportes/csv export
 go.sum                             → (se genera con go mod tidy)
 ```
 
@@ -224,7 +224,7 @@ El APK construye la URL completa como: `{url}:{puerto}/desar/api/v1/{endpoint}`
 
 ## Módulos pendientes de implementar
 
-### internal/notify/notify.go
+### internal/notify/notify.go ✅ COMPLETADO
 ```go
 // Enviar email SMTP cuando:
 // - Empleado entra a sitio peligroso
@@ -235,7 +235,7 @@ El APK construye la URL completa como: `{url}:{puerto}/desar/api/v1/{endpoint}`
 // Webhook: POST a URL configurable con payload JSON del evento
 ```
 
-### internal/scheduler/scheduler.go
+### internal/scheduler/scheduler.go ✅ COMPLETADO
 ```go
 // Cada noche a las 3am:
 // - Backup de cada BD de compañía a ./data/backups/
@@ -243,7 +243,7 @@ El APK construye la URL completa como: `{url}:{puerto}/desar/api/v1/{endpoint}`
 // - Reporte semanal por email (lunes 7am)
 ```
 
-### internal/sync/sync.go
+### internal/sync/sync.go ✅ COMPLETADO
 ```go
 // Sync bidireccional:
 // - Servidor puede mandar empleados nuevos/actualizados al APK
@@ -252,7 +252,7 @@ El APK construye la URL completa como: `{url}:{puerto}/desar/api/v1/{endpoint}`
 // Cola de mensajes si APK estuvo offline
 ```
 
-### Reportes CSV/PDF en servidor
+### Reportes CSV ✅ COMPLETADO  |  PDF: pendiente
 ```go
 // GET /desar/reportes/csv?desde=&hasta=&emp=
 // Genera CSV de registros y fuerza descarga

@@ -1,0 +1,29 @@
+[Unit]
+Description=DESAR Server - API + Panel Admin
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/desar-server
+ExecStart=/opt/desar-server/desar-server
+
+# Variables de entorno - CAMBIAR EN PRODUCCIÓN
+Environment=API_PORT=8443
+Environment=WEB_PORT=8080
+Environment=DBS_PATH=/opt/desar-server/data
+Environment=JWT_SECRET=CAMBIA_ESTE_SECRETO_MINIMO_32_CARACTERES
+
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=desar-server
+
+# Límites de seguridad
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

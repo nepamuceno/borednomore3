@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reportes — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li class="active"><a href="/desar/reportes">📄 Reportes</a></li>
+    {{if puede .Claims.Rol "usuarios.ver"}}<li><a href="/desar/usuarios">🔑 Usuarios</a></li>{{end}}
+    {{if puede .Claims.Rol "config.ver"}}<li><a href="/desar/config">⚙️ Config</a></li>{{end}}
+    {{if eq .Claims.Rol "superadmin"}}<li><a href="/desar/sa/companias">🏢 Compañías</a></li>{{end}}
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header"><h1>📄 Reportes y Exportaciones</h1></header>
+
+  <!-- Exportar CSV / Excel -->
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-title">📊 Exportar Registros</div>
+    <form method="GET" action="/desar/reportes/csv" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+      <div class="form-group" style="margin:0;flex:1;min-width:140px">
+        <label>Desde</label>
+        <input type="date" name="desde" value="">
+      </div>
+      <div class="form-group" style="margin:0;flex:1;min-width:140px">
+        <label>Hasta</label>
+        <input type="date" name="hasta" value="">
+      </div>
+      <button type="submit" class="btn btn-secondary">⬇️ CSV</button>
+    </form>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+      <a href="/desar/reportes/excel?tipo=asistencias" class="btn btn-primary">📋 Excel Asistencias</a>
+      <a href="/desar/reportes/excel?tipo=empleados" class="btn btn-primary">👥 Excel Empleados</a>
+      <a href="/desar/reportes/excel?tipo=tardanzas" class="btn btn-primary">⏰ Excel Tardanzas</a>
+    </div>
+  </div>
+
+  <!-- PDF Reports -->
+  {{if puede .Claims.Rol "pdf.ver"}}
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-title">🖨️ Reportes PDF</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+
+      <!-- Nómina PDF -->
+      <div style="border:1px solid #e0e0e0;border-radius:10px;padding:16px">
+        <div style="font-size:16px;margin-bottom:6px">💰 PDF de Nómina</div>
+        <div style="font-size:12px;color:#666;margin-bottom:12px">Genera el recibo de nómina del período seleccionado con totales brutos, descuentos y neto por empleado.</div>
+        <form method="GET" action="/desar/pdf/nomina" style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="form-group" style="margin:0;flex:1;min-width:110px"><label>Desde</label><input type="date" name="desde"></div>
+          <div class="form-group" style="margin:0;flex:1;min-width:110px"><label>Hasta</label><input type="date" name="hasta"></div>
+          <button type="submit" class="btn btn-danger" style="align-self:flex-end;margin-top:4px">📥 Descargar PDF</button>
+        </form>
+      </div>
+
+      <!-- Gafetes CR80 -->
+      <div style="border:1px solid #e0e0e0;border-radius:10px;padding:16px">
+        <div style="font-size:16px;margin-bottom:6px">🪪 Catálogo Gafetes CR80</div>
+        <div style="font-size:12px;color:#666;margin-bottom:12px">Genera gafetes tamaño CR80 (tarjeta de crédito) con código, nombre, puesto y sitio de todos los empleados activos.</div>
+        <a href="/desar/pdf/gafetes" class="btn btn-danger">📥 Descargar PDF</a>
+      </div>
+
+      <!-- Vigencias -->
+      <div style="border:1px solid #e0e0e0;border-radius:10px;padding:16px">
+        <div style="font-size:16px;margin-bottom:6px">📅 Reporte de Vigencias</div>
+        <div style="font-size:12px;color:#666;margin-bottom:12px">Lista empleados con fecha de vencimiento de contrato, indicando estado: vigente, por vencer (≤30 días) o vencido.</div>
+        <a href="/desar/pdf/vigencias" class="btn btn-danger">📥 Descargar PDF</a>
+      </div>
+
+    </div>
+
+    <div style="margin-top:16px;padding:12px;background:#fff8e1;border-radius:8px;border-left:4px solid #ffa000">
+      <strong>🚧 Próximamente:</strong>
+      <span style="font-size:12px;color:#666;margin-left:8px">
+        Catálogo QR · Envío automático por email · Reporte de horas extras
+      </span>
+    </div>
+  </div>
+  {{else}}
+  <div class="alert alert-error">🔒 No tienes permisos para generar reportes PDF. Contacta a tu administrador.</div>
+  {{end}}
+
+</main>
+<script src="/desar/static/js/main.js"></script>
+</body></html>

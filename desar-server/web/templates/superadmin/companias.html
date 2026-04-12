@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compañías — DESAR Superadmin</title>
+<link rel="stylesheet" href="/desar/static/css/main.css"></head>
+<body class="app-body">
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li class="sidebar-sep"></li>
+    <li class="active"><a href="/desar/sa/companias">🏢 Compañías</a></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header">
+    <h1>🏢 Compañías</h1>
+    <button class="btn btn-primary" onclick="document.getElementById('modal').style.display='flex'">+ Nueva</button>
+  </header>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead><tr><th>#</th><th>Nombre</th><th>Plan</th><th>Vence</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+        {{range .Companias}}
+        <tr>
+          <td class="mono">{{.ID}}</td>
+          <td><strong>{{.Nombre}}</strong></td>
+          <td><span class="badge">{{.Plan}}</span></td>
+          <td class="mono" style="font-size:11px">{{.FechaVence}}</td>
+          <td><span class="badge {{if .Activo}}badge-entrada{{else}}badge-salida{{end}}">
+            {{if .Activo}}Activa{{else}}Pausada{{end}}</span></td>
+          <td style="display:flex;gap:4px;flex-wrap:wrap">
+            <a href="/desar/sa/companias/{{.ID}}" class="btn btn-secondary" style="padding:3px 8px;font-size:11px">Ver</a>
+            <a href="/desar/sa/companias/{{.ID}}/empleados" class="btn btn-secondary" style="padding:3px 8px;font-size:11px">👥</a>
+            <a href="/desar/sa/companias/{{.ID}}/registros" class="btn btn-secondary" style="padding:3px 8px;font-size:11px">📋</a>
+            <button class="btn btn-secondary" style="padding:3px 8px;font-size:11px"
+              onclick="toggleCia({{.ID}},this)">{{if .Activo}}⏸{{else}}▶{{end}}</button>
+          </td>
+        </tr>
+        {{else}}<tr><td colspan="6" class="empty">Sin compañías</td></tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<!-- Modal nueva compañía -->
+<div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:white;border-radius:16px;padding:32px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto">
+    <h2 style="margin-bottom:20px;color:#1565C0">Nueva Compañía</h2>
+    <form method="POST" action="/desar/sa/companias">
+      <div class="form-group"><label>Nombre *</label><input type="text" name="nombre" required></div>
+      <div class="form-group"><label>Email admin</label><input type="email" name="email"></div>
+      <div class="form-group"><label>Plan</label>
+        <select name="plan">
+          <option value="basico">Básico (25 emp)</option>
+          <option value="estandar">Estándar (100 emp)</option>
+          <option value="enterprise">Enterprise (ilimitado)</option>
+        </select></div>
+      <div class="form-group"><label>Vence</label><input type="date" name="fecha_vence"></div>
+      <div class="form-group"><label>Password admin</label><input type="password" name="password" placeholder="min 8 caracteres"></div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button type="submit" class="btn btn-primary">Crear</button>
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('modal').style.display='none'">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="/desar/static/js/main.js"></script>
+<script>
+function toggleCia(id, btn) {
+  fetch('/desar/sa/companias/'+id+'/toggle', {method:'PUT'}).then(() => location.reload());
+}
+</script>
+</body></html>

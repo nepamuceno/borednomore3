@@ -26,9 +26,9 @@
     <div class="card-title">Exportar Registros CSV</div>
     <form method="GET" action="/desar/reportes/csv" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
       <div class="form-group" style="margin:0"><label>Desde</label>
-        <input type="date" name="desde" value="{{now | formatDate}}"></div>
+        <input type="date" name="desde"></div>
       <div class="form-group" style="margin:0"><label>Hasta</label>
-        <input type="date" name="hasta" value="{{now | formatDate}}"></div>
+        <input type="date" name="hasta"></div>
       <button type="submit" class="btn btn-primary">📥 Descargar CSV</button>
     </form>
   </div>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{.Titulo}} — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li class="active"><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+    {{if puede .Claims.Rol "usuarios.ver"}}<li><a href="/desar/usuarios">🔑 Usuarios</a></li>{{end}}
+    {{if puede .Claims.Rol "config.ver"}}<li><a href="/desar/config">⚙️ Config</a></li>{{end}}
+    {{if eq .Claims.Rol "superadmin"}}<li><a href="/desar/sa/companias">🏢 Compañías</a></li>{{end}}
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header">
+    <div>
+      <a href="/desar/empleados" class="btn btn-secondary" style="margin-bottom:8px">← Volver</a>
+      <h1>{{.Titulo}}</h1>
+    </div>
+  </header>
+  {{if .Error}}<div class="alert alert-error">⚠️ {{.Error}}</div>{{end}}
+
+  <div style="max-width:820px">
+    <form method="POST" action="{{.Accion}}">
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">📋 Datos Principales</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label>Código Empleado *</label>
+            <input type="text" name="codigo_empleado" value="{{.Emp.CodigoEmpleado}}"
+              {{if .EsEdicion}}readonly style="background:#f5f7fa"{{else}}required{{end}}>
+          </div>
+          <div class="form-group">
+            <label>Nombre Completo *</label>
+            <input type="text" name="nombre" value="{{.Emp.Nombre}}" required>
+          </div>
+          <div class="form-group">
+            <label>Puesto / Cargo</label>
+            <input type="text" name="puesto" value="{{.Emp.Puesto}}">
+          </div>
+          <div class="form-group">
+            <label>Sitio de Trabajo</label>
+            <select name="sitio_trabajo">
+              <option value="">— Sin asignar —</option>
+              {{range .Sitios}}
+                <option value="{{.Nombre}}" {{if eq .Nombre $.Emp.SitioTrabajo}}selected{{end}}>{{.Nombre}}</option>
+              {{end}}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha de Alta</label>
+            <input type="date" name="fecha_alta" value="{{.Emp.FechaAlta}}">
+          </div>
+          <div class="form-group">
+            <label>Fecha Vencimiento Contrato</label>
+            <input type="date" name="fecha_vencimiento" value="{{.Emp.FechaVencimiento}}">
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">📞 Contacto y Domicilio</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group"><label>Teléfono</label>
+            <input type="tel" name="telefono" value="{{.Emp.Telefono}}">
+          </div>
+          <div class="form-group"><label>Tel. Emergencia</label>
+            <input type="tel" name="telefono_emergencia" value="{{.Emp.TelefonoEmergencia}}">
+          </div>
+          <div class="form-group" style="grid-column:1/-1"><label>Dirección</label>
+            <input type="text" name="direccion" value="{{.Emp.Direccion}}">
+          </div>
+          <div class="form-group"><label>Ciudad</label>
+            <input type="text" name="ciudad" value="{{.Emp.Ciudad}}">
+          </div>
+          <div class="form-group"><label>Estado</label>
+            <input type="text" name="estado" value="{{.Emp.Estado}}">
+          </div>
+          <div class="form-group"><label>Código Postal</label>
+            <input type="text" name="codigo_postal" value="{{.Emp.CodigoPostal}}">
+          </div>
+          <div class="form-group"><label>País</label>
+            <input type="text" name="pais" value="{{.Emp.Pais}}">
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">🪪 Datos Fiscales / IMSS</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group"><label>RFC</label>
+            <input type="text" name="rfc" value="{{.Emp.RFC}}" maxlength="13" style="text-transform:uppercase">
+          </div>
+          <div class="form-group"><label>No. Seguro Social (IMSS)</label>
+            <input type="text" name="seguro_social" value="{{.Emp.SeguroSocial}}">
+          </div>
+          <div class="form-group"><label>No. Identificación</label>
+            <input type="text" name="numero_identificacion" value="{{.Emp.NumeroIdentificacion}}">
+          </div>
+          <div class="form-group"><label>Fecha de Nacimiento</label>
+            <input type="date" name="fecha_nacimiento" value="{{.Emp.FechaNacimiento}}">
+          </div>
+          <div class="form-group"><label>Tipo de Sangre</label>
+            <select name="tipo_sangre">
+              <option value="">—</option>
+              <option value="A+" {{if eq .Emp.TipoSangre "A+"}}selected{{end}}>A+</option>
+              <option value="A-" {{if eq .Emp.TipoSangre "A-"}}selected{{end}}>A-</option>
+              <option value="B+" {{if eq .Emp.TipoSangre "B+"}}selected{{end}}>B+</option>
+              <option value="B-" {{if eq .Emp.TipoSangre "B-"}}selected{{end}}>B-</option>
+              <option value="AB+" {{if eq .Emp.TipoSangre "AB+"}}selected{{end}}>AB+</option>
+              <option value="AB-" {{if eq .Emp.TipoSangre "AB-"}}selected{{end}}>AB-</option>
+              <option value="O+" {{if eq .Emp.TipoSangre "O+"}}selected{{end}}>O+</option>
+              <option value="O-" {{if eq .Emp.TipoSangre "O-"}}selected{{end}}>O-</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-title">📝 Notas</div>
+        <div class="form-group" style="margin:0">
+          <textarea name="notas" rows="3"
+            style="width:100%;padding:10px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;resize:vertical">{{.Emp.Notas}}</textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:32px">
+        <button type="submit" class="btn btn-primary" style="padding:12px 32px;font-size:15px">💾 Guardar</button>
+        <a href="/desar/empleados" class="btn btn-secondary" style="padding:12px 24px">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</main>
+<script src="/desar/static/js/main.js"></script>
+</body></html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Registros — {{.CompaniaNombre}}</title>
+<link rel="stylesheet" href="/desar/static/css/main.css"></head>
+<body class="app-body">
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li class="sidebar-sep"></li>
+    <li class="active"><a href="/desar/sa/companias">🏢 Compañías</a></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header">
+    <div>
+      <a href="/desar/sa/companias/{{.CompaniaID}}" class="btn btn-secondary" style="margin-bottom:8px">← {{.CompaniaNombre}}</a>
+      <h1>📋 Registros</h1>
+    </div>
+  </header>
+  <div class="card">
+    <form style="display:flex;gap:10px;flex-wrap:wrap">
+      <div class="form-group" style="margin:0"><label>Desde</label>
+        <input type="date" name="desde" value="{{.Desde}}"></div>
+      <div class="form-group" style="margin:0"><label>Hasta</label>
+        <input type="date" name="hasta" value="{{.Hasta}}"></div>
+      <button type="submit" class="btn btn-primary">Filtrar</button>
+    </form>
+  </div>
+  <div class="table-container">
+    <table class="data-table">
+      <thead><tr><th>Timestamp</th><th>Empleado</th><th>Tipo</th><th>Método</th><th>Sitio</th><th>Acción</th></tr></thead>
+      <tbody>
+        {{range .Registros}}
+        <tr class="fila-{{.Tipo}}">
+          <td class="mono">{{.Timestamp}}</td>
+          <td>{{.NombreEmpleado}} <small class="mono">({{.CodigoEmpleado}})</small></td>
+          <td><span class="badge-tipo badge-{{.Tipo}}">{{.Tipo}}</span></td>
+          <td>{{.Metodo}}</td>
+          <td>{{.SitioTrabajo}}</td>
+          <td>
+            <button class="btn btn-danger" style="padding:3px 8px;font-size:11px"
+              data-delete-url="/desar/sa/registros/{{.ID}}?compania_id={{$.CompaniaID}}"
+              data-confirm="¿Eliminar este registro?">✕</button>
+          </td>
+        </tr>
+        {{else}}<tr><td colspan="6" class="empty">Sin registros en el período</td></tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+</main>
+<script src="/desar/static/js/main.js"></script>
+</body></html>

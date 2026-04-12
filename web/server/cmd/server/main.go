@@ -14,6 +14,8 @@ import (
 	apiv1 "desar-server/internal/api/v1"
 	"desar-server/internal/auth"
 	"desar-server/internal/db"
+	"desar-server/internal/notify"
+	"desar-server/internal/scheduler"
 	webhandlers "desar-server/internal/web"
 
 	"github.com/go-chi/chi/v5"
@@ -21,56 +23,94 @@ import (
 )
 
 func main() {
-	apiPort := envOr("API_PORT", "8443")
-	webPort := envOr("WEB_PORT", "8080")
-	dbsPath := envOr("DBS_PATH", "./data")
-	jwtKey  := envOr("JWT_SECRET", "cambia-este-secreto-en-produccion-32chars")
+	apiPort := envOr("API_PORT",   "8443")
+	webPort  := envOr("WEB_PORT",  "8080")
+	dbsPath  := envOr("DBS_PATH",  "./data")
+	jwtKey   := envOr("JWT_SECRET","cambia-este-secreto-en-produccion-32chars")
 
 	if err := db.Init(dbsPath); err != nil {
 		log.Fatalf("BD init: %v", err)
 	}
 	auth.Init(jwtKey)
+
+	notify.Init(notify.Config{
+		SMTPHost:     envOr("SMTP_HOST", ""),
+		SMTPPort:     envOr("SMTP_PORT", "587"),
+		SMTPUser:     envOr("SMTP_USER", ""),
+		SMTPPassword: envOr("SMTP_PASSWORD", ""),
+		SMTPFrom:     envOr("SMTP_FROM", "noreply@desar.local"),
+		Habilitado:   envOr("SMTP_HOST", "") != "",
+	})
+
+	scheduler.Init(db.Get())
 	crearSuperadminSiNoExiste()
 
-	// Cargar templates desde disco (desarrollo) o embed (producción)
 	tmpl, err := cargarTemplates()
 	if err != nil {
 		log.Fatalf("Templates: %v", err)
 	}
 	webhandlers.Init(tmpl)
 
-	// Router API
-	apiRouter := chi.NewRouter()
-	apiRouter.Use(middleware.Logger, middleware.Recoverer, corsMiddleware)
-	apiRouter.Mount("/desar/api/v1", apiv1.Router())
+	// ── API Router (puerto 8443) ──────────────────────────
+	apiR := chi.NewRouter()
+	apiR.Use(middleware.Recoverer, corsMiddleware)
+	apiR.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			t := time.Now()
+			next.ServeHTTP(w, r)
+			log.Printf("API %s %s %s", r.Method, r.URL.Path, time.Since(t))
+		})
+	})
+	// Mount API — rutas dentro del router son relativas a /desar/api/v1
+	apiR.Mount("/desar/api/v1", apiv1.Router())
 
-	// Router Web
-	webRouter := chi.NewRouter()
-	webRouter.Use(middleware.Logger, middleware.Recoverer, middleware.Compress(5))
+	// ── Web Router (puerto 8080) ──────────────────────────
+	webR := chi.NewRouter()
+	webR.Use(middleware.Recoverer, middleware.Compress(5))
+	webR.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			t := time.Now()
+			next.ServeHTTP(w, r)
+			log.Printf("WEB %s %s %s", r.Method, r.URL.Path, time.Since(t))
+		})
+	})
 
-	// Servir estáticos desde ./web/static/
-	staticDir := http.Dir("./web/static")
-	webRouter.Handle("/desar/static/*",
-		http.StripPrefix("/desar/static/", http.FileServer(staticDir)))
+	// Archivos estáticos
+	webR.Handle("/desar/static/*",
+		http.StripPrefix("/desar/static/",
+			http.FileServer(http.Dir("./web/static"))))
 
-	webRouter.Mount("/desar", webhandlers.Router())
-	webRouter.Get("/desar", func(w http.ResponseWriter, r *http.Request) {
+	// Panel — el router interno usa rutas sin prefijo /desar
+	// Usamos StripPrefix para que chi las resuelva correctamente
+	webR.Mount("/desar", http.StripPrefix("/desar", webhandlers.Router()))
+
+	// Redirect /desar → /desar/
+	webR.Get("/desar", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/desar/", http.StatusFound)
 	})
 
-	apiSrv := &http.Server{Addr: ":" + apiPort, Handler: apiRouter,
-		ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second}
-	webSrv := &http.Server{Addr: ":" + webPort, Handler: webRouter,
-		ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second}
+	// ── Servidores ────────────────────────────────────────
+	apiSrv := &http.Server{
+		Addr:         ":" + apiPort,
+		Handler:      apiR,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+	}
+	webSrv := &http.Server{
+		Addr:         ":" + webPort,
+		Handler:      webR,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+	}
 
 	go func() {
-		log.Printf("🔌 API  ::%s  → /desar/api/v1/", apiPort)
+		log.Printf("🔌 API  :%s  → /desar/api/v1/ping", apiPort)
 		if err := apiSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("API: %v", err)
 		}
 	}()
 	go func() {
-		log.Printf("🌐 Web  ::%s  → /desar/", webPort)
+		log.Printf("🌐 Web  :%s  → http://localhost:%s/desar/", webPort, webPort)
 		if err := webSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Web: %v", err)
 		}
@@ -79,6 +119,7 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
+	log.Println("Cerrando...")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	apiSrv.Shutdown(ctx)
@@ -86,25 +127,40 @@ func main() {
 	log.Println("Servidor cerrado.")
 }
 
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,X-API-Key,Authorization")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(204)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func cargarTemplates() (*template.Template, error) {
 	funcs := template.FuncMap{
 		"formatTS": func(ts string) string {
 			t, err := time.Parse(time.RFC3339, ts)
-			if err != nil { return ts }
+			if err != nil {
+				t, err = time.Parse("2006-01-02T15:04:05", ts)
+				if err != nil { return ts }
+			}
 			return t.Format("02/01/2006 15:04:05")
 		},
 		"formatDate": func(s string) string {
 			if len(s) >= 10 { return s[:10] }
 			return s
 		},
-		"now": func() time.Time { return time.Now() },
+		"now": time.Now,
 	}
-
 	tmpl := template.New("").Funcs(funcs)
-
-	// Cargar todos los .html recursivamente desde ./web/templates/
-	err := fs.WalkDir(os.DirFS("./web/templates"), ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil || d.IsDir() || !isHTML(path) { return err }
+	err := fs.WalkDir(os.DirFS("./web/templates"), ".", func(path string, d fs.DirEntry, _ error) error {
+		if d.IsDir() || len(path) < 6 || path[len(path)-5:] != ".html" {
+			return nil
+		}
 		content, e := os.ReadFile("./web/templates/" + path)
 		if e != nil { return e }
 		_, e = tmpl.New(path).Parse(string(content))
@@ -113,47 +169,32 @@ func cargarTemplates() (*template.Template, error) {
 	return tmpl, err
 }
 
-func isHTML(path string) bool {
-	return len(path) > 5 && path[len(path)-5:] == ".html"
-}
-
 func envOr(k, def string) string {
 	if v := os.Getenv(k); v != "" { return v }
 	return def
 }
 
-func corsMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,X-API-Key,Authorization")
-		if r.Method == "OPTIONS" { w.WriteHeader(204); return }
-		next.ServeHTTP(w, r)
-	})
-}
-
 func crearSuperadminSiNoExiste() {
 	adminDB := db.Get().AdminDB()
-	var count int
-	adminDB.QueryRow("SELECT COUNT(*) FROM usuarios WHERE rol='superadmin'").Scan(&count)
-	if count > 0 { return }
+	var n int
+	adminDB.QueryRow("SELECT COUNT(*) FROM usuarios WHERE rol='superadmin'").Scan(&n)
+	if n > 0 { return }
 
 	apiKey := auth.GenerarAPIKey()
 	dbPath := "./data/company_admin.db"
 	res, err := adminDB.Exec(`INSERT INTO companias(nombre,api_key,plan,max_empleados,activo,db_path)
-		VALUES('DESAR Admin',?,  'enterprise',9999,1,?)`, apiKey, dbPath)
-	if err != nil { log.Printf("Compañía admin: %v", err); return }
+		VALUES('DESAR Admin',?,'enterprise',9999,1,?)`, apiKey, dbPath)
+	if err != nil { return }
 	compID, _ := res.LastInsertId()
 
 	hash, _ := auth.HashPassword("admin123")
 	adminDB.Exec(`INSERT INTO usuarios(compania_id,nombre,email,password_hash,rol)
 		VALUES(?,'Super Admin','admin@desar.local',?,'superadmin')`, compID, hash)
+	db.Get().CompanyDB(compID)
 
-	db.Get().CompanyDB(compID) // inicializa la BD
-
-	log.Printf("══════════════════════════════════════════")
-	log.Printf("  SUPERADMIN: admin@desar.local / admin123")
-	log.Printf("  Panel:      http://localhost:%s/desar/", envOr("WEB_PORT","8080"))
-	log.Printf("  ⚠️  CAMBIA EL PASSWORD INMEDIATAMENTE")
-	log.Printf("══════════════════════════════════════════")
+	log.Println("══════════════════════════════════════════════")
+	log.Println("  SUPERADMIN: admin@desar.local / admin123")
+	log.Printf("  Panel: http://localhost:%s/desar/", envOr("WEB_PORT","8080"))
+	log.Println("  ⚠️  CAMBIA EL PASSWORD INMEDIATAMENTE")
+	log.Println("══════════════════════════════════════════════")
 }

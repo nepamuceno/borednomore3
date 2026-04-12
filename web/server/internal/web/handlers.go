@@ -3,6 +3,7 @@ package web
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -41,7 +42,8 @@ func Router() http.Handler {
 		r.Get("/sitios",      handlerSitios)
 		r.Get("/config",      handlerConfig)
 		r.Post("/config",     handlerConfigSave)
-		r.Get("/reportes",    handlerReportes)
+		r.Get("/reportes",        handlerReportes)
+		r.Get("/reportes/csv",    handlerReportesCSV)
 		r.Get("/usuarios",    handlerUsuarios)
 		r.Post("/usuarios",   handlerUsuarioCrear)
 		r.Delete("/usuarios/{id}", handlerUsuarioEliminar)
@@ -395,6 +397,42 @@ func handlerSAToggleCompania(w http.ResponseWriter, r *http.Request) {
 func handlerReportes(w http.ResponseWriter, r *http.Request) {
 	claims := auth.ClaimsFromCtx(r)
 	render(w, "admin/reportes.html", map[string]interface{}{"Claims":claims})
+}
+
+
+// ── CSV Export ────────────────────────────────────────────────
+func handlerReportesCSV(w http.ResponseWriter, r *http.Request) {
+	claims := auth.ClaimsFromCtx(r)
+	if !auth.Puede(claims.Rol, "reportes.*") {
+		http.Error(w, "403", 403); return
+	}
+	compDB, _ := db.Get().CompanyDB(claims.CompaniaID)
+	desde := r.URL.Query().Get("desde")
+	hasta := r.URL.Query().Get("hasta")
+	if desde == "" { desde = time.Now().AddDate(0, 0, -30).Format("2006-01-02") }
+	if hasta == "" { hasta = time.Now().Format("2006-01-02") }
+
+	rows, err := compDB.Query(`SELECT codigo_empleado,nombre_empleado,tipo,timestamp,
+		sitio_trabajo,metodo,COALESCE(CAST(gps_lat AS TEXT),''),COALESCE(CAST(gps_lon AS TEXT),''),COALESCE(notas,'')
+		FROM registros WHERE timestamp >= ? AND timestamp <= ? ORDER BY timestamp DESC`,
+		desde+"T00:00:00", hasta+"T23:59:59")
+	if err != nil {
+		http.Error(w, "Error BD", 500); return
+	}
+	defer rows.Close()
+
+	w.Header().Set("Content-Type", "text/csv; charset=utf-8")
+	w.Header().Set("Content-Disposition", `attachment; filename="registros_`+desde+`_`+hasta+`.csv"`)
+
+	w.Write([]byte("ï»¿")) // BOM UTF-8 para Excel
+	w.Write([]byte("Código,Nombre,Tipo,Timestamp,Sitio,Método,GPS_Lat,GPS_Lon,Notas\n"))
+	for rows.Next() {
+		var cod, nom, tipo, ts, sitio, metodo, lat, lon, notas string
+		rows.Scan(&cod, &nom, &tipo, &ts, &sitio, &metodo, &lat, &lon, &notas)
+		line := fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s,%q\n",
+			cod, nom, tipo, ts, sitio, metodo, lat, lon, notas)
+		w.Write([]byte(line))
+	}
 }
 
 // ── Template helper ───────────────────────────────────────────

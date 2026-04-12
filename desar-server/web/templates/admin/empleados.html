@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Empleados — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li class="active"><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+    {{if puede .Claims.Rol "usuarios.ver"}}<li><a href="/desar/usuarios">🔑 Usuarios</a></li>{{end}}
+    {{if puede .Claims.Rol "config.ver"}}<li><a href="/desar/config">⚙️ Config</a></li>{{end}}
+    {{if eq .Claims.Rol "superadmin"}}<li><a href="/desar/sa/companias">🏢 Compañías</a></li>{{end}}
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header">
+    <h1>👥 Empleados</h1>
+    <div class="header-meta">
+      <span>{{.Claims.Email}}</span>
+      <span class="badge-rol badge-rol-{{.Claims.Rol}}">{{.Claims.Rol}}</span>
+    </div>
+  </header>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <form method="GET" style="display:flex;gap:8px">
+        <input type="text" name="q" value="{{.Busq}}" placeholder="🔍 Buscar empleado..." style="padding:8px 12px;border:1.5px solid #E0E0E0;border-radius:8px;width:240px">
+        <button type="submit" class="btn btn-secondary">Buscar</button>
+      </form>
+      <span style="font-size:13px;color:#666">{{len .Empleados}} empleados</span>
+    </div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead><tr>
+          <th>Código</th><th>Nombre</th><th>Puesto</th>
+          <th>Sitio</th><th>Vencimiento</th><th>Estado</th>
+          {{if puede .Claims.Rol "empleados.eliminar"}}<th></th>{{end}}
+        </tr></thead>
+        <tbody>
+          {{range .Empleados}}
+          <tr>
+            <td class="mono">{{.ID}}</td>
+            <td><strong>{{.Nombre}}</strong></td>
+            <td>{{.Puesto}}</td>
+            <td>{{.SitioTrabajo}}</td>
+            <td class="mono" style="font-size:11px">{{.FechaVencimiento}}</td>
+            <td><span class="badge-rol" style="{{if .Activo}}background:#2e7d32;color:#fff{{else}}background:#c62828;color:#fff{{end}}">
+              {{if .Activo}}✅ Activo{{else}}⛔ Baja{{end}}
+            </span></td>
+            {{if puede $.Claims.Rol "empleados.eliminar"}}
+            <td>
+              <button class="btn btn-danger" style="padding:3px 10px;font-size:11px"
+                data-delete-url="/desar/empleados/{{.DBID}}"
+                data-confirm="¿Eliminar empleado {{.Nombre}}? Esta acción no se puede deshacer.">
+                🗑️ Eliminar
+              </button>
+            </td>
+            {{end}}
+          </tr>
+          {{else}}<tr><td colspan="7" class="empty">Sin empleados registrados</td></tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+<script src="/desar/static/js/main.js"></script>
+</body></html>
