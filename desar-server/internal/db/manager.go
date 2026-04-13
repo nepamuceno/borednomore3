@@ -253,6 +253,14 @@ func companyDDL(mode DBMode) []string {
 			`CREATE INDEX IF NOT EXISTS idx_registros_emp ON registros(codigo_empleado)`,
 			`CREATE INDEX IF NOT EXISTS idx_empleados_cod ON empleados(codigo_empleado)`,
 			`CREATE INDEX IF NOT EXISTS idx_jornadas_emp ON jornadas(empleado_id, fecha)`,
+		`CREATE TABLE IF NOT EXISTS administradores_bot (
+			id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+			plataforma TEXT NOT NULL, plataforma_id TEXT NOT NULL,
+			nombre TEXT, apellido TEXT, username TEXT, email TEXT,
+			telefono TEXT, empresa TEXT, cargo TEXT, notas TEXT,
+			activo INTEGER NOT NULL DEFAULT 1,
+			fecha_registro TEXT NOT NULL DEFAULT to_char(now(),'YYYY-MM-DD"T"HH24:MI:SS'),
+			UNIQUE(plataforma, plataforma_id))`,
 		}
 	}
 	return []string{`
@@ -306,7 +314,15 @@ func companyDDL(mode DBMode) []string {
 	CREATE INDEX IF NOT EXISTS idx_registros_ts ON registros(timestamp);
 	CREATE INDEX IF NOT EXISTS idx_registros_emp ON registros(codigo_empleado);
 	CREATE INDEX IF NOT EXISTS idx_empleados_cod ON empleados(codigo_empleado);
-	CREATE INDEX IF NOT EXISTS idx_jornadas_emp ON jornadas(empleado_id, fecha);`}
+	CREATE INDEX IF NOT EXISTS idx_jornadas_emp ON jornadas(empleado_id, fecha);
+	CREATE TABLE IF NOT EXISTS administradores_bot (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		plataforma TEXT NOT NULL, plataforma_id TEXT NOT NULL,
+		nombre TEXT, apellido TEXT, username TEXT, email TEXT,
+		telefono TEXT, empresa TEXT, cargo TEXT, notas TEXT,
+		activo INTEGER NOT NULL DEFAULT 1,
+		fecha_registro TEXT NOT NULL DEFAULT (datetime('now')),
+		UNIQUE(plataforma, plataforma_id));`}
 }
 
 func (m *Manager) CompanyDBByKey(apiKey string) (*sql.DB, int64, error) {

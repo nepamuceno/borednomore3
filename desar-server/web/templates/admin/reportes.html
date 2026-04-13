@@ -3,6 +3,16 @@
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Reportes — DESAR</title>
 <link rel="stylesheet" href="/desar/static/css/main.css">
+<style>
+.rep-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-top:8px }
+.rep-card { border:1px solid #e0e0e0; border-radius:10px; padding:16px }
+.rep-card h3 { font-size:15px; margin:0 0 6px; display:flex; gap:6px; align-items:center }
+.rep-card p  { font-size:12px; color:#666; margin:0 0 12px }
+.rep-form    { display:flex; gap:8px; flex-wrap:wrap }
+.rep-form .form-group { margin:0; flex:1; min-width:110px }
+.rep-form button { align-self:flex-end; margin-top:4px }
+.section-title { font-size:16px; font-weight:700; color:#1565C0; margin:20px 0 4px; border-bottom:2px solid #1565C0; padding-bottom:4px }
+</style>
 </head>
 <body class="app-body">
 <nav class="sidebar">
@@ -23,71 +33,149 @@
 <main class="main-content">
   <header class="page-header"><h1>📄 Reportes y Exportaciones</h1></header>
 
-  <!-- Exportar CSV / Excel -->
+  <!-- CSV rápido -->
   <div class="card" style="margin-bottom:20px">
-    <div class="card-title">📊 Exportar Registros</div>
+    <div class="card-title">📊 Exportar CSV</div>
     <form method="GET" action="/desar/reportes/csv" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-      <div class="form-group" style="margin:0;flex:1;min-width:140px">
-        <label>Desde</label>
-        <input type="date" name="desde" value="">
-      </div>
-      <div class="form-group" style="margin:0;flex:1;min-width:140px">
-        <label>Hasta</label>
-        <input type="date" name="hasta" value="">
-      </div>
-      <button type="submit" class="btn btn-secondary">⬇️ CSV</button>
+      <div class="form-group" style="margin:0;flex:1;min-width:140px"><label>Desde</label><input type="date" name="desde"></div>
+      <div class="form-group" style="margin:0;flex:1;min-width:140px"><label>Hasta</label><input type="date" name="hasta"></div>
+      <button type="submit" class="btn btn-secondary">⬇️ CSV Registros</button>
     </form>
-    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
-      <a href="/desar/reportes/excel?tipo=asistencias" class="btn btn-primary">📋 Excel Asistencias</a>
-      <a href="/desar/reportes/excel?tipo=empleados" class="btn btn-primary">👥 Excel Empleados</a>
-      <a href="/desar/reportes/excel?tipo=tardanzas" class="btn btn-primary">⏰ Excel Tardanzas</a>
-    </div>
   </div>
 
-  <!-- PDF Reports -->
-  {{if puede .Claims.Rol "pdf.ver"}}
+  <!-- EXCEL -->
+  <div class="section-title">📋 Reportes Excel / CSV</div>
   <div class="card" style="margin-bottom:20px">
-    <div class="card-title">🖨️ Reportes PDF</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+    <div class="rep-grid">
 
-      <!-- Nómina PDF -->
-      <div style="border:1px solid #e0e0e0;border-radius:10px;padding:16px">
-        <div style="font-size:16px;margin-bottom:6px">💰 PDF de Nómina</div>
-        <div style="font-size:12px;color:#666;margin-bottom:12px">Genera el recibo de nómina del período seleccionado con totales brutos, descuentos y neto por empleado.</div>
-        <form method="GET" action="/desar/pdf/nomina" style="display:flex;gap:8px;flex-wrap:wrap">
-          <div class="form-group" style="margin:0;flex:1;min-width:110px"><label>Desde</label><input type="date" name="desde"></div>
-          <div class="form-group" style="margin:0;flex:1;min-width:110px"><label>Hasta</label><input type="date" name="hasta"></div>
-          <button type="submit" class="btn btn-danger" style="align-self:flex-end;margin-top:4px">📥 Descargar PDF</button>
+      <div class="rep-card">
+        <h3>📋 Asistencias (Jornadas)</h3>
+        <p>Jornadas con entrada, salida, horas trabajadas y estado de completitud.</p>
+        <form class="rep-form" method="GET" action="/desar/reportes/excel">
+          <input type="hidden" name="tipo" value="asistencias">
+          <div class="form-group"><label>Desde</label><input type="date" name="desde"></div>
+          <div class="form-group"><label>Hasta</label><input type="date" name="hasta"></div>
+          <button class="btn btn-primary">⬇️ Descargar</button>
         </form>
       </div>
 
-      <!-- Gafetes CR80 -->
-      <div style="border:1px solid #e0e0e0;border-radius:10px;padding:16px">
-        <div style="font-size:16px;margin-bottom:6px">🪪 Catálogo Gafetes CR80</div>
-        <div style="font-size:12px;color:#666;margin-bottom:12px">Genera gafetes tamaño CR80 (tarjeta de crédito) con código, nombre, puesto y sitio de todos los empleados activos.</div>
-        <a href="/desar/pdf/gafetes" class="btn btn-danger">📥 Descargar PDF</a>
+      <div class="rep-card">
+        <h3>👥 Catálogo de Empleados</h3>
+        <p>Listado completo con datos laborales, IMSS, RFC y vigencias.</p>
+        <form class="rep-form" method="GET" action="/desar/reportes/excel">
+          <input type="hidden" name="tipo" value="empleados">
+          <button class="btn btn-primary">⬇️ Descargar</button>
+        </form>
       </div>
 
-      <!-- Vigencias -->
-      <div style="border:1px solid #e0e0e0;border-radius:10px;padding:16px">
-        <div style="font-size:16px;margin-bottom:6px">📅 Reporte de Vigencias</div>
-        <div style="font-size:12px;color:#666;margin-bottom:12px">Lista empleados con fecha de vencimiento de contrato, indicando estado: vigente, por vencer (≤30 días) o vencido.</div>
-        <a href="/desar/pdf/vigencias" class="btn btn-danger">📥 Descargar PDF</a>
+      <div class="rep-card">
+        <h3>⏰ Tardanzas y Ausencias</h3>
+        <p>Resumen por empleado: tardanzas, ausencias, días trabajados y horas totales del período.</p>
+        <form class="rep-form" method="GET" action="/desar/reportes/excel/tardanzas">
+          <div class="form-group"><label>Desde</label><input type="date" name="desde"></div>
+          <div class="form-group"><label>Hasta</label><input type="date" name="hasta"></div>
+          <button class="btn btn-primary">⬇️ Descargar</button>
+        </form>
+      </div>
+
+      <div class="rep-card">
+        <h3>📝 Registros Individuales</h3>
+        <p>Cada registro de entrada/salida con hora exacta, sitio y método (QR/rostro/manual).</p>
+        <form class="rep-form" method="GET" action="/desar/reportes/excel/registros">
+          <div class="form-group"><label>Desde</label><input type="date" name="desde"></div>
+          <div class="form-group"><label>Hasta</label><input type="date" name="hasta"></div>
+          <div class="form-group"><label>Empleado (opcional)</label><input type="text" name="empleado" placeholder="código o nombre"></div>
+          <button class="btn btn-primary">⬇️ Descargar</button>
+        </form>
+      </div>
+
+      <div class="rep-card">
+        <h3>🪪 Catálogo Gafetes (Excel)</h3>
+        <p>Datos para impresión de credenciales: código, IMSS, RFC, tipo sangre, vigencias y más.</p>
+        <form class="rep-form" method="GET" action="/desar/reportes/excel/catalogo">
+          <input type="hidden" name="tipo" value="gafetes">
+          <button class="btn btn-primary">⬇️ Descargar</button>
+        </form>
+      </div>
+
+      <div class="rep-card">
+        <h3>📱 Catálogo QR (Excel)</h3>
+        <p>Código, nombre, puesto y el contenido del QR listo para impresión o generación masiva.</p>
+        <form class="rep-form" method="GET" action="/desar/reportes/excel/catalogo">
+          <input type="hidden" name="tipo" value="qr">
+          <button class="btn btn-primary">⬇️ Descargar</button>
+        </form>
       </div>
 
     </div>
+  </div>
 
-    <div style="margin-top:16px;padding:12px;background:#fff8e1;border-radius:8px;border-left:4px solid #ffa000">
-      <strong>🚧 Próximamente:</strong>
-      <span style="font-size:12px;color:#666;margin-left:8px">
-        Catálogo QR · Envío automático por email · Reporte de horas extras
-      </span>
+  <!-- PDF -->
+  {{if puede .Claims.Rol "pdf.ver"}}
+  <div class="section-title">🖨️ Reportes PDF</div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="rep-grid">
+
+      <div class="rep-card">
+        <h3>💰 Nómina</h3>
+        <p>Recibo de nómina con horas, descuentos y neto por empleado para el período.</p>
+        <form class="rep-form" method="GET" action="/desar/pdf/nomina">
+          <div class="form-group"><label>Desde</label><input type="date" name="desde"></div>
+          <div class="form-group"><label>Hasta</label><input type="date" name="hasta"></div>
+          <button class="btn btn-danger">📥 PDF</button>
+        </form>
+      </div>
+
+      <div class="rep-card">
+        <h3>📋 Registros de Asistencia</h3>
+        <p>Tabla de todos los registros entrada/salida con colores diferenciados por tipo.</p>
+        <form class="rep-form" method="GET" action="/desar/pdf/registros">
+          <div class="form-group"><label>Desde</label><input type="date" name="desde"></div>
+          <div class="form-group"><label>Hasta</label><input type="date" name="hasta"></div>
+          <button class="btn btn-danger">📥 PDF</button>
+        </form>
+      </div>
+
+      <div class="rep-card">
+        <h3>⏰ Tardanzas y Ausencias</h3>
+        <p>Empleados con tardanzas o ausencias resaltados en amarillo. Usa la configuración de tolerancia.</p>
+        <form class="rep-form" method="GET" action="/desar/pdf/tardanzas">
+          <div class="form-group"><label>Desde</label><input type="date" name="desde"></div>
+          <div class="form-group"><label>Hasta</label><input type="date" name="hasta"></div>
+          <button class="btn btn-danger">📥 PDF</button>
+        </form>
+      </div>
+
+      <div class="rep-card">
+        <h3>📅 Control de Vigencias</h3>
+        <p>Clasificado en: Vencidos · Por vencer ≤30 días · Vigentes · Sin fecha de vencimiento.</p>
+        <a href="/desar/pdf/vigencias" class="btn btn-danger">📥 PDF</a>
+      </div>
+
+      <div class="rep-card">
+        <h3>🪪 Gafetes CR80</h3>
+        <p>Credenciales tamaño tarjeta CR80 listos para imprimir. 4 por hoja A4.</p>
+        <a href="/desar/pdf/gafetes" class="btn btn-danger">📥 PDF</a>
+      </div>
+
+      <div class="rep-card">
+        <h3>📱 Catálogo QR</h3>
+        <p>Tabla con el contenido de código QR de cada empleado activo (CHECADOR:código:nombre).</p>
+        <a href="/desar/pdf/catalogo-qr" class="btn btn-danger">📥 PDF</a>
+      </div>
+
     </div>
   </div>
   {{else}}
-  <div class="alert alert-error">🔒 No tienes permisos para generar reportes PDF. Contacta a tu administrador.</div>
+  <div class="alert alert-error">🔒 Sin permisos para PDFs. Contacta a tu administrador.</div>
   {{end}}
 
 </main>
+<script>
+const hoy = new Date().toISOString().slice(0,10)
+const hace30 = new Date(Date.now()-30*86400000).toISOString().slice(0,10)
+document.querySelectorAll('input[type=date][name=desde]').forEach(el => el.value = hace30)
+document.querySelectorAll('input[type=date][name=hasta]').forEach(el => el.value = hoy)
+</script>
 <script src="/desar/static/js/main.js"></script>
 </body></html>

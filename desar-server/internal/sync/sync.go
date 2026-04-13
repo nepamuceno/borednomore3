@@ -9,17 +9,16 @@ import (
 	"desar-server/internal/ws"
 )
 
-func q(s string) string { return db.Q(s) }
+func q(s string)  string { return db.Q(s) }
+func qi(s string) string { return db.QI(s) }
 
 func ProcesarSync(compDB *sql.DB, adminDB *sql.DB, compID int64, req models.SyncRequest) (*models.SyncResponse, error) {
 	resp := &models.SyncResponse{OK: true, Timestamp: time.Now().Format(time.RFC3339)}
 
-	// ── Guardar registros del APK ─────────────────────────────
 	for _, reg := range req.Registros {
-		_, err := compDB.Exec(q(`INSERT INTO registros
+		_, err := compDB.Exec(qi(`INSERT INTO registros
 			(empleado_id,codigo_empleado,nombre_empleado,tipo,timestamp,gps_lat,gps_lon,sitio_trabajo,metodo,notas,sync_status)
-			VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,1)
-			ON CONFLICT DO NOTHING`),
+			VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,1)`),
 			reg.EmpleadoID, reg.CodigoEmpleado, reg.NombreEmpleado, reg.Tipo,
 			reg.Timestamp, reg.GPSLat, reg.GPSLon, reg.SitioTrabajo, reg.Metodo, reg.Notas)
 		if err == nil {
@@ -28,7 +27,6 @@ func ProcesarSync(compDB *sql.DB, adminDB *sql.DB, compID int64, req models.Sync
 		}
 	}
 
-	// ── Guardar empleados del APK ─────────────────────────────
 	for _, emp := range req.Empleados {
 		var exists int
 		compDB.QueryRow(q("SELECT COUNT(*) FROM empleados WHERE codigo_empleado=$1"), emp.CodigoEmpleado).Scan(&exists)
@@ -66,7 +64,6 @@ func ProcesarSync(compDB *sql.DB, adminDB *sql.DB, compID int64, req models.Sync
 
 	actualizarJornadas(compDB)
 
-	// ── Enviar empleados nuevos al APK ────────────────────────
 	rows, err := compDB.Query(q("SELECT codigo_empleado,nombre,COALESCE(puesto,''),COALESCE(sitio_trabajo,''),activo FROM empleados WHERE sync_status=0"))
 	if err == nil {
 		defer rows.Close()
@@ -85,8 +82,7 @@ func ProcesarSync(compDB *sql.DB, adminDB *sql.DB, compID int64, req models.Sync
 
 func actualizarJornadas(compDB *sql.DB) {
 	hoy := time.Now().Format("2006-01-02")
-	rows, err := compDB.Query(q(`SELECT DISTINCT codigo_empleado, nombre_empleado, COALESCE(sitio_trabajo,'')
-		FROM registros WHERE tipo='entrada' AND timestamp LIKE $1`), hoy+"%")
+	rows, err := compDB.Query(q("SELECT DISTINCT codigo_empleado, nombre_empleado, COALESCE(sitio_trabajo,'') FROM registros WHERE tipo='entrada' AND timestamp LIKE $1"), hoy+"%")
 	if err != nil { return }
 	defer rows.Close()
 
@@ -103,7 +99,7 @@ func actualizarJornadas(compDB *sql.DB) {
 
 		var horas float64
 		var completa int
-		if salida != "" && entrada != "" {
+		if entrada != "" && salida != "" {
 			for _, layout := range []string{"2006-01-02T15:04:05", time.RFC3339} {
 				t1, e1 := time.Parse(layout, entrada)
 				t2, e2 := time.Parse(layout, salida)
@@ -121,8 +117,7 @@ func actualizarJornadas(compDB *sql.DB) {
 			compDB.Exec(q("UPDATE jornadas SET entrada_timestamp=$1,salida_timestamp=$2,horas_trabajadas=$3,completa=$4,sitio_trabajo=$5 WHERE codigo_empleado=$6 AND fecha=$7"),
 				entrada, salida, horas, completa, sitio, cod, hoy)
 		} else {
-			compDB.Exec(q(`INSERT INTO jornadas(empleado_id,codigo_empleado,nombre_empleado,fecha,entrada_timestamp,salida_timestamp,horas_trabajadas,completa,sitio_trabajo)
-				VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`),
+			compDB.Exec(q("INSERT INTO jornadas(empleado_id,codigo_empleado,nombre_empleado,fecha,entrada_timestamp,salida_timestamp,horas_trabajadas,completa,sitio_trabajo) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)"),
 				empID, cod, nom, hoy, entrada, salida, horas, completa, sitio)
 		}
 	}

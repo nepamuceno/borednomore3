@@ -23,14 +23,25 @@
 <main class="main-content">
   <header class="page-header">
     <h1>📋 Registros de Asistencia</h1>
-    <span class="header-meta"><span class="badge-rol badge-rol-{{.Claims.Rol}}">{{.Claims.Rol}}</span></span>
+    <div style="display:flex;gap:8px">
+      {{if puede .Claims.Rol "registros.crear"}}
+      <a href="/desar/registros/nuevo" class="btn btn-primary">➕ Registro Manual</a>
+      {{end}}
+    </div>
   </header>
+  {{if .Ok}}<div class="alert alert-success">✅ Registro guardado.</div>{{end}}
 
   <div class="card" style="margin-bottom:16px">
     <form method="GET" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
-      <div class="form-group" style="margin:0;flex:1;min-width:130px"><label>Desde</label><input type="date" name="desde" value="{{.Desde}}"></div>
-      <div class="form-group" style="margin:0;flex:1;min-width:130px"><label>Hasta</label><input type="date" name="hasta" value="{{.Hasta}}"></div>
-      <div class="form-group" style="margin:0;flex:2;min-width:180px"><label>Empleado</label><input type="text" name="emp" value="{{.Emp}}" placeholder="Nombre o código"></div>
+      <div class="form-group" style="margin:0;flex:1;min-width:130px">
+        <label>Desde</label><input type="date" name="desde" value="{{.Desde}}">
+      </div>
+      <div class="form-group" style="margin:0;flex:1;min-width:130px">
+        <label>Hasta</label><input type="date" name="hasta" value="{{.Hasta}}">
+      </div>
+      <div class="form-group" style="margin:0;flex:2;min-width:180px">
+        <label>Empleado</label><input type="text" name="emp" value="{{.Emp}}" placeholder="Nombre o código">
+      </div>
       <button type="submit" class="btn btn-primary">🔍 Filtrar</button>
       <a href="/desar/registros" class="btn btn-secondary">Limpiar</a>
     </form>
@@ -39,19 +50,25 @@
   <div class="table-container">
     <table class="data-table">
       <thead><tr>
-        <th>Empleado</th><th>Tipo</th><th>Fecha/Hora</th><th>Sitio</th><th>Método</th>
+        <th>Empleado</th><th>Tipo</th><th>Fecha / Hora</th><th>Sitio</th><th>Método</th>
         {{if puede .Claims.Rol "registros.eliminar"}}<th></th>{{end}}
       </tr></thead>
       <tbody>
         {{range .Registros}}
         <tr>
-          <td><strong>{{.NombreEmpleado}}</strong><br><span class="mono" style="font-size:10px;color:#888">{{.CodigoEmpleado}}</span></td>
           <td>
-            {{if eq .Tipo "entrada"}}<span style="color:#2e7d32;font-weight:700">▶ ENTRADA</span>
-            {{else}}<span style="color:#c62828;font-weight:700">■ SALIDA</span>{{end}}
+            <strong>{{.NombreEmpleado}}</strong>
+            <br><span class="mono" style="font-size:10px;color:#9e9e9e">{{.CodigoEmpleado}}</span>
+          </td>
+          <td>
+            {{if eq .Tipo "entrada"}}
+              <span style="color:#2e7d32;font-weight:700">▶ ENTRADA</span>
+            {{else}}
+              <span style="color:#c62828;font-weight:700">■ SALIDA</span>
+            {{end}}
           </td>
           <td class="mono" style="font-size:11px">{{formatTS .Timestamp}}</td>
-          <td>{{.SitioTrabajo}}</td>
+          <td style="font-size:12px">{{.SitioTrabajo}}</td>
           <td><span class="badge-rol">{{.Metodo}}</span></td>
           {{if puede $.Claims.Rol "registros.eliminar"}}
           <td>
@@ -61,7 +78,8 @@
           </td>
           {{end}}
         </tr>
-        {{else}}<tr><td colspan="6" class="empty">Sin registros en el período seleccionado</td></tr>
+        {{else}}
+        <tr><td colspan="6" class="empty">Sin registros en el período seleccionado.</td></tr>
         {{end}}
       </tbody>
     </table>

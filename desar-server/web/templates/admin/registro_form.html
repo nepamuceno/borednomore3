@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Registro Manual — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li><a href="/desar/empleados">👥 Empleados</a></li>
+    <li class="active"><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+    {{if puede .Claims.Rol "usuarios.ver"}}<li><a href="/desar/usuarios">🔑 Usuarios</a></li>{{end}}
+    {{if puede .Claims.Rol "config.ver"}}<li><a href="/desar/config">⚙️ Config</a></li>{{end}}
+    {{if eq .Claims.Rol "superadmin"}}<li><a href="/desar/sa/companias">🏢 Compañías</a></li>{{end}}
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header">
+    <div>
+      <a href="/desar/registros" class="btn btn-secondary" style="margin-bottom:8px">← Volver</a>
+      <h1>➕ Registro Manual de Asistencia</h1>
+    </div>
+  </header>
+  {{if .Error}}<div class="alert alert-error">⚠️ {{.Error}}</div>{{end}}
+
+  <div style="max-width:500px">
+    <div class="card">
+      <div class="card-title">📋 Datos del Registro</div>
+      <form method="POST" action="/desar/registros/nuevo">
+        <div class="form-group">
+          <label>Empleado *</label>
+          <select name="codigo_empleado" required>
+            <option value="">— Seleccionar empleado —</option>
+            {{range .Empleados}}
+            <option value="{{.CodigoEmpleado}}">{{.Nombre}} ({{.CodigoEmpleado}})</option>
+            {{end}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tipo *</label>
+          <select name="tipo" required>
+            <option value="entrada">▶ Entrada</option>
+            <option value="salida">■ Salida</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Fecha y Hora *</label>
+          <input type="datetime-local" name="timestamp" value="{{.Hoy}}" required>
+        </div>
+        <div class="form-group">
+          <label>Sitio de Trabajo</label>
+          <select name="sitio_trabajo">
+            <option value="">— Sin especificar —</option>
+            {{range .Sitios}}
+            <option value="{{.Nombre}}">{{.Nombre}}</option>
+            {{end}}
+          </select>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <button type="submit" class="btn btn-primary btn-full">💾 Guardar Registro</button>
+        </div>
+      </form>
+    </div>
+    <div class="card" style="margin-top:16px;background:#fff8e1;border-left:4px solid #ffa000">
+      <p style="font-size:13px;color:#666;margin:0">
+        ⚠️ Los registros manuales quedan marcados con método <strong>manual</strong> y se sincronizan al APK en el próximo sync.
+      </p>
+    </div>
+  </div>
+</main>
+<script src="/desar/static/js/main.js"></script>
+</body></html>

@@ -351,3 +351,188 @@ func truncate(s string, max int) string {
 	}
 	return s
 }
+
+// ── Registros individuales ────────────────────────────────────
+
+func GenerarRegistros(compDB *sql.DB, compania, desde, hasta string) ([]byte, error) {
+	rows, err := compDB.Query(db.Q(`SELECT codigo_empleado,nombre_empleado,tipo,timestamp,
+		COALESCE(sitio_trabajo,''),COALESCE(metodo,'')
+		FROM registros WHERE timestamp >= $1 AND timestamp <= $2 ORDER BY timestamp ASC`), desde, hasta)
+	if err != nil { return nil, err }
+	defer rows.Close()
+
+	type Reg struct{ Cod, Nom, Tipo, TS, Sitio, Metodo string }
+	var lista []Reg
+	for rows.Next() {
+		var r Reg
+		rows.Scan(&r.Cod, &r.Nom, &r.Tipo, &r.TS, &r.Sitio, &r.Metodo)
+		lista = append(lista, r)
+	}
+
+	pdf := gofpdf.New("L", "mm", "A4", "")
+	pdf.AddPage()
+	// Encabezado
+	pdf.SetFillColor(21, 101, 192)
+	pdf.SetTextColor(255, 255, 255)
+	pdf.SetFont("Arial", "B", 12)
+	pdf.CellFormat(277, 10, "Registros de Asistencia  —  "+compania, "", 0, "L", true, 0, "")
+	pdf.Ln(2)
+	pdf.SetFont("Arial", "", 8)
+	pdf.CellFormat(277, 6, fmt.Sprintf("Período: %s al %s   |   %d registros", desde[:10], hasta[:10], len(lista)), "", 0, "L", false, 0, "")
+	pdf.Ln(8)
+	// Encabezados tabla
+	pdf.SetFillColor(187, 222, 251)
+	pdf.SetTextColor(0, 0, 0)
+	pdf.SetFont("Arial", "B", 8)
+	for _, h := range []struct{ w float64; t string }{{28, "Código"},{70, "Nombre"},{22, "Fecha"},{16, "Hora"},{18, "Tipo"},{22, "Método"},{48, "Sitio"}} {
+		pdf.CellFormat(h.w, 7, h.t, "1", 0, "C", true, 0, "")
+	}
+	pdf.Ln(-1)
+	pdf.SetFont("Arial", "", 7)
+	for i, r := range lista {
+		if pdf.GetY() > 185 { pdf.AddPage() }
+		fill := i%2 == 0
+		if fill { pdf.SetFillColor(240, 248, 255) } else { pdf.SetFillColor(255, 255, 255) }
+		if r.Tipo == "entrada" { pdf.SetTextColor(27, 94, 32) } else { pdf.SetTextColor(183, 28, 28) }
+		fecha, hora := "", ""
+		if len(r.TS) >= 19 { fecha = r.TS[:10]; hora = r.TS[11:16] }
+		pdf.CellFormat(28, 6, r.Cod, "1", 0, "C", fill, 0, "")
+		pdf.SetTextColor(0, 0, 0)
+		pdf.CellFormat(70, 6, truncate(r.Nom, 35), "1", 0, "L", fill, 0, "")
+		pdf.CellFormat(22, 6, fecha, "1", 0, "C", fill, 0, "")
+		pdf.CellFormat(16, 6, hora, "1", 0, "C", fill, 0, "")
+		if r.Tipo == "entrada" { pdf.SetTextColor(27, 94, 32) } else { pdf.SetTextColor(183, 28, 28) }
+		pdf.CellFormat(18, 6, r.Tipo, "1", 0, "C", fill, 0, "")
+		pdf.SetTextColor(0, 0, 0)
+		pdf.CellFormat(22, 6, r.Metodo, "1", 0, "C", fill, 0, "")
+		pdf.CellFormat(48, 6, truncate(r.Sitio, 22), "1", 0, "L", fill, 0, "")
+		pdf.Ln(-1)
+	}
+	var buf []byte
+	pdf.Output(byteWriter{&buf})
+	return buf, pdf.Error()
+}
+
+// ── Tardanzas y Ausencias ─────────────────────────────────────
+
+func GenerarTardanzas(compDB *sql.DB, compania, desde, hasta, horaEntrada string, toleranciaMin int) ([]byte, error) {
+	// Jornadas del período
+	jrows, err := compDB.Query(db.Q(`SELECT codigo_empleado,nombre_empleado,COALESCE(entrada_timestamp,''),
+		COALESCE(horas_trabajadas,0),completa FROM jornadas WHERE fecha >= $1 AND fecha <= $2`), desde, hasta)
+	if err != nil { return nil, err }
+	defer jrows.Close()
+
+	type JRow struct{ Cod, Nom, Entrada string; Horas float64; Completa int }
+	byEmp := map[string][]JRow{}
+	for jrows.Next() {
+		var j JRow
+		jrows.Scan(&j.Cod, &j.Nom, &j.Entrada, &j.Horas, &j.Completa)
+		byEmp[j.Cod] = append(byEmp[j.Cod], j)
+	}
+
+	erows, _ := compDB.Query("SELECT codigo_empleado,nombre,COALESCE(puesto,''),COALESCE(sitio_trabajo,'') FROM empleados WHERE activo=1 ORDER BY nombre")
+	type ResEmp struct{ Cod, Nom, Puesto, Sitio string; Tardanzas, Ausencias, Dias int; Horas float64 }
+	var resultados []ResEmp
+	var hE, mE int
+	fmt.Sscanf(horaEntrada, "%d:%d", &hE, &mE)
+
+	if erows != nil {
+		defer erows.Close()
+		for erows.Next() {
+			var cod, nom, puesto, sitio string
+			erows.Scan(&cod, &nom, &puesto, &sitio)
+			js := byEmp[cod]
+			tard, aus, dias := 0, 0, 0
+			var hTot float64
+			for _, j := range js {
+				if j.Entrada == "" { aus++; continue }
+				if j.Completa == 1 { dias++ }
+				hTot += j.Horas
+				t, err2 := time.Parse("2006-01-02T15:04:05", j.Entrada)
+				if err2 != nil { t, _ = time.Parse(time.RFC3339, j.Entrada) }
+				limite := time.Date(t.Year(), t.Month(), t.Day(), hE, mE, 0, 0, t.Location())
+				if t.After(limite.Add(time.Duration(toleranciaMin) * time.Minute)) { tard++ }
+			}
+			resultados = append(resultados, ResEmp{cod, nom, puesto, sitio, tard, aus, dias, hTot})
+		}
+	}
+
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	pdf.AddPage()
+	pdf.SetFillColor(21, 101, 192)
+	pdf.SetTextColor(255, 255, 255)
+	pdf.SetFont("Arial", "B", 12)
+	pdf.CellFormat(190, 10, "Tardanzas y Ausencias  —  "+compania, "", 0, "L", true, 0, "")
+	pdf.Ln(2)
+	pdf.SetFont("Arial", "", 8)
+	pdf.SetTextColor(0, 0, 0)
+	pdf.CellFormat(190, 6, fmt.Sprintf("Período: %s al %s", desde, hasta), "", 0, "L", false, 0, "")
+	pdf.Ln(8)
+	pdf.SetFillColor(187, 222, 251)
+	pdf.SetFont("Arial", "B", 8)
+	for _, h := range []struct{ w float64; t string }{{28,"Código"},{68,"Nombre"},{20,"Tardanzas"},{20,"Ausencias"},{20,"Días"},{22,"Horas"}} {
+		pdf.CellFormat(h.w, 7, h.t, "1", 0, "C", true, 0, "")
+	}
+	pdf.Ln(-1)
+	pdf.SetFont("Arial", "", 7)
+	for i, e := range resultados {
+		if pdf.GetY() > 265 { pdf.AddPage() }
+		alert := e.Tardanzas > 0 || e.Ausencias > 0
+		if alert { pdf.SetFillColor(255, 249, 196) } else if i%2==0 { pdf.SetFillColor(245,245,245) } else { pdf.SetFillColor(255,255,255) }
+		pdf.CellFormat(28, 6, e.Cod, "1", 0, "C", true, 0, "")
+		pdf.CellFormat(68, 6, truncate(e.Nom, 32), "1", 0, "L", true, 0, "")
+		tardStr := fmt.Sprintf("%d", e.Tardanzas); if e.Tardanzas > 0 { tardStr += " !" }
+		ausStr  := fmt.Sprintf("%d", e.Ausencias); if e.Ausencias > 0 { ausStr  += " x" }
+		pdf.SetTextColor(183, 28, 28)
+		if e.Tardanzas == 0 { pdf.SetTextColor(0,0,0) }
+		pdf.CellFormat(20, 6, tardStr, "1", 0, "C", true, 0, "")
+		pdf.SetTextColor(183, 28, 28)
+		if e.Ausencias == 0 { pdf.SetTextColor(0,0,0) }
+		pdf.CellFormat(20, 6, ausStr, "1", 0, "C", true, 0, "")
+		pdf.SetTextColor(0,0,0)
+		pdf.CellFormat(20, 6, fmt.Sprintf("%d", e.Dias), "1", 0, "C", true, 0, "")
+		pdf.CellFormat(22, 6, fmt.Sprintf("%.1fh", e.Horas), "1", 0, "C", true, 0, "")
+		pdf.Ln(-1)
+	}
+	var buf []byte
+	pdf.Output(byteWriter{&buf})
+	return buf, pdf.Error()
+}
+
+// ── Catálogo QR ───────────────────────────────────────────────
+
+func GenerarCatalogoQR(empleados []EmpleadoGafete, compania string) ([]byte, error) {
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	pdf.AddPage()
+	pdf.SetFillColor(21, 101, 192)
+	pdf.SetTextColor(255, 255, 255)
+	pdf.SetFont("Arial", "B", 12)
+	pdf.CellFormat(190, 10, compania+" — Catálogo de Códigos QR", "", 0, "L", true, 0, "")
+	pdf.Ln(4)
+	pdf.SetTextColor(0, 0, 0)
+	pdf.SetFont("Arial", "", 7)
+	pdf.CellFormat(190, 5, fmt.Sprintf("Total empleados: %d  |  Generado: %s", len(empleados), time.Now().Format("02/01/2006 15:04")), "", 0, "L", false, 0, "")
+	pdf.Ln(6)
+	// Tabla
+	pdf.SetFillColor(187, 222, 251)
+	pdf.SetFont("Arial", "B", 8)
+	for _, h := range []struct{ w float64; t string }{{28,"Código"},{70,"Nombre"},{32,"Puesto"},{60,"Contenido QR"}} {
+		pdf.CellFormat(h.w, 7, h.t, "1", 0, "C", true, 0, "")
+	}
+	pdf.Ln(-1)
+	pdf.SetFont("Arial", "", 7)
+	for i, e := range empleados {
+		if pdf.GetY() > 270 { pdf.AddPage() }
+		fill := i%2 == 0
+		if fill { pdf.SetFillColor(235, 245, 255) } else { pdf.SetFillColor(255, 255, 255) }
+		qrData := e.QRData; if qrData == "" { qrData = "CHECADOR:" + e.Codigo + ":" + e.Nombre }
+		pdf.CellFormat(28, 6, e.Codigo, "1", 0, "C", fill, 0, "")
+		pdf.CellFormat(70, 6, truncate(e.Nombre, 35), "1", 0, "L", fill, 0, "")
+		pdf.CellFormat(32, 6, truncate(e.Puesto, 16), "1", 0, "L", fill, 0, "")
+		pdf.CellFormat(60, 6, truncate(qrData, 30), "1", 0, "L", fill, 0, "")
+		pdf.Ln(-1)
+	}
+	var buf []byte
+	pdf.Output(byteWriter{&buf})
+	return buf, pdf.Error()
+}

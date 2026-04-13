@@ -56,9 +56,9 @@ func RolesDisponibles(rolActor string) []string {
 var permisos = map[string][]string{
 	"superadmin": {"*"},
 	"admin":      {"companias.ver", "empleados.*", "registros.*", "sitios.*", "reportes.*", "usuarios.*", "config.*", "pdf.*"},
-	"gerente":    {"empleados.ver", "registros.ver", "registros.editar", "sitios.ver", "reportes.*", "pdf.*"},
-	"rrhh":       {"empleados.*", "sitios.ver", "reportes.ver", "pdf.ver"},
-	"supervisor": {"registros.ver", "empleados.ver"},
+	"gerente":    {"empleados.ver", "empleados.editar", "registros.*", "sitios.ver", "sitios.editar", "reportes.*", "pdf.*"},
+	"rrhh":       {"empleados.*", "sitios.*", "registros.ver", "registros.crear", "reportes.ver", "pdf.ver"},
+	"supervisor": {"registros.ver", "registros.crear", "empleados.ver"},
 	"readonly":   {"empleados.ver", "registros.ver"},
 }
 
