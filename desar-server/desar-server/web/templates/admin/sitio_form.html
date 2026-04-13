@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{.Titulo}} — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li class="active"><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+    {{if puede .Claims.Rol "usuarios.ver"}}<li><a href="/desar/usuarios">🔑 Usuarios</a></li>{{end}}
+    {{if puede .Claims.Rol "config.ver"}}<li><a href="/desar/config">⚙️ Config</a></li>{{end}}
+    {{if eq .Claims.Rol "superadmin"}}<li><a href="/desar/sa/companias">🏢 Compañías</a></li>{{end}}
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header">
+    <div>
+      <a href="/desar/sitios" class="btn btn-secondary" style="margin-bottom:8px">← Volver</a>
+      <h1>{{.Titulo}}</h1>
+    </div>
+  </header>
+  {{if .Error}}<div class="alert alert-error">⚠️ {{.Error}}</div>{{end}}
+
+  <div style="max-width:600px">
+    <form method="POST" action="{{.Accion}}">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">📍 Información del Sitio</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Nombre del Sitio *</label>
+            <input type="text" name="nombre" value="{{.Sitio.Nombre}}" required {{if .EsEdicion}}readonly style="background:#f5f7fa"{{end}}>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Descripción</label>
+            <input type="text" name="descripcion" value="{{.Sitio.Descripcion}}">
+          </div>
+          <div class="form-group">
+            <label>Tipo de Sitio</label>
+            <select name="tipo_sitio">
+              <option value="normal" {{if eq .Sitio.TipoSitio "normal"}}selected{{end}}>Normal</option>
+              <option value="oficina" {{if eq .Sitio.TipoSitio "oficina"}}selected{{end}}>Oficina</option>
+              <option value="bodega" {{if eq .Sitio.TipoSitio "bodega"}}selected{{end}}>Bodega</option>
+              <option value="planta" {{if eq .Sitio.TipoSitio "planta"}}selected{{end}}>Planta</option>
+              <option value="remoto" {{if eq .Sitio.TipoSitio "remoto"}}selected{{end}}>Remoto</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+              <input type="checkbox" name="recibir_advertencias" value="1"
+                {{if .Sitio.RecibirAdvertencias}}checked{{end}} style="width:auto">
+              Recibir advertencias
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">🗺️ GPS y Geocerca</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label>Latitud GPS</label>
+            <input type="number" name="gps_lat" value="{{.Sitio.GPSLat}}" step="0.000001" placeholder="20.123456">
+          </div>
+          <div class="form-group">
+            <label>Longitud GPS</label>
+            <input type="number" name="gps_lon" value="{{.Sitio.GPSLon}}" step="0.000001" placeholder="-103.123456">
+          </div>
+          <div class="form-group">
+            <label>Radio Geofence (metros)</label>
+            <input type="number" name="geofence_radio_metros" value="{{.Sitio.GeofenceRadioMetros}}" min="10" max="50000" placeholder="100">
+          </div>
+          <div class="form-group">
+            <label>Tipo Geofence</label>
+            <select name="geofence_tipo">
+              <option value="permitido" {{if eq .Sitio.GeofenceTipo "permitido"}}selected{{end}}>Permitido (debe estar dentro)</option>
+              <option value="restringido" {{if eq .Sitio.GeofenceTipo "restringido"}}selected{{end}}>Restringido (no debe entrar)</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label style="display:flex;align-items:center;gap:8px">
+              <input type="checkbox" name="geofence_activo" value="1"
+                {{if .Sitio.GeofenceActivo}}checked{{end}} style="width:auto">
+              Activar verificación de geofence en el APK
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:32px">
+        <button type="submit" class="btn btn-primary" style="padding:12px 32px">💾 Guardar</button>
+        <a href="/desar/sitios" class="btn btn-secondary" style="padding:12px 24px">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</main>
+<script src="/desar/static/js/main.js"></script>
+</body></html>

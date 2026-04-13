@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-icon">◉</span>
+    <span class="logo-text">DESAR</span>
+  </div>
+  <ul class="sidebar-nav">
+    <li class="active"><a href="/desar/">📊 Dashboard</a></li>
+    <li><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+        {{if puede .Claims.Rol "usuarios.ver"}}<li><a href="/desar/usuarios">🔑 Usuarios</a></li>{{end}}
+        {{if puede .Claims.Rol "config.ver"}}<li><a href="/desar/config">⚙️ Config</a></li>{{end}}
+    {{if eq .Claims.Rol "superadmin"}}
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/sa/companias">🏢 Compañías</a></li>
+    {{end}}
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+  <div class="sidebar-ws-status">
+    <span id="ws-dot" class="ws-dot offline"></span>
+    <span id="ws-label">Desconectado</span>
+  </div>
+</nav>
+
+<!-- Main content -->
+<main class="main-content">
+  <header class="page-header">
+    <h1>Dashboard</h1>
+    <div class="header-meta">
+      <span id="fecha-hoy">{{.Hoy}}</span>
+      <span class="sep">|</span>
+      <span>{{.Claims.Email}}</span>
+      <span class="badge-rol">{{.Claims.Rol}}</span>
+    </div>
+  </header>
+
+  <!-- Tarjetas de estadísticas -->
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="stat-icon">👥</div>
+      <div class="stat-value" id="stat-activos">{{.TotalEmp}}</div>
+      <div class="stat-label">Empleados activos</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon">✅</div>
+      <div class="stat-value" id="stat-presentes">{{.Presentes}}</div>
+      <div class="stat-label">Presentes hoy</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-icon">🚪</div>
+      <div class="stat-value" id="stat-salidas">{{.Salidas}}</div>
+      <div class="stat-label">Salidas hoy</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-icon">📋</div>
+      <div class="stat-value" id="stat-reghoy">{{.RegHoy}}</div>
+      <div class="stat-label">Registros hoy</div>
+    </div>
+  </div>
+
+  <!-- Feed en tiempo real -->
+  <div class="section-header">
+    <h2>Registros en tiempo real</h2>
+    <span id="ws-conectados" class="badge">{{.Conectados}} conectados</span>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table" id="tabla-registros">
+      <thead>
+        <tr>
+          <th>Hora</th>
+          <th>Empleado</th>
+          <th>Código</th>
+          <th>Tipo</th>
+          <th>Método</th>
+          <th>Sitio</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-registros">
+        {{range .Ultimos}}
+        <tr class="fila-{{.Tipo}}">
+          <td class="mono">{{formatTS .Timestamp}}</td>
+          <td><strong>{{.NombreEmpleado}}</strong></td>
+          <td class="mono">{{.CodigoEmpleado}}</td>
+          <td><span class="badge-tipo badge-{{.Tipo}}">{{.Tipo}}</span></td>
+          <td>{{.Metodo}}</td>
+          <td>{{.SitioTrabajo}}</td>
+        </tr>
+        {{else}}
+        <tr><td colspan="6" class="empty">Sin registros hoy</td></tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<script>
+// ── WebSocket tiempo real ─────────────────────────────────
+const wsUrl = 'ws://' + location.host + '/desar/ws';
+let ws, reconnectTimer;
+
+function conectar() {
+  ws = new WebSocket(wsUrl);
+
+  ws.onopen = () => {
+    document.getElementById('ws-dot').className = 'ws-dot online';
+    document.getElementById('ws-label').textContent = 'En vivo';
+    clearTimeout(reconnectTimer);
+  };
+
+  ws.onclose = () => {
+    document.getElementById('ws-dot').className = 'ws-dot offline';
+    document.getElementById('ws-label').textContent = 'Reconectando...';
+    reconnectTimer = setTimeout(conectar, 3000);
+  };
+
+  ws.onmessage = (e) => {
+    const evt = JSON.parse(e.data);
+    if (evt.tipo === 'registro') agregarFila(evt.datos);
+  };
+}
+
+function agregarFila(reg) {
+  const tbody = document.getElementById('tbody-registros');
+  // Quitar fila "sin registros" si existe
+  const empty = tbody.querySelector('.empty');
+  if (empty) empty.parentElement.remove();
+
+  const ts = new Date(reg.timestamp).toLocaleString('es-MX');
+  const tr = document.createElement('tr');
+  tr.className = 'fila-' + reg.tipo + ' fila-nueva';
+  tr.innerHTML = `
+    <td class="mono">${ts}</td>
+    <td><strong>${reg.nombre_empleado}</strong></td>
+    <td class="mono">${reg.codigo_empleado}</td>
+    <td><span class="badge-tipo badge-${reg.tipo}">${reg.tipo}</span></td>
+    <td>${reg.metodo}</td>
+    <td>${reg.sitio_trabajo || '—'}</td>
+  `;
+  tbody.insertBefore(tr, tbody.firstChild);
+
+  // Actualizar contadores
+  actualizarStats();
+
+  // Alerta si sitio peligroso
+  if (reg.tipo === 'entrada' && reg.sitio_tipo === 'peligroso') {
+    notificar('⚠️ Entrada en sitio peligroso', reg.nombre_empleado + ' → ' + reg.sitio_trabajo);
+  }
+
+  // Quitar clase animación
+  setTimeout(() => tr.classList.remove('fila-nueva'), 2000);
+}
+
+async function actualizarStats() {
+  try {
+    const r = await fetch('/desar/registros/hoy');
+    const data = await r.json();
+    const presentes = data.filter(r => r.tipo === 'entrada').length;
+    const salidas   = data.filter(r => r.tipo === 'salida').length;
+    document.getElementById('stat-presentes').textContent = presentes;
+    document.getElementById('stat-salidas').textContent = salidas;
+    document.getElementById('stat-reghoy').textContent = data.length;
+  } catch(e) {}
+}
+
+function notificar(titulo, cuerpo) {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted') {
+    new Notification(titulo, { body: cuerpo, icon: '/desar/static/img/icon.png' });
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission().then(p => {
+      if (p === 'granted') new Notification(titulo, { body: cuerpo });
+    });
+  }
+}
+
+// Actualizar reloj
+setInterval(() => {
+  document.getElementById('fecha-hoy').textContent =
+    new Date().toLocaleDateString('es-MX', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}, 60000);
+
+conectar();
+</script>
+</body>
+</html>

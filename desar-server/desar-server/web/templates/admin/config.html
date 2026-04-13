@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Configuración — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+<style>
+.cfg-section { margin-bottom:24px }
+.cfg-section .card-title { display:flex; align-items:center; gap:8px }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px }
+.three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px }
+.toggle-row { display:flex; align-items:center; gap:10px; margin-bottom:8px }
+.toggle-row label { font-weight:600; font-size:14px }
+.badge-on  { background:#E8F5E9; color:#2E7D32; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:700 }
+.badge-off { background:#FFEBEE; color:#C62828; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:700 }
+</style>
+</head>
+<body class="app-body">
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+    {{if puede .Claims.Rol "usuarios.ver"}}<li><a href="/desar/usuarios">🔑 Usuarios</a></li>{{end}}
+    {{if puede .Claims.Rol "config.ver"}}<li class="active"><a href="/desar/config">⚙️ Config</a></li>{{end}}
+    {{if eq .Claims.Rol "superadmin"}}<li><a href="/desar/sa/companias">🏢 Compañías</a></li>{{end}}
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header"><h1>⚙️ Configuración</h1></header>
+  {{if .Ok}}<div class="alert alert-success">✅ Configuración guardada correctamente.</div>{{end}}
+
+  {{if puede .Claims.Rol "config.editar"}}
+  <form method="POST" action="/desar/config">
+
+    <!-- ── Empresa ─────────────────────────────────────────── -->
+    <div class="card cfg-section">
+      <div class="card-title">🏢 Datos de la Empresa</div>
+      <div class="form-group"><label>Nombre de la Compañía *</label>
+        <input type="text" name="nombre_compania" value="{{index .Cfg "NombreCompania"}}" required></div>
+      <div class="two-col">
+        <div class="form-group"><label>RFC</label>
+          <input type="text" name="rfc_compania" value="{{index .Cfg "RFC"}}"></div>
+        <div class="form-group"><label>Email</label>
+          <input type="email" name="email_compania" value="{{index .Cfg "Email"}}"></div>
+      </div>
+      <div class="form-group"><label>Dirección</label>
+        <input type="text" name="direccion_compania" value="{{index .Cfg "Direccion"}}"></div>
+      <div class="three-col">
+        <div class="form-group"><label>Ciudad</label>
+          <input type="text" name="ciudad_compania" value="{{index .Cfg "Ciudad"}}"></div>
+        <div class="form-group"><label>Estado</label>
+          <input type="text" name="estado_compania" value="{{index .Cfg "Estado"}}"></div>
+        <div class="form-group"><label>País</label>
+          <input type="text" name="pais_compania" value="{{index .Cfg "Pais"}}"></div>
+      </div>
+      <div class="two-col">
+        <div class="form-group"><label>Código Postal</label>
+          <input type="text" name="codigo_postal_compania" value="{{index .Cfg "CodigoPostal"}}"></div>
+        <div class="form-group"><label>Teléfono</label>
+          <input type="text" name="telefono_compania" value="{{index .Cfg "Telefono"}}"></div>
+      </div>
+    </div>
+
+    <!-- ── Jornada ─────────────────────────────────────────── -->
+    <div class="card cfg-section">
+      <div class="card-title">⏱️ Jornada Laboral</div>
+      <div class="three-col">
+        <div class="form-group"><label>Hora de Entrada</label>
+          <input type="time" name="hora_entrada_default" value="{{index .Cfg "HoraEntrada"}}"></div>
+        <div class="form-group"><label>Hora de Salida</label>
+          <input type="time" name="hora_salida_default" value="{{index .Cfg "HoraSalida"}}"></div>
+        <div class="form-group"><label>Tolerancia (minutos)</label>
+          <input type="number" name="tolerancia_minutos" value="{{index .Cfg "Tolerancia"}}" min="0" max="120"></div>
+      </div>
+      <div class="three-col">
+        <div class="form-group"><label>Horas de Jornada</label>
+          <input type="number" step="0.5" name="jornada_horas" value="{{index .Cfg "JornadaHoras"}}" min="1" max="24"></div>
+        <div class="form-group"><label>Umbral Reconocimiento Facial (0–1)</label>
+          <input type="number" step="0.01" name="umbral_reconocimiento" value="{{index .Cfg "Umbral"}}" min="0.5" max="1.0"></div>
+        <div class="form-group"><label>Zona Horaria</label>
+          <select name="zona_horaria">
+            <option value="America/Mexico_City" {{if eq (index .Cfg "ZonaHoraria") "America/Mexico_City"}}selected{{end}}>America/Mexico_City (Centro)</option>
+            <option value="America/Tijuana" {{if eq (index .Cfg "ZonaHoraria") "America/Tijuana"}}selected{{end}}>America/Tijuana (Noroeste)</option>
+            <option value="America/Chihuahua" {{if eq (index .Cfg "ZonaHoraria") "America/Chihuahua"}}selected{{end}}>America/Chihuahua (Noroeste)</option>
+            <option value="America/Cancun" {{if eq (index .Cfg "ZonaHoraria") "America/Cancun"}}selected{{end}}>America/Cancun (Sureste)</option>
+            <option value="America/Monterrey" {{if eq (index .Cfg "ZonaHoraria") "America/Monterrey"}}selected{{end}}>America/Monterrey</option>
+          </select>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="form-group"><label>Formato de Reporte por Defecto</label>
+          <select name="formato_reporte_default">
+            <option value="excel" {{if eq (index .Cfg "FmtReporte") "excel"}}selected{{end}}>Excel</option>
+            <option value="pdf"   {{if eq (index .Cfg "FmtReporte") "pdf"}}selected{{end}}>PDF</option>
+            <option value="txt"   {{if eq (index .Cfg "FmtReporte") "txt"}}selected{{end}}>TXT</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Bot — Prefijo de comandos</label>
+          <input type="text" name="bot_prefijo" value="{{index .Cfg "BotPrefijo"}}" placeholder="/" maxlength="10"></div>
+      </div>
+      <div class="toggle-row" style="margin-top:4px">
+        <input type="checkbox" name="pedir_confirmacion_nuevo" id="pedirConf" value="1" {{if index .Cfg "PedirConf"}}checked{{end}}>
+        <label for="pedirConf">Pedir confirmación al registrar empleado nuevo desde APK</label>
+      </div>
+    </div>
+
+    <!-- ── Telegram ─────────────────────────────────────────── -->
+    <div class="card cfg-section">
+      <div class="card-title">✈️ Bot Telegram</div>
+      <div class="toggle-row">
+        <input type="checkbox" name="telegram_habilitado" id="tgEn" value="1" {{if index .Cfg "TGEn"}}checked{{end}}>
+        <label for="tgEn">Habilitar Bot Telegram</label>
+        {{if index .Cfg "TGEn"}}<span class="badge-on">ON</span>{{else}}<span class="badge-off">OFF</span>{{end}}
+      </div>
+      <div class="two-col">
+        <div class="form-group"><label>Token del Bot</label>
+          <input type="text" name="telegram_bot_token" value="{{index .Cfg "TGTok"}}" placeholder="123456:ABC-DEF..."></div>
+        <div class="form-group"><label>Chat ID (administrador)</label>
+          <input type="text" name="telegram_chat_id" value="{{index .Cfg "TGChat"}}" placeholder="-100123456789"></div>
+      </div>
+      <p style="font-size:12px;color:#757575">
+        Crea un bot con @BotFather, copia el token. El Chat ID puede ser un grupo (negativo) o usuario individual.
+        Comandos disponibles: /ayuda /hoy /reporte /lista /empleado /estado
+      </p>
+    </div>
+
+    <!-- ── WhatsApp ─────────────────────────────────────────── -->
+    <div class="card cfg-section">
+      <div class="card-title">💬 WhatsApp Business API</div>
+      <div class="toggle-row">
+        <input type="checkbox" name="whatsapp_habilitado" id="waEn" value="1" {{if index .Cfg "WAEn"}}checked{{end}}>
+        <label for="waEn">Habilitar WhatsApp</label>
+        {{if index .Cfg "WAEn"}}<span class="badge-on">ON</span>{{else}}<span class="badge-off">OFF</span>{{end}}
+      </div>
+      <div class="two-col">
+        <div class="form-group"><label>API URL</label>
+          <input type="url" name="whatsapp_api_url" value="{{index .Cfg "WAUrl"}}" placeholder="https://graph.facebook.com/v17.0/..."></div>
+        <div class="form-group"><label>API Token</label>
+          <input type="text" name="whatsapp_api_token" value="{{index .Cfg "WATok"}}"></div>
+      </div>
+      <div class="three-col">
+        <div class="form-group"><label>Channel ID</label>
+          <input type="text" name="whatsapp_channel_id" value="{{index .Cfg "WAChanId"}}"></div>
+        <div class="form-group"><label>Phone Number ID</label>
+          <input type="text" name="whatsapp_phone_number_id" value="{{index .Cfg "WAPhnId"}}"></div>
+        <div class="form-group"><label>Verify Token (Webhook)</label>
+          <input type="text" name="whatsapp_verify_token" value="{{index .Cfg "WAVer"}}"></div>
+      </div>
+    </div>
+
+    <!-- ── Facebook ─────────────────────────────────────────── -->
+    <div class="card cfg-section">
+      <div class="card-title">📘 Facebook Messenger</div>
+      <div class="toggle-row">
+        <input type="checkbox" name="facebook_habilitado" id="fbEn" value="1" {{if index .Cfg "FBEn"}}checked{{end}}>
+        <label for="fbEn">Habilitar Facebook Messenger</label>
+        {{if index .Cfg "FBEn"}}<span class="badge-on">ON</span>{{else}}<span class="badge-off">OFF</span>{{end}}
+      </div>
+      <div class="two-col">
+        <div class="form-group"><label>Page Access Token</label>
+          <input type="text" name="facebook_page_token" value="{{index .Cfg "FBTok"}}"></div>
+        <div class="form-group"><label>App ID</label>
+          <input type="text" name="facebook_app_id" value="{{index .Cfg "FBAppId"}}"></div>
+      </div>
+      <div class="two-col">
+        <div class="form-group"><label>App Secret</label>
+          <input type="password" name="facebook_app_secret" value="{{index .Cfg "FBAppSec"}}"></div>
+        <div class="form-group"><label>Verify Token (Webhook)</label>
+          <input type="text" name="facebook_verify_token" value="{{index .Cfg "FBVer"}}"></div>
+      </div>
+    </div>
+
+    <div style="padding:0 0 24px">
+      <button type="submit" class="btn btn-primary" style="min-width:180px">💾 Guardar Configuración</button>
+    </div>
+  </form>
+  {{else}}
+  <div class="alert alert-error">🔒 Sin permisos para editar la configuración.</div>
+  {{end}}
+
+</main>
+<script src="/desar/static/js/main.js"></script>
+</body></html>

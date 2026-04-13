@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Empleados — DESAR</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li class="active"><a href="/desar/empleados">👥 Empleados</a></li>
+    <li><a href="/desar/registros">📋 Registros</a></li>
+    <li><a href="/desar/sitios">📍 Sitios</a></li>
+    <li><a href="/desar/reportes">📄 Reportes</a></li>
+    {{if puede .Claims.Rol "usuarios.ver"}}<li><a href="/desar/usuarios">🔑 Usuarios</a></li>{{end}}
+    {{if puede .Claims.Rol "config.ver"}}<li><a href="/desar/config">⚙️ Config</a></li>{{end}}
+    {{if eq .Claims.Rol "superadmin"}}<li><a href="/desar/sa/companias">🏢 Compañías</a></li>{{end}}
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header">
+    <h1>👥 Empleados</h1>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="badge-rol badge-rol-{{.Claims.Rol}}">{{.Claims.Rol}}</span>
+      {{if puede .Claims.Rol "empleados.crear"}}
+      <a href="/desar/empleados/nuevo" class="btn btn-primary">➕ Nuevo Empleado</a>
+      {{end}}
+    </div>
+  </header>
+  {{if .Ok}}<div class="alert alert-success">✅ Cambios guardados.</div>{{end}}
+  {{if .Error}}<div class="alert alert-error">⚠️ {{.Error}}</div>{{end}}
+
+  <div class="card">
+    <form method="GET" style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-end">
+      <div class="form-group" style="margin:0;flex:1;min-width:200px">
+        <label>Buscar</label>
+        <input type="text" name="q" value="{{.Busq}}" placeholder="Nombre o código...">
+      </div>
+      <button type="submit" class="btn btn-secondary">🔍 Buscar</button>
+      {{if .Busq}}<a href="/desar/empleados" class="btn btn-secondary">✕ Limpiar</a>{{end}}
+    </form>
+
+    <div class="table-container">
+      <table class="data-table">
+        <thead><tr>
+          <th>Código</th><th>Nombre</th><th>Puesto</th><th>Sitio</th><th>Vencimiento</th><th>Estado</th>
+          {{if or (puede .Claims.Rol "empleados.editar") (puede .Claims.Rol "empleados.eliminar")}}
+          <th style="width:140px">Acciones</th>
+          {{end}}
+        </tr></thead>
+        <tbody>
+          {{range .Empleados}}
+          <tr>
+            <td class="mono">{{.ID}}</td>
+            <td><strong>{{.Nombre}}</strong></td>
+            <td style="color:#666">{{.Puesto}}</td>
+            <td style="font-size:12px">{{.SitioTrabajo}}</td>
+            <td class="mono" style="font-size:11px">{{.FechaVencimiento}}</td>
+            <td>
+              {{if .Activo}}
+                <span class="badge-rol" style="background:#2e7d32;color:#fff">✅ Activo</span>
+              {{else}}
+                <span class="badge-rol" style="background:#b0bec5;color:#fff">⛔ Baja</span>
+              {{end}}
+            </td>
+            {{if or (puede $.Claims.Rol "empleados.editar") (puede $.Claims.Rol "empleados.eliminar")}}
+            <td style="display:flex;gap:4px;flex-wrap:wrap">
+              {{if puede $.Claims.Rol "empleados.editar"}}
+              <a href="/desar/empleados/{{.DBID}}/editar" class="btn btn-secondary" style="padding:3px 10px;font-size:11px">✏️</a>
+              {{if .Activo}}
+              <button class="btn btn-secondary" style="padding:3px 10px;font-size:11px;background:#e65100;color:#fff"
+                data-delete-url="/desar/empleados/{{.DBID}}/baja"
+                data-method="POST"
+                data-confirm="¿Dar de baja a {{.Nombre}}?">📴 Baja</button>
+              {{end}}
+              {{end}}
+              {{if puede $.Claims.Rol "empleados.eliminar"}}
+              <button class="btn btn-danger" style="padding:3px 10px;font-size:11px"
+                data-delete-url="/desar/empleados/{{.DBID}}"
+                data-confirm="¿ELIMINAR permanentemente a {{.Nombre}}?">🗑️</button>
+              {{end}}
+            </td>
+            {{end}}
+          </tr>
+          {{else}}
+          <tr><td colspan="7" class="empty">Sin empleados. {{if puede .Claims.Rol "empleados.crear"}}<a href="/desar/empleados/nuevo">Crear el primero →</a>{{end}}</td></tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+<script src="/desar/static/js/main.js"></script>
+<script>
+// POST method for baja button
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('[data-method="POST"][data-delete-url]');
+  if (!btn) return;
+  if (!confirm(btn.dataset.confirm || '¿Confirmar?')) return;
+  fetch(btn.dataset.deleteUrl, {method:'POST'})
+    .then(r => { if(r.ok) location.reload(); else alert('Error: ' + r.status); });
+});
+</script>
+</body></html>

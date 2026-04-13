@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{.C.Nombre}} — DESAR Superadmin</title>
+<link rel="stylesheet" href="/desar/static/css/main.css">
+</head>
+<body class="app-body">
+<nav class="sidebar">
+  <div class="sidebar-logo"><span class="logo-icon">◉</span><span class="logo-text">DESAR</span></div>
+  <ul class="sidebar-nav">
+    <li><a href="/desar/">📊 Dashboard</a></li>
+    <li class="active"><a href="/desar/sa/companias">🏢 Compañías</a></li>
+    <li class="sidebar-sep"></li>
+    <li><a href="/desar/logout">🚪 Salir</a></li>
+  </ul>
+</nav>
+<main class="main-content">
+  <header class="page-header">
+    <div>
+      <a href="/desar/sa/companias" class="btn btn-secondary" style="margin-bottom:8px">← Volver</a>
+      <h1>🏢 {{.C.Nombre}}</h1>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a href="/desar/sa/companias/{{.C.ID}}/empleados" class="btn btn-secondary">👥 Empleados ({{.TotalEmp}})</a>
+      <a href="/desar/sa/companias/{{.C.ID}}/registros" class="btn btn-secondary">📋 Registros ({{.TotalReg}})</a>
+      <a href="/desar/sa/companias/{{.C.ID}}/usuarios" class="btn btn-secondary">🔑 Usuarios</a>
+      <button class="btn btn-danger"
+        data-toggle-url="/desar/sa/companias/{{.C.ID}}/toggle"
+        data-confirm="¿Cambiar estado de la compañía?">
+        {{if eq .C.Activo 1}}⛔ Pausar{{else}}✅ Activar{{end}}
+      </button>
+    </div>
+  </header>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+    <!-- Info -->
+    <div class="card">
+      <div class="card-title">📋 Información</div>
+      <table style="width:100%;font-size:13px;border-collapse:collapse">
+        <tr><td style="padding:6px;color:#666;width:120px">ID</td><td style="padding:6px"><strong>{{.C.ID}}</strong></td></tr>
+        <tr><td style="padding:6px;color:#666">Plan</td><td style="padding:6px"><span class="badge-rol">{{.C.Plan}}</span></td></tr>
+        <tr><td style="padding:6px;color:#666">Email</td><td style="padding:6px">{{.C.Email}}</td></tr>
+        <tr><td style="padding:6px;color:#666">Estado</td><td style="padding:6px">
+          {{if eq .C.Activo 1}}<span style="color:#2e7d32">✅ Activo</span>{{else}}<span style="color:#c62828">⛔ Inactivo</span>{{end}}
+        </td></tr>
+        <tr><td style="padding:6px;color:#666">Vence</td><td style="padding:6px">{{if .C.FechaVence}}{{.C.FechaVence}}{{else}}—{{end}}</td></tr>
+        <tr><td style="padding:6px;color:#666">Empleados</td><td style="padding:6px"><strong>{{.TotalEmp}}</strong></td></tr>
+        <tr><td style="padding:6px;color:#666">Registros</td><td style="padding:6px"><strong>{{.TotalReg}}</strong></td></tr>
+        <tr><td style="padding:6px;color:#666">Dispositivos</td><td style="padding:6px"><strong>{{len .Dispositivos}}</strong></td></tr>
+      </table>
+      <div style="margin-top:12px;padding:10px;background:#f5f7fa;border-radius:8px">
+        <div style="font-size:11px;color:#666;margin-bottom:4px">API KEY (empresa)</div>
+        <div style="font-family:monospace;font-size:11px;word-break:break-all;user-select:all">{{.C.APIKey}}</div>
+      </div>
+    </div>
+
+    <!-- Editar -->
+    <div class="card">
+      <div class="card-title">✏️ Editar Compañía</div>
+      <form method="POST" action="/desar/sa/companias/{{.C.ID}}/editar">
+        <div class="form-group"><label>Nombre</label><input type="text" name="nombre" value="{{.C.Nombre}}" required></div>
+        <div class="form-group"><label>Email admin</label><input type="email" name="email" value="{{.C.Email}}"></div>
+        <div class="form-group"><label>Plan</label>
+          <select name="plan">
+            {{range .Planes}}<option value="{{.}}"{{if eq . $.C.Plan}} selected{{end}}>{{.}}</option>{{end}}
+          </select>
+        </div>
+        <div class="form-group"><label>Máx. empleados</label><input type="number" name="max_empleados" value="{{.C.MaxEmp}}" min="1"></div>
+        <div class="form-group"><label>Fecha vencimiento</label><input type="date" name="fecha_vence" value="{{.C.FechaVence}}"></div>
+        <button type="submit" class="btn btn-primary btn-full">💾 Guardar cambios</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dispositivos APK -->
+  <div class="card">
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+      <span>📱 Dispositivos APK registrados</span>
+      <button class="btn btn-primary btn-sm" onclick="document.getElementById('frmNuevoDisp').style.display='block';this.style.display='none'">+ Agregar</button>
+    </div>
+
+    <!-- Formulario nuevo dispositivo (oculto) -->
+    <form id="frmNuevoDisp" method="POST" action="/desar/sa/companias/{{.C.ID}}/dispositivos"
+          style="display:none;background:#f5f7fa;border-radius:8px;padding:14px;margin-bottom:16px">
+      <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:flex-end">
+        <div class="form-group" style="margin:0"><label>Nombre del dispositivo</label>
+          <input type="text" name="nombre" placeholder="Tablet recepción, iPad bodega…" required></div>
+        <div class="form-group" style="margin:0"><label>API Key del APK</label>
+          <input type="text" name="api_key" placeholder="desar_xxxx… (o dejar en blanco para generar)" style="font-family:monospace"></div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+
+    {{if .Dispositivos}}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>API Key (APK)</th>
+          <th>Último Sync</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Dispositivos}}
+        <tr>
+          <td>{{.ID}}</td>
+          <td><strong>{{.Nombre}}</strong></td>
+          <td style="font-family:monospace;font-size:11px;word-break:break-all">{{.APIKey}}</td>
+          <td>{{.UltimoSync}}</td>
+          <td>{{if .Activo}}<span style="color:#2e7d32">✅ Activo</span>{{else}}<span style="color:#c62828">⛔ Inactivo</span>{{end}}</td>
+          <td>
+            <button class="btn btn-danger btn-sm"
+              data-delete-url="/desar/sa/companias/{{$.C.ID}}/dispositivos/{{.ID}}"
+              data-confirm="¿Eliminar este dispositivo?">🗑</button>
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+    {{else}}
+    <div style="padding:20px;text-align:center;color:#9e9e9e;font-size:13px">
+      📱 No hay dispositivos APK registrados para esta compañía.<br>
+      El primer APK que sincronice con la API Key de la empresa se registrará automáticamente.
+    </div>
+    {{end}}
+  </div>
+
+</main>
+<script src="/desar/static/js/main.js"></script>
+</body></html>
